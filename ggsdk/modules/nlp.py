@@ -1,7 +1,9 @@
-from ggsdk.modules.module import GraphGridModule
+from ggsdk.modules.module import GraphGridModule, GraphGridModuleFactory
 
 
-class GraphGridNlpModule(GraphGridModule):
+class NlpModuleFactory(GraphGridModuleFactory):
+    pass
 
-    def is_available(self):
-        return True;
+
+class NlpModule(GraphGridModule):
+    pass

@@ -15,4 +15,9 @@ class ModuleSession():
             self._session_core.set_credentials(access_key, secret_key, )
 
 
+    def module(self, module_name):
+        """
 
+        :param module_name:
+        :return:
+        """

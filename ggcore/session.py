@@ -6,7 +6,7 @@ class SessionCore:
     def __init__(self,):
         self._credentials = None
 
-    def create_client(self):
+    def module(self):
         pass
 
     def set_credentials(self, access_key, secret_key, token=None):
