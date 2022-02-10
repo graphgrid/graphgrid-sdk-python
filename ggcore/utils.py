@@ -15,6 +15,7 @@ CONNECT = "connect"
 HEAD = "head"
 TRACE = "trace"
 
+
 class HttpMethod(enum.Enum):
     post = POST
     get = GET
@@ -25,13 +26,6 @@ class HttpMethod(enum.Enum):
     connect = CONNECT
     head = HEAD
     trace = TRACE
-
-
-AUTH_HEADER_KEY = "Authorization";
-BASIC_HEADER_KEY = "Basic ";
-GRANT_TYPE_KEY = "grant_type";
-PASSWORD_KEY = "password";
-USERNAME_KEY = "username";
 
 
 def http_response_to_sdk_response(http_response: requests.Response):
