@@ -1,8 +1,7 @@
 import enum
-import typing
 from dataclasses import dataclass
 
-from ggsdk.modules.module import ConfigModule, SecurityModule, NlpModule
+from ggsdk.module import ConfigModule, SecurityModule, NlpModule
 
 CONFIG = 'config'
 SECURITY = 'security'
@@ -50,12 +49,12 @@ class ModuleFactoryFactory(enum.Enum):
         super().__init__()
 
         options = {
-            CONFIG: self._config(),
-            SECURITY: self._security(),
-            NLP: self._nlp(),
+            CONFIG: self._config,
+            SECURITY: self._security,
+            NLP: self._nlp,
         }
         if self.value in options:
-            self._factory = options[self.value]
+            self._factory = options[self.value]()
         else:
             raise Exception("bad module str")
 
