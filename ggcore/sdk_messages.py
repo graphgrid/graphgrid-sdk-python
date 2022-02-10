@@ -1,6 +1,5 @@
-import typing
+import dataclasses
 
-import urllib
 from dataclasses import dataclass
 
 
@@ -23,6 +22,5 @@ class SdkServiceResponse:
     statusCode: int
     statusText: str
 
-    response: object = dict({})
+    response: dict = dataclasses.field(default_factory=dict)
     exception: Exception = None
-
