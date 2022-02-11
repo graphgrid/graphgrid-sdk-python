@@ -1,7 +1,7 @@
 import enum
 from dataclasses import dataclass
 
-from ggcore.module import ConfigModuleSession, SecurityModuleSession, NlpModuleSession
+from ggcore.module import ConfigClient, SecurityClient, NlpClient
 
 CONFIG = 'config'
 SECURITY = 'security'
@@ -16,17 +16,17 @@ class GraphGridClientFactory:
 
 class ConfigClientFactory(GraphGridClientFactory):
     def create_client_instance(self):
-        return ConfigModuleSession()
+        return ConfigClient()
 
 
 class SecurityClientFactory(GraphGridClientFactory):
     def create_client_instance(self):
-        return SecurityModuleSession()
+        return SecurityClient()
 
 
 class NlpClientFactory(GraphGridClientFactory):
     def create_client_instance(self):
-        return NlpModuleSession()
+        return NlpClient()
 
 
 class SessionFactoryFactory(enum.Enum):
