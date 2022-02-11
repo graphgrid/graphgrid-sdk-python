@@ -9,41 +9,32 @@ NLP = 'nlp'
 
 
 @dataclass
-class GraphGridModuleFactory:
-    def create_module_instance(self):
+class GraphGridClientFactory:
+    def create_client_instance(self):
         pass
 
 
-class ConfigModuleFactory(GraphGridModuleFactory):
-    def __init__(self, ):
-        print("config fact")
-
-    def create_module_instance(self):
+class ConfigClientFactory(GraphGridClientFactory):
+    def create_client_instance(self):
         return ConfigModuleSession()
 
 
-class SecurityModuleFactory(GraphGridModuleFactory):
-    def __init__(self, ):
-        print("sec fact")
-
-    def create_module_instance(self):
+class SecurityClientFactory(GraphGridClientFactory):
+    def create_client_instance(self):
         return SecurityModuleSession()
 
 
-class NlpModuleFactory(GraphGridModuleFactory):
-    def __init__(self, ):
-        print("nlp factory")
-
-    def create_module_instance(self):
+class NlpClientFactory(GraphGridClientFactory):
+    def create_client_instance(self):
         return NlpModuleSession()
 
 
-class ModuleFactoryFactory(enum.Enum):
+class SessionFactoryFactory(enum.Enum):
     config = CONFIG
     security = SECURITY
     nlp = NLP
 
-    _factory: GraphGridModuleFactory
+    _factory: GraphGridClientFactory
 
     def __init__(self, value):
         super().__init__()
@@ -59,17 +50,17 @@ class ModuleFactoryFactory(enum.Enum):
             raise Exception("bad module str")
 
     def _config(self):
-        return ConfigModuleFactory()
+        return ConfigClientFactory()
 
     def _security(self):
-        return SecurityModuleFactory()
+        return SecurityClientFactory()
 
     def _nlp(self):
-        return NlpModuleFactory()
+        return NlpClientFactory()
 
-    def create_module(self):
-        return self._factory.create_module_instance()
+    def create_client(self):
+        return self._factory.create_client_instance()
 
 
-def module(s: str):
-    return ModuleFactoryFactory(s).create_module()
+def client(s: str):
+    return SessionFactoryFactory(s).create_client()
