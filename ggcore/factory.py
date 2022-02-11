@@ -1,7 +1,7 @@
 import enum
 from dataclasses import dataclass
 
-from ggsdk.module import ConfigModule, SecurityModule, NlpModule
+from ggcore.module import ConfigModule, SecurityModule, NlpModule
 
 CONFIG = 'config'
 SECURITY = 'security'
