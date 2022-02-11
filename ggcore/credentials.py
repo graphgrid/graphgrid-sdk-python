@@ -1,8 +1,6 @@
 import typing
-from dataclasses import dataclass
 
 
-# @dataclass
 class Credentials:
     access_key: typing.AnyStr
     secret_key: typing.AnyStr

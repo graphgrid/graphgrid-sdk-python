@@ -2,6 +2,7 @@ import enum
 from dataclasses import dataclass
 
 from ggcore.module import ConfigClient, SecurityClient, NlpClient
+
 from ggcore.utils import CONFIG, SECURITY, NLP
 
 
