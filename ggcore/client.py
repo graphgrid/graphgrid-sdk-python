@@ -8,7 +8,6 @@ class ModuleClient:
     def is_available(self):
         pass
 
-    @property
     def client_name(self):
         pass
 
