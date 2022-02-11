@@ -6,7 +6,6 @@ from ggcore.client import ConfigClient, SecurityClient, NlpClient, GraphGridModu
 from ggcore.utils import CONFIG, SECURITY, NLP
 
 
-@dataclass
 class GraphGridModuleClientFactory:
     def create_client_instance(self) -> GraphGridModuleClient:
         pass
@@ -30,19 +29,19 @@ class NlpClientFactory(GraphGridModuleClientFactory):
 @dataclass
 class FactoryData:
     client_name: str
-    factory: typing.Type[GraphGridModuleClientFactory]
+    factory: GraphGridModuleClientFactory
 
 
 class ClientFactory:
     _FACTORIES_DATA: typing.Dict[str, FactoryData] = {
-        CONFIG: FactoryData(CONFIG, ConfigClientFactory),
-        SECURITY: FactoryData(SECURITY, SecurityClientFactory),
-        NLP: FactoryData(NLP, NlpClientFactory),
+        CONFIG: FactoryData(CONFIG, ConfigClientFactory()),
+        SECURITY: FactoryData(SECURITY, SecurityClientFactory()),
+        NLP: FactoryData(NLP, NlpClientFactory()),
     }
 
     @classmethod
     def call_module_client_factory(cls, validated_client_name):
-        return cls._FACTORIES_DATA.get(validated_client_name).factory().create_client_instance()
+        return cls._FACTORIES_DATA.get(validated_client_name).factory.create_client_instance()
 
     @classmethod
     def create_client(cls, client_name):
