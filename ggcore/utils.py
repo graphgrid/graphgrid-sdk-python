@@ -40,3 +40,10 @@ def http_response_to_sdk_response(http_response: requests.Response):
         sdk_response.exception = e
 
     sdk_response.statusText = http_response.reason
+
+
+CONFIG = 'config'
+SECURITY = 'security'
+NLP = 'nlp'
+
+SUPPORTED_CLIENTS = [CONFIG, SECURITY]
