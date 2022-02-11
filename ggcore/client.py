@@ -4,7 +4,7 @@ from ggcore.utils import CONFIG, NLP, SECURITY
 
 
 @dataclass
-class ModuleClient:
+class GraphGridModuleClient:
     def is_available(self):
         pass
 
@@ -13,7 +13,7 @@ class ModuleClient:
 
 
 @dataclass
-class ConfigClient(ModuleClient):
+class ConfigClient(GraphGridModuleClient):
     _client_name = CONFIG
 
     @property
@@ -21,7 +21,7 @@ class ConfigClient(ModuleClient):
         return self._client_name
 
 
-class SecurityClient(ModuleClient):
+class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
 
     @property
@@ -29,7 +29,7 @@ class SecurityClient(ModuleClient):
         return self._client_name
 
 
-class NlpClient(ModuleClient):
+class NlpClient(GraphGridModuleClient):
     _client_name = NLP
 
     @property

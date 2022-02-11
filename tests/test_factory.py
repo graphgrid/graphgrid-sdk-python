@@ -1,6 +1,7 @@
 from unittest import TestCase
 
 from ggcore import client_factory, utils
+from ggcore.sdk_exceptions import SdkInvalidClient
 
 
 class TestFactory(TestCase):
@@ -10,9 +11,9 @@ class TestFactory(TestCase):
         Tests that the factory instantiates all supported client object.
         """
         for client in utils.SUPPORTED_CLIENTS:
-            self.assertEqual(client,client_factory.client(client).client_name, f"Supported client '{client}' failed to return its client factory object.")
+            self.assertEqual(client,client_factory.client(client).client_name, f"Client '{client}' failed to return its client factory object.")
 
 
     def test_invalid_client(self):
-        with self.assertRaises(ValueError) as context:
+        with self.assertRaises(SdkInvalidClient) as context:
             client_factory.client("invalid")
