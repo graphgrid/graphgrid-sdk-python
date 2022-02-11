@@ -1,29 +1,16 @@
 import base64
-import enum
 from dataclasses import dataclass
 
 from ggcore import sdk_exceptions
 from ggcore.credentials import Credentials
-
-AUTH_HEADER_KEY = "Authorization"
-BASIC_HEADER_KEY = "Basic"
-BEARER_HEADER_KEY = "Bearer"
-
-GRANT_TYPE_KEY = "grant_type"
-PASSWORD_KEY = "password"
-USERNAME_KEY = "username"
-
-
-class RequestAuthType(enum.Enum):
-    BASIC = BASIC_HEADER_KEY
-    BEARER = BEARER_HEADER_KEY
+from ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, BEARER_HEADER_KEY, RequestAuthType
 
 
 @dataclass
 class RequestAuth:
     credentials: Credentials
 
-    def get_auth_header(self):
+    def get_auth_header(self) -> dict:
         pass
 
 
@@ -60,5 +47,5 @@ class BearerAuth(RequestAuth):
 class SdkAuth():
     credentials: Credentials
 
-    def get_auth(self, auth_type: RequestAuthType):
+    def get_auth_for_http(self, auth_type: RequestAuthType) -> dict:
         return RequestAuthFactory.from_auth_type(auth_type, self.credentials).get_auth_header()

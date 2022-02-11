@@ -1,10 +1,13 @@
 import enum
-import json
 
-import requests
+"""MODULES"""
+CONFIG = 'config'
+SECURITY = 'security'
+NLP = 'nlp'
 
-from ggcore.sdk_messages import SdkServiceResponse
+SUPPORTED_CLIENTS = [CONFIG, SECURITY]
 
+"""HTTP METHODS"""
 POST = "post"
 GET = "get"
 PUT = "put"
@@ -28,22 +31,18 @@ class HttpMethod(enum.Enum):
     trace = TRACE
 
 
-def http_response_to_sdk_response(http_response: requests.Response):
-    sdk_response = SdkServiceResponse()
-
-    sdk_response.statusCode = http_response.status_code
-    sdk_response.response = json.load(http_response.content)
-
-    try:
-        http_response.raise_for_status()
-    except requests.HTTPError as e:
-        sdk_response.exception = e
-
-    sdk_response.statusText = http_response.reason
 
 
-CONFIG = 'config'
-SECURITY = 'security'
-NLP = 'nlp'
 
-SUPPORTED_CLIENTS = [CONFIG, SECURITY]
+"""SECURITY"""
+AUTH_HEADER_KEY = "Authorization"
+BASIC_HEADER_KEY = "Basic"
+BEARER_HEADER_KEY = "Bearer"
+GRANT_TYPE_KEY = "grant_type"
+PASSWORD_KEY = "password"
+USERNAME_KEY = "username"
+
+
+class RequestAuthType(enum.Enum):
+    BASIC = BASIC_HEADER_KEY
+    BEARER = BEARER_HEADER_KEY
