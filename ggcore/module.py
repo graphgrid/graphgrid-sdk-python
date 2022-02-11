@@ -2,21 +2,21 @@ from dataclasses import dataclass
 
 
 @dataclass
-class GraphGridModule:
+class GraphGridModuleSession:
     def is_available(self):
         pass
 
 
-class ConfigModule(GraphGridModule):
+class ConfigModuleSession(GraphGridModuleSession):
     def __init__(self, ):
         print("CONFIG SDK MODULE CREATED")
 
 
-class NlpModule(GraphGridModule):
+class NlpModuleSession(GraphGridModuleSession):
     def __init__(self, ):
         print("NLP SDK MODULE CREATED")
 
 
-class SecurityModule(GraphGridModule):
+class SecurityModuleSession(GraphGridModuleSession):
     def __init__(self, ):
         print("SECURITY SDK MODULE CREATED")
