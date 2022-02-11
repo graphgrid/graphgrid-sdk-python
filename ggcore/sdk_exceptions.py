@@ -5,5 +5,6 @@ class SdkException(Exception):
 class SdkInvalidClient(Exception):
     """ The client requested is invalid """
 
-class SdkBadAuthTypeException(Exception):
+
+class SdkAuthTypeException(Exception):
     """ """

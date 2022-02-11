@@ -1,11 +1,10 @@
 import enum
 
-"""MODULES"""
+"""GG MODULE CLIENTS"""
 CONFIG = 'config'
 SECURITY = 'security'
-NLP = 'nlp'
 
-SUPPORTED_CLIENTS = [CONFIG, SECURITY, NLP]
+SUPPORTED_CLIENTS = [CONFIG, SECURITY, ]  # do s
 
 """HTTP METHODS"""
 POST = "post"
@@ -29,9 +28,6 @@ class HttpMethod(enum.Enum):
     connect = CONNECT
     head = HEAD
     trace = TRACE
-
-
-
 
 
 """SECURITY"""

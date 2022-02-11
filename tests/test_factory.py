@@ -11,9 +11,9 @@ class TestFactory(TestCase):
         Tests that the factory instantiates all supported client object.
         """
         for client in utils.SUPPORTED_CLIENTS:
-            self.assertEqual(client,client_factory.client(client).client_name, f"Client '{client}' failed to return its client factory object.")
-
+            self.assertEqual(client, client_factory.client(client).client_name,
+                             f"Client '{client}' failed to return its client factory object.")
 
     def test_invalid_client(self):
-        with self.assertRaises(SdkInvalidClient) as context:
+        with self.assertRaises(SdkInvalidClient):
             client_factory.client("invalid")

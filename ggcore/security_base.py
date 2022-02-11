@@ -23,7 +23,7 @@ class RequestAuthFactory:
             return BasicAuth(credentials)
         elif request_type == request_type.BEARER:
             return BearerAuth(credentials)
-        raise sdk_exceptions.SdkBadAuthTypeException()
+        raise sdk_exceptions.SdkAuthTypeException()
 
 
 @dataclass

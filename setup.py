@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from setuptools import setup, find_packages
 
-PACKAGE_NAME = "gg_sdk"
+PACKAGE_NAME = "graphgrid-sdk-python"
 
 top_level_path = Path(__file__).parent.absolute()
 with open(os.path.join(top_level_path, "README.md"), "r", encoding="utf-8") as fh:
@@ -10,13 +10,13 @@ with open(os.path.join(top_level_path, "README.md"), "r", encoding="utf-8") as f
 
 setup(
     name=PACKAGE_NAME,
-    version="0.0.1",
+    version="2.0.0",
     packages=find_packages(),
     url="",
     license="",
     author="graphgrid",
     author_email="",
-    description="GG CORE",
+    description="GraphGrid Python SDK",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
