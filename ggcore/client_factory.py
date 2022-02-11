@@ -1,8 +1,7 @@
 import enum
 from dataclasses import dataclass
 
-from ggcore.module import ConfigClient, SecurityClient, NlpClient
-
+from ggcore.client import ConfigClient, SecurityClient, NlpClient
 from ggcore.utils import CONFIG, SECURITY, NLP
 
 
@@ -27,7 +26,7 @@ class NlpClientFactory(GraphGridClientFactory):
         return NlpClient()
 
 
-class SessionFactoryFactory(enum.Enum):
+class ClientFactory(enum.Enum):
     config = CONFIG
     security = SECURITY
     nlp = NLP
@@ -37,28 +36,17 @@ class SessionFactoryFactory(enum.Enum):
     def __init__(self, value):
         super().__init__()
 
-        options = {
-            CONFIG: self._config,
-            SECURITY: self._security,
-            NLP: self._nlp,
+        factory_map = {
+            CONFIG: ConfigClientFactory,
+            SECURITY: SecurityClientFactory,
+            NLP: NlpClientFactory,
         }
-        if self.value in options:
-            self._factory = options[self.value]()
-        else:
-            raise Exception("bad module str")
-
-    def _config(self):
-        return ConfigClientFactory()
-
-    def _security(self):
-        return SecurityClientFactory()
-
-    def _nlp(self):
-        return NlpClientFactory()
+        if self.value in factory_map:
+            self._factory = factory_map[self.value]()
 
     def create_client(self):
         return self._factory.create_client_instance()
 
 
 def client(s: str):
-    return SessionFactoryFactory(s).create_client()
+    return ClientFactory(s).create_client()
