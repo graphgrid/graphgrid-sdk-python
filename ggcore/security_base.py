@@ -57,7 +57,7 @@ class BearerAuth(RequestAuth):
 
 
 @dataclass
-class AuthUnion():
+class SdkAuth():
     credentials: Credentials
 
     def get_auth(self, auth_type: RequestAuthType):

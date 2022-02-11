@@ -2,6 +2,8 @@ import dataclasses
 
 from dataclasses import dataclass
 
+from ggcore import security_base
+
 
 @dataclass
 class SdkServiceRequest:
@@ -10,7 +12,7 @@ class SdkServiceRequest:
 
     # request_handler: object
     # response_handler: object
-    request_auth_method: object
+    request_auth_method: security_base.RequestAuthType
 
     headers: dict = None
     query_params: dict = None
