@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-
 from ggcore.utils import CONFIG, NLP, SECURITY
 
 
-@dataclass
 class GraphGridModuleClient:
     def is_available(self):
         pass
@@ -12,7 +9,6 @@ class GraphGridModuleClient:
         pass
 
 
-@dataclass
 class ConfigClient(GraphGridModuleClient):
     _client_name = CONFIG
 

@@ -7,22 +7,22 @@ from ggcore.utils import CONFIG, SECURITY, NLP
 
 
 @dataclass
-class GraphGridClientFactory:
+class GraphGridModuleClientFactory:
     def create_client_instance(self) -> GraphGridModuleClient:
         pass
 
 
-class ConfigClientFactory(GraphGridClientFactory):
+class ConfigClientFactory(GraphGridModuleClientFactory):
     def create_client_instance(self) -> GraphGridModuleClient:
         return ConfigClient()
 
 
-class SecurityClientFactory(GraphGridClientFactory):
+class SecurityClientFactory(GraphGridModuleClientFactory):
     def create_client_instance(self) -> GraphGridModuleClient:
         return SecurityClient()
 
 
-class NlpClientFactory(GraphGridClientFactory):
+class NlpClientFactory(GraphGridModuleClientFactory):
     def create_client_instance(self) -> GraphGridModuleClient:
         return NlpClient()
 
@@ -30,14 +30,14 @@ class NlpClientFactory(GraphGridClientFactory):
 @dataclass
 class FactoryData:
     client_name: str
-    factory: typing.Type[GraphGridClientFactory]
+    factory: typing.Type[GraphGridModuleClientFactory]
 
 
 class ClientFactory:
     _FACTORIES_DATA: typing.Dict[str, FactoryData] = {
-        CONFIG:     FactoryData(CONFIG, ConfigClientFactory),
-        SECURITY:   FactoryData(SECURITY, SecurityClientFactory),
-        NLP:        FactoryData(NLP, NlpClientFactory),
+        CONFIG: FactoryData(CONFIG, ConfigClientFactory),
+        SECURITY: FactoryData(SECURITY, SecurityClientFactory),
+        NLP: FactoryData(NLP, NlpClientFactory),
     }
 
     @classmethod
