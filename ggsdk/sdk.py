@@ -1,5 +1,7 @@
 import ggcore.client_factory
+from ggcore.client import GraphGridModuleClient
 from ggsdk.session import GraphGridSession
+
 
 
 class SdkMain:
@@ -15,17 +17,5 @@ class SdkMain:
         # Get security client
             # Get url base, setup
 
-
-        _nlp_client = ggcore.client_factory.client("nlp") # this seems wrong
-
-    def save(self):
-        pass
-
-    def train(self):
-        pass
-
-    def get_job_status(self):
-        pass
-
-    def get_job_results(self):
-        pass
+    def get_client(self, name) -> GraphGridModuleClient:
+        return ggcore.client_factory.client(name) # should session be passed in here too? the client should keep track of the session itself?
