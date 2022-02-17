@@ -1,6 +1,4 @@
-import requests
-
-from ggcore.utils import CONFIG, SECURITY
+from ggcore.utils import CONFIG, SECURITY, NLP
 
 
 class GraphGridModuleClient:
@@ -62,3 +60,13 @@ class SecurityClient(GraphGridModuleClient):
         return self._url_base
 
 
+class NlpClient(GraphGridModuleClient):
+    _client_name = NLP
+
+    @property
+    def client_name(self):
+        return self._client_name
+
+    @property
+    def url_base(self):
+        return self._url_base

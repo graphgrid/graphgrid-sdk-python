@@ -2,8 +2,8 @@ import typing
 from dataclasses import dataclass
 
 from ggcore import sdk_exceptions
-from ggcore.client import ConfigClient, SecurityClient, GraphGridModuleClient
-from ggcore.utils import CONFIG, SECURITY
+from ggcore.client import ConfigClient, SecurityClient, GraphGridModuleClient, NlpClient
+from ggcore.utils import CONFIG, SECURITY, NLP
 
 
 class GraphGridModuleClientFactory:
@@ -21,6 +21,12 @@ class SecurityClientFactory(GraphGridModuleClientFactory):
         return SecurityClient()
 
 
+class NlpClientFactory(GraphGridModuleClientFactory):
+    def create_client_instance(self) -> GraphGridModuleClient:
+        return NlpClient()
+
+
+
 @dataclass
 class FactoryData:
     client_name: str
@@ -31,6 +37,7 @@ class ClientFactory:
     _FACTORIES_DATA: typing.Dict[str, FactoryData] = {
         CONFIG: FactoryData(CONFIG, ConfigClientFactory()),
         SECURITY: FactoryData(SECURITY, SecurityClientFactory()),
+        NLP: FactoryData(NLP, NlpClientFactory()),
     }
 
     @classmethod

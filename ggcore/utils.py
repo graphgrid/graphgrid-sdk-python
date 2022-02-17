@@ -3,8 +3,9 @@ import enum
 """GG MODULE CLIENTS"""
 CONFIG = 'config'
 SECURITY = 'security'
+NLP = 'nlp'
 
-SUPPORTED_CLIENTS = [CONFIG, SECURITY, ]  # do s
+SUPPORTED_CLIENTS = [CONFIG, SECURITY, NLP, ]
 
 """HTTP METHODS"""
 POST = "post"
