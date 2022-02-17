@@ -44,7 +44,7 @@ class BearerAuth(RequestAuth):
 
 
 @dataclass
-class SdkAuth():
+class SdkAuth:
     credentials: Credentials
 
     def get_auth_for_http(self, auth_type: RequestAuthType) -> dict:
