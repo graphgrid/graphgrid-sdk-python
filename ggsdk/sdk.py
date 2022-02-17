@@ -1,11 +1,13 @@
 import ggcore.client_factory
-from ggcore.client import NlpClient
+from ggsdk.session import GraphGridSession
 
 
 class SdkMain:
 
-    _nlp_client: NlpClient
-    def __init__(self):
+    _session: GraphGridSession
+
+    def __init__(self, session):
+        self._session = session
         # get bootstrap config
 
         # Get config client
