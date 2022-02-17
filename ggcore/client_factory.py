@@ -26,7 +26,6 @@ class NlpClientFactory(GraphGridModuleClientFactory):
         return NlpClient()
 
 
-
 @dataclass
 class FactoryData:
     client_name: str
