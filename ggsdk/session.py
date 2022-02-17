@@ -16,5 +16,6 @@ class GraphGridSession:
         self._credentials = Credentials(access_key, secret_access_key)
 
     def client(self, name) -> GraphGridModuleClient:
-        self._client_map[name] = ggcore.client_factory.client(name)
+        if name not in self._client_map:
+            self._client_map[name] = ggcore.client_factory.client(name)
         return self._client_map[name]
