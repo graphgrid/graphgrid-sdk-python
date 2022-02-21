@@ -9,8 +9,6 @@ class SdkServiceRequest:
     endpoint: str
     # serviceUrl: str # see java sdk analog; used internally?
 
-    # request_handler: object
-    # response_handler: object
     request_auth_method: RequestAuthType
 
     headers: dict = dataclasses.field(default_factory=dict)
@@ -23,5 +21,5 @@ class SdkServiceResponse:
     statusCode: int = None
     statusText: str = None
 
-    response: dict = dataclasses.field(default_factory=dict)
+    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict instead?
     exception: Exception = None
