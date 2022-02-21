@@ -1,5 +1,3 @@
-import json
-
 import requests
 
 from ggcore.sdk_messages import SdkServiceRequest
@@ -11,7 +9,8 @@ def http_response_to_sdk_response(http_response: requests.Response):
     sdk_response = SdkServiceResponse()
 
     sdk_response.statusCode = http_response.status_code
-    sdk_response.response = json.load(http_response.content)
+
+    sdk_response.response = http_response.content.decode()
 
     try:
         http_response.raise_for_status()

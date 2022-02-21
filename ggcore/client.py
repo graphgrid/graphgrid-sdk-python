@@ -1,8 +1,11 @@
+import json
+
 from ggcore import http_base
 from ggcore.credentials import Credentials
 from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
 from ggcore.security_base import SdkAuth
-from ggcore.utils import CONFIG, SECURITY, NLP, POST, BASIC_HEADER_KEY, RequestAuthType, HttpMethod
+from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
+    GRANT_TYPE_CLIENT_CREDENTIALS
 
 
 class GraphGridModuleClient:
@@ -75,11 +78,18 @@ class SecurityClient(GraphGridModuleClient):
 
     def get_token(self, creds: Credentials):
         endpoint = self._http_base() + "oauth/token"
-        headers=SdkAuth(credentials=creds).get_auth_for_http(auth_type=RequestAuthType.BASIC)
+        headers = SdkAuth(credentials=creds).get_auth_for_http(auth_type=RequestAuthType.BASIC)
 
         sdk_request = SdkServiceRequest(endpoint=endpoint, headers=headers, request_auth_method=RequestAuthType.BASIC)
 
+        sdk_request.query_params[GRANT_TYPE_KEY] = GRANT_TYPE_CLIENT_CREDENTIALS
+
         sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, HttpMethod.post)
+
+        response:str = sdk_response.response
+        json_acceptable_string = response.replace("'", "\"")
+        token = json.loads(json_acceptable_string)["access_token"]
+        return token
 
 
 

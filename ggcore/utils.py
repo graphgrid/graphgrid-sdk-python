@@ -39,6 +39,8 @@ GRANT_TYPE_KEY = "grant_type"
 PASSWORD_KEY = "password"
 USERNAME_KEY = "username"
 
+GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials"
+
 
 class RequestAuthType(enum.Enum):
     BASIC = BASIC_HEADER_KEY

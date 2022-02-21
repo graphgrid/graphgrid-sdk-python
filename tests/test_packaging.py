@@ -1,8 +1,6 @@
 from unittest import TestCase
 
-from ggcore import client_factory, utils
 from ggcore.credentials import Credentials
-from ggcore.sdk_exceptions import SdkInvalidClient
 from ggsdk.session import GraphGridSession
 
 

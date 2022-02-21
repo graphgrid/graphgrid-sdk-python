@@ -13,9 +13,9 @@ class SdkServiceRequest:
     # response_handler: object
     request_auth_method: RequestAuthType
 
-    headers: dict = None
-    query_params: dict = None
-    body: dict = None
+    headers: dict = dataclasses.field(default_factory=dict)
+    query_params: dict = dataclasses.field(default_factory=dict)
+    body: dict = dataclasses.field(default_factory=dict)
 
 
 @dataclass
