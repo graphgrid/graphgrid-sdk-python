@@ -1,4 +1,8 @@
-from ggcore.utils import CONFIG, SECURITY, NLP
+from ggcore import http_base
+from ggcore.credentials import Credentials
+from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
+from ggcore.security_base import SdkAuth
+from ggcore.utils import CONFIG, SECURITY, NLP, POST
 
 
 class GraphGridModuleClient:
@@ -58,6 +62,16 @@ class SecurityClient(GraphGridModuleClient):
     @property
     def url_base(self):
         return self._url_base
+
+
+    def get_token(self, creds: Credentials):
+        endpoint = self._http_base() + "oauth/token"
+        sdk_request = SdkServiceRequest(endpoint=endpoint, headers=SdkAuth(credentials=creds).get_auth_for_http())
+
+        sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, POST)
+
+
+
 
 
 class NlpClient(GraphGridModuleClient):

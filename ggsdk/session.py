@@ -1,9 +1,9 @@
 import typing
 
 import ggcore.client_factory
-from ggcore.client import GraphGridModuleClient, NlpClient
+from ggcore.client import GraphGridModuleClient, NlpClient, SecurityClient
 from ggcore.credentials import Credentials
-from ggcore.utils import NLP
+from ggcore.utils import NLP, CONFIG, SECURITY
 
 
 class GraphGridSession:
@@ -20,10 +20,22 @@ class GraphGridSession:
         if name not in self._client_map:
             self._client_map[name] = ggcore.client_factory.client(name)
         return self._client_map[name]
+    #
+    # def save_dataset(self):
+    #     """
+    #     Work in progress
+    #     """
+    #     nlp_client: NlpClient = self.client(NLP)
+    #     nlp_client.save()
+    #     pass
 
-    def saveDataset(self):
-        """
-        Work in progress
-        """
-        nlp_client: NlpClient = self.client(NLP)
-        nlp_client.save()
+    def setup_config_client(self):
+        self.client(CONFIG)
+
+    def setup_security_client(self):
+        self.client(SECURITY)
+
+        security_client: SecurityClient = self.client(SECURITY)
+
+        self._credentials.token = security_client.get_token(self._credentials)
+
