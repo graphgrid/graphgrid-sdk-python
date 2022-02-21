@@ -40,7 +40,6 @@ pip-delete-this-directory.txt
 clover.xml
 cov.xml
 pytest.xml
-.coveragerc
 
 # Result Sets
 files/
