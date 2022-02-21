@@ -7,23 +7,23 @@ from ggcore.utils import CONFIG, SECURITY, NLP
 
 
 class GraphGridModuleClientFactory:
-    def create_client_instance(self) -> GraphGridModuleClient:
+    def create_client_instance(self, url_base) -> GraphGridModuleClient:
         pass
 
 
 class ConfigClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
-        return ConfigClient()
+    def create_client_instance(self, url_base) -> GraphGridModuleClient:
+        return ConfigClient(url_base)
 
 
 class SecurityClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
-        return SecurityClient()
+    def create_client_instance(self, url_base) -> GraphGridModuleClient:
+        return SecurityClient(url_base)
 
 
 class NlpClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
-        return NlpClient()
+    def create_client_instance(self, url_base) -> GraphGridModuleClient:
+        return NlpClient(url_base)
 
 
 @dataclass
@@ -40,16 +40,20 @@ class ClientFactory:
     }
 
     @classmethod
-    def call_module_client_factory(cls, validated_client_name) -> GraphGridModuleClient:
-        return cls._FACTORIES_DATA.get(validated_client_name).factory.create_client_instance()
+    def call_module_client_factory(cls, validated_client_name, url_base) -> GraphGridModuleClient:
+        return cls._FACTORIES_DATA.get(validated_client_name).factory.create_client_instance(url_base)
 
     @classmethod
-    def create_client(cls, client_name) -> GraphGridModuleClient:
+    def create_client(cls, client_name, url_base) -> GraphGridModuleClient:
         if client_name in cls._FACTORIES_DATA:
-            return cls.call_module_client_factory(client_name)
+            return cls.call_module_client_factory(client_name, url_base)
         else:
             raise sdk_exceptions.SdkInvalidClient
 
 
 def client(s: str) -> GraphGridModuleClient:
-    return ClientFactory.create_client(s)
+    return client(s, "localhost")
+
+
+def client(s: str, url_base: str) -> GraphGridModuleClient:
+    return ClientFactory.create_client(s, url_base)

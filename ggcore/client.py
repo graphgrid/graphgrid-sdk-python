@@ -25,9 +25,15 @@ class GraphGridModuleClient:
     def _http_base(self):
         return f'{self.url_base}/1.0/{self.client_name}/'
 
+    def __init__(self, url_base):
+        self.url_baseurl_base = url_base
+
 
 class ConfigClient(GraphGridModuleClient):
     _client_name = CONFIG
+
+    def __init__(self, url_base):
+        super().__init__(url_base)
 
     @property
     def client_name(self):
@@ -55,6 +61,9 @@ class ConfigClient(GraphGridModuleClient):
 class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
 
+    def __init__(self, url_base):
+        super().__init__(url_base)
+
     @property
     def client_name(self):
         return self._client_name
@@ -76,6 +85,9 @@ class SecurityClient(GraphGridModuleClient):
 
 class NlpClient(GraphGridModuleClient):
     _client_name = NLP
+
+    def __init__(self, url_base):
+        super().__init__(url_base)
 
     @property
     def client_name(self):
