@@ -2,7 +2,7 @@ from ggcore import http_base
 from ggcore.credentials import Credentials
 from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
 from ggcore.security_base import SdkAuth
-from ggcore.utils import CONFIG, SECURITY, NLP, POST
+from ggcore.utils import CONFIG, SECURITY, NLP, POST, BASIC_HEADER_KEY, RequestAuthType, HttpMethod
 
 
 class GraphGridModuleClient:
@@ -23,10 +23,10 @@ class GraphGridModuleClient:
         pass
 
     def _http_base(self):
-        return f'{self.url_base}/1.0/{self.client_name}/'
+        return f'http://{self._url_base}/1.0/{self.client_name}/'
 
     def __init__(self, url_base):
-        self.url_baseurl_base = url_base
+        self._url_base = url_base
 
 
 class ConfigClient(GraphGridModuleClient):
@@ -75,9 +75,11 @@ class SecurityClient(GraphGridModuleClient):
 
     def get_token(self, creds: Credentials):
         endpoint = self._http_base() + "oauth/token"
-        sdk_request = SdkServiceRequest(endpoint=endpoint, headers=SdkAuth(credentials=creds).get_auth_for_http())
+        headers=SdkAuth(credentials=creds).get_auth_for_http(auth_type=RequestAuthType.BASIC)
 
-        sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, POST)
+        sdk_request = SdkServiceRequest(endpoint=endpoint, headers=headers, request_auth_method=RequestAuthType.BASIC)
+
+        sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, HttpMethod.post)
 
 
 

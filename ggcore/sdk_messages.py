@@ -20,8 +20,8 @@ class SdkServiceRequest:
 
 @dataclass
 class SdkServiceResponse:
-    statusCode: int
-    statusText: str
+    statusCode: int = None
+    statusText: str = None
 
     response: dict = dataclasses.field(default_factory=dict)
     exception: Exception = None
