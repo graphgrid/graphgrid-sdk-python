@@ -70,3 +70,6 @@ class NlpClient(GraphGridModuleClient):
     @property
     def url_base(self):
         return self._url_base
+
+    def save(self):
+        pass
