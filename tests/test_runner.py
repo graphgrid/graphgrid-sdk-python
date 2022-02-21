@@ -1,3 +1,4 @@
+"""Define methods to run tests and configure test output"""
 import os
 from pathlib import Path
 import pytest
@@ -5,6 +6,7 @@ from clover.coverage2clover import Clover, Cobertura
 
 
 def main():
+    """Run the test suite"""
     top_level_dir = Path(__file__).parent.parent.absolute()
     test_dir = os.path.join(top_level_dir, "tests")
     pytest_path = os.path.join(test_dir, "pytest.xml")
