@@ -51,9 +51,6 @@ class ClientFactory:
             raise sdk_exceptions.SdkInvalidClient
 
 
-def client(s: str) -> GraphGridModuleClient:
-    return client(s, "localhost")
-
-
-def client(s: str, url_base: str) -> GraphGridModuleClient:
+# todo the url_base should really be worked in elsewhere, like into the config store (non-existant atm) or totally disconnected from the client anyways
+def client(s: str, url_base: str = "localhost") -> GraphGridModuleClient:
     return ClientFactory.create_client(s, url_base)

@@ -14,6 +14,8 @@ class GraphGridSession:
     _credentials: Credentials
     _client_map: typing.Dict[str, GraphGridModuleClient]
 
+    # does a config map in here make sense? insted of having the _url_base and having to add new ones for new config, we keep config in a map/obj instead?
+
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
         self._url_base = url_base
         self._credentials = Credentials(access_key, secret_access_key)

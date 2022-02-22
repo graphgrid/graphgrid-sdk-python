@@ -64,6 +64,10 @@ class ConfigClient(GraphGridModuleClient):
 class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
 
+    _ENDPOINTS = {
+        "OAUTH_TOKEN" : "oauth/token"
+    }
+
     def __init__(self, url_base):
         super().__init__(url_base)
 
@@ -77,20 +81,27 @@ class SecurityClient(GraphGridModuleClient):
 
 
     def get_token(self, creds: Credentials):
+        # endpoint
         endpoint = self._http_base() + "oauth/token"
-        headers = SdkAuth(credentials=creds).get_auth_for_http(auth_type=RequestAuthType.BASIC)
 
+        # todo Can the SdkAuth just be made automatically or something? Cumbersome to manually create the headers and set them
+        # construct sdk request
+        headers = SdkAuth(credentials=creds).get_auth_for_http(auth_type=RequestAuthType.BASIC)
         sdk_request = SdkServiceRequest(endpoint=endpoint, headers=headers, request_auth_method=RequestAuthType.BASIC)
 
+        # Set grant type
         sdk_request.query_params[GRANT_TYPE_KEY] = GRANT_TYPE_CLIENT_CREDENTIALS
 
+        # Execute Request
         sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, HttpMethod.post)
 
+        # todo add error handling
+        # parse response
         response:str = sdk_response.response
         json_acceptable_string = response.replace("'", "\"")
         token = json.loads(json_acceptable_string)["access_token"]
-        return token
 
+        return token
 
 
 
@@ -111,3 +122,8 @@ class NlpClient(GraphGridModuleClient):
 
     def save(self):
         pass
+
+
+
+
+

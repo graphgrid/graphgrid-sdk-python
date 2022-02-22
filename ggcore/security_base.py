@@ -14,9 +14,7 @@ class RequestAuth:
         pass
 
 
-@dataclass
 class RequestAuthFactory:
-
     @classmethod
     def from_auth_type(cls, request_type: RequestAuthType, credentials: Credentials) -> RequestAuth:
         if request_type == request_type.BASIC:
