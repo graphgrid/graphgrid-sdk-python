@@ -79,6 +79,3 @@ diplomat.xml
 
 # Venv
 venv/
-
-# Lint
-.pylintrc
