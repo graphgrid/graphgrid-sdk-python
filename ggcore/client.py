@@ -25,6 +25,7 @@ class GraphGridModuleClient:
     def url_base(self):
         pass
 
+    # Should construction of http reqs be moved into their own class? Disconnected from the client obj itself?
     def _http_base(self):
         return f'http://{self._url_base}/1.0/{self.client_name}/'
 
