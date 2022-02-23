@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# usage:
+# install-and-run-tests $repo_dir $target-build-dir
+cd $1
+docker build -t python-sdk-tests -f tests.dockerfile .
+
+# run tests
+docker run --name python-sdk-container -d python-sdk-tests
+docker wait python-sdk-container
+
+# copy coverage report to build dir
+echo "Copying clover.xml to $2"
+docker cp python-sdk-container:/opt/graphgrid-sdk-python/tests/clover.xml $2
+
+# copy tests results to build dir
+echo "Copying pytest.xml to $2"
+docker cp python-sdk-container:/opt/graphgrid-sdk-python/tests/pytest.xml $2
+
+# remove python-sdk-container
+docker container rm python-sdk-container
+
+# lint project
+docker run --rm python-sdk-tests -m pylint ggcore ggsdk
+PYLINT_EXIT_CODE=$?
+
+# cleanup image
+docker image rm python-sdk-tests
+
+# exit based on pylint exit code
+exit $(($PYLINT_EXIT_CODE % 4))

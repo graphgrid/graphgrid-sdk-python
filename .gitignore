@@ -37,6 +37,9 @@ pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 .pytest_cache
+clover.xml
+cov.xml
+pytest.xml
 
 # Result Sets
 files/
