@@ -9,32 +9,14 @@ from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRA
     GRANT_TYPE_CLIENT_CREDENTIALS
 
 
-
-
 class GraphGridModuleClient:
     """
-    url_base: address of client (ex. "localhost", "gg-dev")
     client_name: subclass defined; static name of the client
     """
-    _url_base: str
     _client_name: str
-
-    def is_available(self):
-        pass
 
     def client_name(self) -> str:
         pass
-
-    def url_base(self):
-        pass
-
-    # Should construction of http reqs be moved into their own class? Disconnected from the client obj itself?
-        # todo yes this should be decoupled from the client
-    def _http_base(self):
-        return f'http://{self._url_base}/1.0/{self.client_name}/'
-
-    def __init__(self, url_base):
-        self._url_base = url_base
 
 
 class AbstractApi:
@@ -50,33 +32,27 @@ class AbstractApi:
     def auth_type(self) -> RequestAuthType:
         pass
 
-    def handler(self, sdk_response:SdkServiceResponse):
+    def handler(self, sdk_response: SdkServiceResponse):
         pass
+
+    def client_name(self):
+        self._client.client_name()
 
 
 class ConfigClient(GraphGridModuleClient):
     _client_name = CONFIG
 
-    def __init__(self, url_base):
-        super().__init__(url_base)
-
     @property
     def client_name(self):
         return self._client_name
-
-    @property
-    def url_base(self):
-        return self._url_base
-
 
     # todo being depricated
     def get_data(self, path: str) -> str:
         endpoint = self._http_base() + "data"
 
         # how does the security token even get in for this call? this is why we need to separate the client apis from the request creation and execution itself
-            # could setup a call_api method that takes two functions (or just one?) as input, and then pass these `get_data` apis back which returns an obj containing the endpoint and a handler
-            # for what to do with the output of the request
-
+        # could setup a call_api method that takes two functions (or just one?) as input, and then pass these `get_data` apis back which returns an obj containing the endpoint and a handler
+        # for what to do with the output of the request
 
     class GetDataApi(AbstractApi):
         def endpoint(self):
@@ -89,25 +65,12 @@ class ConfigClient(GraphGridModuleClient):
             pass
 
 
-
 class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
-
-    _ENDPOINTS = {
-        "OAUTH_TOKEN": "oauth/token"
-    }
-
-    def __init__(self, url_base):
-        super().__init__(url_base)
 
     @property
     def client_name(self):
         return self._client_name
-
-    # todo being depricated
-    @property
-    def url_base(self):
-        return self._url_base
 
     def get_token_request(self):
         return self.GetTokenApi(self)
@@ -119,7 +82,7 @@ class SecurityClient(GraphGridModuleClient):
             super().__init__(client)
 
         def endpoint(self):
-            return self._client.client_name() + "oauth/token"
+            return "oauth/token"
 
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BASIC
@@ -127,7 +90,6 @@ class SecurityClient(GraphGridModuleClient):
         def handler(self, sdk_response: SdkServiceResponse):
             json_acceptable_string = sdk_response.response.replace("'", "\"")
             return json.loads(json_acceptable_string)["access_token"]
-
 
 
     # todo getting depricated
@@ -158,26 +120,9 @@ class SecurityClient(GraphGridModuleClient):
         return token
 
 
-
-
 class NlpClient(GraphGridModuleClient):
     _client_name = NLP
-
-    def __init__(self, url_base):
-        super().__init__(url_base)
 
     @property
     def client_name(self):
         return self._client_name
-
-    @property
-    def url_base(self):
-        return self._url_base
-
-    def save(self):
-        pass
-
-
-
-
-

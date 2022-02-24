@@ -7,4 +7,8 @@ class SdkInvalidClient(Exception):
 
 
 class SdkAuthTypeException(Exception):
-    """ """
+    """ Tried using an invalid auth type """
+
+
+class SdkInvalidConfigKey(Exception):
+    """ Tried referencing an invalid config key """

@@ -15,7 +15,14 @@ CONFIG_KEYS = {
 }
 
 
-class SdkConfig:
-    url_base: str
+
+URL_BASE = "URL_BASE"
+BOOTSTRAP_CONFIG_KEYS = [URL_BASE]
+
+class SdkConfig(dict):
+    pass
+
+
+
 
 
