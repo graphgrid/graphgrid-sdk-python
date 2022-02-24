@@ -50,23 +50,25 @@ class ConfigClient(GraphGridModuleClient):
 
 
     def get_data(self, path: str) -> str:
-        """
-        """
-        # trigger_response = requests.post(
-        #     f'{self.url}/api/v1/dags/{dag_id}/dagRuns',
-        #     json={"conf": request_body, "execution_date": execution_date},
-        #     headers=HEADERS)
-        # if trigger_response.status_code != 200:
-        #     raise RuntimeError(f'DAG {dag_id} could not be triggered. Response: "{trigger_response.text}"')
-        # dag_run_id = json.loads(trigger_response.text)["dag_run_id"]
-        # return dag_run_id
+        endpoint = self._http_base() + "data"
 
+        # how does the security token even get in for this call? this is why we need to separate the client apis from the request creation and execution itself
+            # could setup a call_api method that takes two functions (or just one?) as input, and then pass these `get_data` apis back which returns an obj containing the endpoint and a handler
+            # for what to do with the output of the request
+
+
+    class GetDataRequest():
+        def endpoint(self):
+            return "data"
+
+        def handler(self):
+            pass
 
 class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
 
     _ENDPOINTS = {
-        "OAUTH_TOKEN" : "oauth/token"
+        "OAUTH_TOKEN": "oauth/token"
     }
 
     def __init__(self, url_base):

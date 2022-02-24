@@ -10,11 +10,14 @@ class GraphGridSession:
     """
 
     """
-    _url_base: str
-    _credentials: Credentials
+    _url_base: str # todo replace within config map?
+    _credentials: Credentials # todo  replace within config map?
+    # does a config map in here make sense? insted of having the _url_base and having to add new ones for new config, we keep config in a map/obj instead?
+
     _client_map: typing.Dict[str, GraphGridModuleClient]
 
-    # does a config map in here make sense? insted of having the _url_base and having to add new ones for new config, we keep config in a map/obj instead?
+    # def __init__(self, bootstrap_configuration):
+    #     pass
 
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
         self._url_base = url_base
@@ -23,9 +26,6 @@ class GraphGridSession:
 
         self.setup_config_client()
         self.setup_security_client()
-
-    # def __init__(self, credentials: Credentials):
-    #     self._credentials = credentials
 
     def client(self, name: str) -> GraphGridModuleClient:
         if name not in self._client_map:
