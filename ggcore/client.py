@@ -96,7 +96,10 @@ class SecurityClient(GraphGridModuleClient):
         # Execute Request
         sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, HttpMethod.post)
 
-        # todo add error handling
+        # todo add test for non-200 status
+        if sdk_response.statusCode != 200:
+            raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
+
         # parse response
         response:str = sdk_response.response
         json_acceptable_string = response.replace("'", "\"")
