@@ -1,4 +1,5 @@
 import json
+from dataclasses import dataclass
 
 from ggcore import http_base
 from ggcore.credentials import Credentials
@@ -7,15 +8,7 @@ from ggcore.security_base import SdkAuth
 from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS
 
-class ApiRequest:
-    def endpoint(self) -> str:
-        pass
 
-    def auth_type(self) -> RequestAuthType:
-        pass
-
-    def handler(self, sdk_response:SdkServiceResponse):
-        pass
 
 
 class GraphGridModuleClient:
@@ -29,7 +22,7 @@ class GraphGridModuleClient:
     def is_available(self):
         pass
 
-    def client_name(self):
+    def client_name(self) -> str:
         pass
 
     def url_base(self):
@@ -42,6 +35,23 @@ class GraphGridModuleClient:
 
     def __init__(self, url_base):
         self._url_base = url_base
+
+
+class AbstractApi:
+    # currently making it so each api can reference the client its contained in, is this the right pattern here?
+    _client: GraphGridModuleClient
+
+    def __init__(self, client: GraphGridModuleClient):
+        self._client = client
+
+    def endpoint(self) -> str:
+        pass
+
+    def auth_type(self) -> RequestAuthType:
+        pass
+
+    def handler(self, sdk_response:SdkServiceResponse):
+        pass
 
 
 class ConfigClient(GraphGridModuleClient):
@@ -68,7 +78,7 @@ class ConfigClient(GraphGridModuleClient):
             # for what to do with the output of the request
 
 
-    class GetDataRequest(ApiRequest):
+    class GetDataApi(AbstractApi):
         def endpoint(self):
             return "data"
 
@@ -94,16 +104,22 @@ class SecurityClient(GraphGridModuleClient):
     def client_name(self):
         return self._client_name
 
+    # todo being depricated
     @property
     def url_base(self):
         return self._url_base
 
     def get_token_request(self):
-        return self.GetTokenRequest()
+        return self.GetTokenApi(self)
 
-    class GetTokenRequest(ApiRequest):
+    @dataclass
+    class GetTokenApi(AbstractApi):
+
+        def __init__(self, client: GraphGridModuleClient):
+            super().__init__(client)
+
         def endpoint(self):
-            return "oauth/token"
+            return self._client.client_name() + "oauth/token"
 
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BASIC

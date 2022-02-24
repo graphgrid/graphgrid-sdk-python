@@ -1,8 +1,8 @@
-from ggcore.client import ApiRequest
+from ggcore.client import AbstractApi
 from ggcore.session import SessionCore
 
 
-def call_api(api_request: ApiRequest, session: SessionCore):
+def call_api(api_request: AbstractApi, session: SessionCore):
     """
     missing items:
         - client_name for http
