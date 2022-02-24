@@ -13,3 +13,9 @@ CONFIG_KEYS = {
     OAUTH_CLIENT_SECRET: "spring.oauth.client.secret",
     OAUTH_TOKEN_URL: "spring.oauth.tokenUrl", # default value is: http://security:8080/1.0/security/oauth/token, but wont we need it to be localhost for the sdk?
 }
+
+
+class SdkConfig:
+    url_base: str
+
+

@@ -21,5 +21,5 @@ class SdkServiceResponse:
     statusCode: int = None
     statusText: str = None
 
-    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict instead?
+    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict/can it somehow get mapped to a dict from a string?
     exception: Exception = None

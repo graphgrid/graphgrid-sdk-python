@@ -15,7 +15,7 @@ class GraphGridSdk:
 
 
 
-    def __init__(self):
+    # def __init__(self):
         # get bootstrap config
 
         # Get config client

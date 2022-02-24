@@ -7,6 +7,16 @@ from ggcore.security_base import SdkAuth
 from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS
 
+class ApiRequest:
+    def endpoint(self) -> str:
+        pass
+
+    def auth_type(self) -> RequestAuthType:
+        pass
+
+    def handler(self, sdk_response:SdkServiceResponse):
+        pass
+
 
 class GraphGridModuleClient:
     """
@@ -26,6 +36,7 @@ class GraphGridModuleClient:
         pass
 
     # Should construction of http reqs be moved into their own class? Disconnected from the client obj itself?
+        # todo yes this should be decoupled from the client
     def _http_base(self):
         return f'http://{self._url_base}/1.0/{self.client_name}/'
 
@@ -48,7 +59,7 @@ class ConfigClient(GraphGridModuleClient):
         return self._url_base
 
 
-
+    # todo being depricated
     def get_data(self, path: str) -> str:
         endpoint = self._http_base() + "data"
 
@@ -57,12 +68,17 @@ class ConfigClient(GraphGridModuleClient):
             # for what to do with the output of the request
 
 
-    class GetDataRequest():
+    class GetDataRequest(ApiRequest):
         def endpoint(self):
             return "data"
 
+        def auth_type(self) -> RequestAuthType:
+            return RequestAuthType.BEARER
+
         def handler(self):
             pass
+
+
 
 class SecurityClient(GraphGridModuleClient):
     _client_name = SECURITY
@@ -82,7 +98,23 @@ class SecurityClient(GraphGridModuleClient):
     def url_base(self):
         return self._url_base
 
+    def get_token_request(self):
+        return self.GetTokenRequest()
 
+    class GetTokenRequest(ApiRequest):
+        def endpoint(self):
+            return "oauth/token"
+
+        def auth_type(self) -> RequestAuthType:
+            return RequestAuthType.BASIC
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            json_acceptable_string = sdk_response.response.replace("'", "\"")
+            return json.loads(json_acceptable_string)["access_token"]
+
+
+
+    # todo getting depricated
     def get_token(self, creds: Credentials):
         # endpoint
         endpoint = self._http_base() + "oauth/token"
