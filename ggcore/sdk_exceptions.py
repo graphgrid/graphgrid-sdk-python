@@ -2,13 +2,13 @@ class SdkException(Exception):
     """ Top level custom sdk exception """
 
 
-class SdkInvalidClient(Exception):
+class SdkInvalidClient(SdkException):
     """ The client requested is invalid """
 
 
-class SdkAuthTypeException(Exception):
+class SdkAuthTypeException(SdkException):
     """ Tried using an invalid auth type """
 
 
-class SdkInvalidConfigKey(Exception):
+class SdkInvalidConfigKey(SdkException):
     """ Tried referencing an invalid config key """

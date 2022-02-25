@@ -19,6 +19,11 @@ class SessionCore:
         else:
             raise SdkInvalidConfigKey
 
+    @property
+    def credentials(self):
+        return self._credentials
+
+
 
 def get_session(env_vars=None):
     return SessionCore(env_vars)

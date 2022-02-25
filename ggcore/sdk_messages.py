@@ -15,6 +15,26 @@ class SdkServiceRequest:
     query_params: dict = dataclasses.field(default_factory=dict)
     body: dict = dataclasses.field(default_factory=dict)
 
+    def __init__(self,):
+        pass
+
+
+    @endpoint.setter
+    def endpoint(self, value):
+        pass
+
+    @request_auth_method.setter
+    def request_auth_method(self, value):
+        pass
+
+    @headers.setter
+    def headers(self, value):
+        pass
+
+    @body.setter
+    def body(self, value):
+        pass
+
 
 @dataclass
 class SdkServiceResponse:

@@ -15,3 +15,7 @@ def call_api(api_request: AbstractApi, session: SessionCore):
 
     http_request = f'http://{url_base}/1.0/{client_name}/{endpoint}'
 
+    # build http request (obj)
+
+
+

@@ -50,6 +50,7 @@ class ClientFactory:
         else:
             raise sdk_exceptions.SdkInvalidClient
 
-
+# todo does this need to be a str creation at this point? Think we're not giving users low level access to the clients,
+#  so they wont need to pass in strings and we can directly access the objs programmatically.
 def client(s: str) -> GraphGridModuleClient:
     return ClientFactory.create_client(s)
