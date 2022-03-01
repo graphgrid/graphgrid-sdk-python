@@ -7,9 +7,6 @@ class SessionCore:
     _credentials: Credentials = None
     _config: SdkConfig
 
-    def module(self):
-        pass
-
     def set_credentials(self, access_key, secret_key, token=None):
         self._credentials = Credentials(access_key, secret_key, token)
 
@@ -22,7 +19,6 @@ class SessionCore:
     @property
     def credentials(self):
         return self._credentials
-
 
 
 def get_session(env_vars=None):
