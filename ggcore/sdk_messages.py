@@ -15,8 +15,8 @@ class SdkServiceRequest:
     query_params: dict = dataclasses.field(default_factory=dict)
     body: dict = dataclasses.field(default_factory=dict)
 
-    def __init__(self,):
-        pass
+    # def __init__(self,):
+    #     pass
 
 
     @endpoint.setter

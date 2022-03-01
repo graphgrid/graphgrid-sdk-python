@@ -32,6 +32,12 @@ class AbstractApi:
     def auth_type(self) -> RequestAuthType:
         pass
 
+    def http_method(self) -> HttpMethod:
+        pass
+
+    def query_params(self) -> dict:
+        pass
+
     def handler(self, sdk_response: SdkServiceResponse):
         pass
 
@@ -87,7 +93,18 @@ class SecurityClient(GraphGridModuleClient):
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BASIC
 
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.post
+
+        def query_params(self) -> dict:
+            return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
+
         def handler(self, sdk_response: SdkServiceResponse):
+            # todo add test for non-200 status
+            if sdk_response.statusCode != 200:
+                raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
+
+            # parse response
             json_acceptable_string = sdk_response.response.replace("'", "\"")
             return json.loads(json_acceptable_string)["access_token"]
 
