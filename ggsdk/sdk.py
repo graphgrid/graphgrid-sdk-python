@@ -31,29 +31,29 @@ class GraphGridSdk:
         self._credentials = Credentials(access_key, secret_access_key)
         self._client_map = {}
 
-        self.setup_clients()
+        self._setup_clients()
 
-        self.setup_session()
-
-
-    def setup_session(self):
-        self._session.set_credentials(self._credentials)
-        # self._session.setup
-
-    def setup_clients(self):
-        self._setup_config_client()
-        self._setup_security_client()
+        self._setup_session()
 
     def _client(self, name: str) -> GraphGridModuleClient:
         if name not in self._client_map:
             self._client_map[name] = ggcore.client_factory.client(name)
         return self._client_map[name]
 
+    def _setup_clients(self):
+        self._setup_config_client()
+        self._setup_security_client()
+
     def _setup_config_client(self):
         config_client: ConfigClient = self._client(CONFIG)
 
     def _setup_security_client(self):
         security_client: SecurityClient = self._client(SECURITY)
+
+    def _setup_session(self):
+        self._session.set_credentials(self._credentials)
+
+        # self._session.setup
 
     def save_dataset(self):
         pass

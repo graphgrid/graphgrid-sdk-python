@@ -78,7 +78,7 @@ class SecurityClient(GraphGridModuleClient):
     def client_name(self):
         return self._client_name
 
-    def get_token_request(self):
+    def api_token_request(self):
         return self.GetTokenApi(self)
 
     @dataclass
