@@ -19,20 +19,44 @@ class SdkServiceRequest:
     #     pass
 
 
+    @property
+    def endpoint(self):
+        return self.endpoint
+    
     @endpoint.setter
     def endpoint(self, value):
         pass
+
+    @property
+    def request_auth_method(self):
+        return self.request_auth_method
 
     @request_auth_method.setter
     def request_auth_method(self, value):
         pass
 
+    @property
+    def body(self):
+        return self.body
+
+    @body.setter
+    def body(self, value):
+        pass
+
+    @property
+    def headers(self):
+        return self.headers
+
     @headers.setter
     def headers(self, value):
         pass
 
-    @body.setter
-    def body(self, value):
+    @property
+    def query_params(self):
+        return self.query_params
+
+    @query_params.setter
+    def query_params(self, value):
         pass
 
 

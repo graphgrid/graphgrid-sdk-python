@@ -4,7 +4,6 @@ from ggcore.client import AbstractApi
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.sdk_messages import SdkServiceResponse
 from ggcore.security_base import SdkAuth
-from ggcore.core import SdkCore
 from ggcore.utils import HttpMethod, RequestAuthType
 
 
@@ -38,12 +37,13 @@ def execute_request(sdk_request: SdkServiceRequest, method: HttpMethod) -> SdkSe
 class SdkHttpBase:
 
     # should pass in credentials obj or session obj?
-    def create_sdk_service_request_from_api_request_and_session(self, aa: AbstractApi, core: SdkCore) -> SdkServiceRequest:
+    # todo think this is still needed, but unsure of where it lives/how it gets auth/if the new session covers this
+    def create_sdk_service_request_from_api_request_and_session(self, aa: AbstractApi,) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest() # will this result in error?
 
         headers = dict
 
-        sdk_auth = SdkAuth(credentials=core.credentials)
+        sdk_auth = SdkAuth(credentials=None)
 
         # Set Auth Type
         if aa.auth_type() == RequestAuthType.BASIC:

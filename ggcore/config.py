@@ -27,11 +27,6 @@ CONFIG_KEYS = {
 
 
 class SdkConfig(dict):
-    """
-
-
-    """
-
 
     # Method like these are for utility, to ensure we're always calling for the right config and also controlling what config gets exposed
     def url_base(self):

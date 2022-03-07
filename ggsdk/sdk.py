@@ -1,11 +1,5 @@
-import typing
-
-import ggcore.client_factory
-from ggcore.client import GraphGridModuleClient, SecurityClient, ConfigClient
 from ggcore.config import SdkConfig, URL_BASE, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET
-from ggcore.credentials import Credentials
 from ggcore.core import SdkCore
-from ggcore.utils import SECURITY, CONFIG
 
 """
 example sdk usage?
@@ -22,7 +16,7 @@ class GraphGridSdk:
     Class used to instantiate the GraphGridSdk
     """
     _core: SdkCore
-    _config: SdkConfig = dict({})
+    _config: SdkConfig = SdkConfig()
 
     # for now this works, but does it make more sense to setup a generic config map?
     def __init__(self, access_key, secret_access_key, url_base="localhost"):

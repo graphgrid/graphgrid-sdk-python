@@ -1,8 +1,6 @@
 from ggcore import http_base, client_factory
 from ggcore.client import ConfigClient, SecurityClient, AbstractApi
-from ggcore.config import SdkConfig, URL_BASE
-from ggcore.credentials import Credentials
-from ggcore.sdk_exceptions import SdkInvalidConfigKey
+from ggcore.config import SdkConfig
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuth
 from ggcore.session import SdkSession, SdkSessionFactory
@@ -28,17 +26,21 @@ class SdkCore:
     _session: SdkSession
 
     def __init__(self, sdk_config: SdkConfig):
-        self._setup_clients(sdk_config)
-        self._setup_session(sdk_config)
+        self._config = SdkConfig(sdk_config)
+
+        self._setup_clients()
+        self._setup_session()
 
 
-    def _setup_clients(self, sdk_config):
+    def _setup_clients(self,):
         # Setup Config Client
         self._config_client = client_factory.client(CONFIG)
         self._security_client = client_factory.client(SECURITY)
 
-    def _setup_session(self, sdk_config):
-        self._session = SdkSessionFactory.create_session(sdk_config)
+    def _setup_session(self,):
+        # Setup Session
+        self._session = SdkSessionFactory.create_session(self._config)
+
 
 
     def call_api(self,api_request: AbstractApi):
@@ -51,7 +53,7 @@ class SdkCore:
             can these be defined once with better/cleaner classes?
         """
 
-        url_base = self._config[URL_BASE]
+        url_base = self._config.url_base()
         client_name = api_request.client_name()
         endpoint = api_request.endpoint()
 
