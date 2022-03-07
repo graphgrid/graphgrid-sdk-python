@@ -23,6 +23,7 @@ class AbstractApi:
     def __init__(self, client: GraphGridModuleClient):
         self._client = client
 
+    # What about the cases where there are multiple possible endpoints for a single api (ie. dataset save with/without a name)?
     def endpoint(self) -> str:
         pass
 
@@ -132,3 +133,35 @@ class NlpClient(GraphGridModuleClient):
     @property
     def client_name(self):
         return self._client_name
+
+    @dataclass
+    class SaveDatasetApi(AbstractApi):
+
+        def __init__(self, client: GraphGridModuleClient):
+            super().__init__(client)
+
+        def endpoint(self):
+            return "dataset/save"
+            # how would this account for multiple endpoints like `dataset/{name}/save`
+
+        # def endpoint(self, dataset_id):
+        #     return "dataset/save" if not dataset_id else return f'dataset/{dataset_id}/save'
+        #     # how would this account for multiple endpoints like `dataset/{name}/save`
+
+        def auth_type(self) -> RequestAuthType:
+            return RequestAuthType.BEARER
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.post
+
+        def query_params(self) -> dict:
+            pass
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            # todo add test for non-200 status
+            if sdk_response.statusCode != 200:
+                raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
+
+            # parse response
+            json_acceptable_string = sdk_response.response.replace("'", "\"")
+            return json.loads(json_acceptable_string)["access_token"]

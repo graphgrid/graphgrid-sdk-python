@@ -9,8 +9,8 @@ OAUTH_TOKEN_URL = "OAUTH_TOKEN_URL"
 
 
 URL_BASE = "URL_BASE"
-OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"
-OAUTH_CLIENT_SECRET = "OAUTH_CLIENT_SECRET"
+OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"             # rename/revalue to ACCESS_KEY ?
+OAUTH_CLIENT_SECRET = "OAUTH_CLIENT_SECRET"     # rename/revalue to SECRET_ACCESS_KEY ?
 
 BOOTSTRAP_CONFIG_KEYS = [URL_BASE,
                          OAUTH_CLIENT_ID,
@@ -27,9 +27,21 @@ CONFIG_KEYS = {
 
 
 class SdkConfig(dict):
-    pass
+    """
 
 
+    """
+
+
+    # Method like these are for utility, to ensure we're always calling for the right config and also controlling what config gets exposed
+    def url_base(self):
+        return self.get(URL_BASE)
+
+    def access_key(self):
+        return self.get(OAUTH_CLIENT_ID)
+
+    def secret_key(self):
+        return self.get(OAUTH_CLIENT_SECRET)
 
 
 

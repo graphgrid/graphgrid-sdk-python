@@ -1,35 +1,45 @@
-from ggcore import http_base
+from ggcore import http_base, client_factory
 from ggcore.client import ConfigClient, SecurityClient, AbstractApi
 from ggcore.config import SdkConfig, URL_BASE
 from ggcore.credentials import Credentials
 from ggcore.sdk_exceptions import SdkInvalidConfigKey
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuth
+from ggcore.session import SdkSession, SdkSessionFactory
+from ggcore.utils import CONFIG, SECURITY
 
 
 class SdkCore:
     """
     SdkCore is the entrypoint for setting up and making calls using the SDK
+
+    SdkCore combines all the different pieces of the core including:
+        - client creation
+        - session creation
+        - session state
+        - calling the client apis by combining necessary parts (client call, session info, smart logic around these)
     """
 
-    _credentials: Credentials = None
-    _config: SdkConfig
+    _config: SdkConfig # Possible rename this to avoid confusing _config with _config_client
 
     _config_client: ConfigClient
     _security_client: SecurityClient
 
-    def set_credentials(self, access_key, secret_key, token=None):
-        self._credentials = Credentials(access_key, secret_key, token)
+    _session: SdkSession
 
-    def get_config(self, key):
-        if key in self._config:
-            return self._config[key]
-        else:
-            raise SdkInvalidConfigKey
+    def __init__(self, sdk_config: SdkConfig):
+        self._setup_clients(sdk_config)
+        self._setup_session(sdk_config)
 
-    @property
-    def credentials(self):
-        return self._credentials
+
+    def _setup_clients(self, sdk_config):
+        # Setup Config Client
+        self._config_client = client_factory.client(CONFIG)
+        self._security_client = client_factory.client(SECURITY)
+
+    def _setup_session(self, sdk_config):
+        self._session = SdkSessionFactory.create_session(sdk_config)
+
 
     def call_api(self,api_request: AbstractApi):
         """
@@ -69,9 +79,8 @@ class SdkCore:
         # Handle response
         return api_request.handler(sdk_response)
 
-    def refresh_credentials_token(self):
-        token: str = self.call_api( self._security_client.api_token_request() )
-        self._credentials.token = token
 
 
 
+    def save_data(self):
+        pass

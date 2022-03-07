@@ -2,8 +2,9 @@ import typing
 
 import ggcore.client_factory
 from ggcore.client import GraphGridModuleClient, SecurityClient, ConfigClient
+from ggcore.config import SdkConfig, URL_BASE, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET
 from ggcore.credentials import Credentials
-from ggcore.session import SdkCore
+from ggcore.core import SdkCore
 from ggcore.utils import SECURITY, CONFIG
 
 """
@@ -18,42 +19,31 @@ example sdk usage?
 
 class GraphGridSdk:
     """
-
+    Class used to instantiate the GraphGridSdk
     """
-    _url_base: str
-    _credentials: Credentials
-
-    _client_map: typing.Dict[str, GraphGridModuleClient]
     _core: SdkCore
+    _config: SdkConfig = dict({})
 
+    # for now this works, but does it make more sense to setup a generic config map?
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
-        self._url_base = url_base
-        self._credentials = Credentials(access_key, secret_access_key)
-        self._client_map = {}
+        self._config[URL_BASE] = url_base
+        self._config[OAUTH_CLIENT_ID] = access_key
+        self._config[OAUTH_CLIENT_SECRET] = secret_access_key
 
-        self._setup_clients()
+        self._setup_core()
 
-        self._setup_session()
+    # todo init so they can just pass in a config map instead of individual params like above?
+    # def __init__(self, config: dict):
+    #     self._config.update(config)
+    #     self._setup_core()
 
-    def _client(self, name: str) -> GraphGridModuleClient:
-        if name not in self._client_map:
-            self._client_map[name] = ggcore.client_factory.client(name)
-        return self._client_map[name]
+    def _setup_core(self):
+        self._core = SdkCore(self._config)
 
-    def _setup_clients(self):
-        self._setup_config_client()
-        self._setup_security_client()
-
-    def _setup_config_client(self):
-        config_client: ConfigClient = self._client(CONFIG)
-
-    def _setup_security_client(self):
-        security_client: SecurityClient = self._client(SECURITY)
-
-    def _setup_session(self):
-        pass
-        # self._session.set_credentials(self._credentials)
-        # self._session.setup
 
     def save_dataset(self):
-        pass
+        self._core.save_data()
+
+
+
+

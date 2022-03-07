@@ -13,7 +13,7 @@ class SdkServiceRequest:
 
     headers: dict = dataclasses.field(default_factory=dict)
     query_params: dict = dataclasses.field(default_factory=dict)
-    body: dict = dataclasses.field(default_factory=dict)
+    body: dict = dataclasses.field(default_factory=dict) # for the dataset_save this would be the generator passed in
 
     # def __init__(self,):
     #     pass
@@ -43,3 +43,6 @@ class SdkServiceResponse:
 
     response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict/can it somehow get mapped to a dict from a string?
     exception: Exception = None
+
+class SavaDatasetResponse(SdkServiceResponse):
+    dataset_id: str = None
