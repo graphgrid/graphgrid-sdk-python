@@ -1,13 +1,4 @@
-from ggcore import http_base
-from ggcore.client import AbstractApi
-from ggcore.config import URL_BASE
-from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
-from ggcore.security_base import SdkAuth
-from ggcore.session import SessionCore
-from ggcore.utils import GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS
-
-
-# def call_api(api_request: AbstractApi, session: SessionCore):
+# def call_api(api_request: AbstractApi, session: SdkCore):
 #     """
 #     missing items:
 #         - client_name for http

@@ -3,7 +3,7 @@ import typing
 import ggcore.client_factory
 from ggcore.client import GraphGridModuleClient, SecurityClient, ConfigClient
 from ggcore.credentials import Credentials
-from ggcore.session import SessionCore
+from ggcore.session import SdkCore
 from ggcore.utils import SECURITY, CONFIG
 
 """
@@ -24,7 +24,7 @@ class GraphGridSdk:
     _credentials: Credentials
 
     _client_map: typing.Dict[str, GraphGridModuleClient]
-    _session: SessionCore
+    _core: SdkCore
 
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
         self._url_base = url_base
@@ -51,8 +51,8 @@ class GraphGridSdk:
         security_client: SecurityClient = self._client(SECURITY)
 
     def _setup_session(self):
-        self._session.set_credentials(self._credentials)
-
+        pass
+        # self._session.set_credentials(self._credentials)
         # self._session.setup
 
     def save_dataset(self):

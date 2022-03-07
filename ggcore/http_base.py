@@ -4,7 +4,7 @@ from ggcore.client import AbstractApi
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.sdk_messages import SdkServiceResponse
 from ggcore.security_base import SdkAuth
-from ggcore.session import SessionCore
+from ggcore.session import SdkCore
 from ggcore.utils import HttpMethod, RequestAuthType
 
 
@@ -38,7 +38,7 @@ def execute_request(sdk_request: SdkServiceRequest, method: HttpMethod) -> SdkSe
 class SdkHttpBase:
 
     # should pass in credentials obj or session obj?
-    def create_sdk_service_request_from_api_request_and_session(self, aa: AbstractApi, session: SessionCore ) -> SdkServiceRequest:
+    def create_sdk_service_request_from_api_request_and_session(self, aa: AbstractApi, session: SdkCore) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest() # will this result in error?
 
         headers = dict
