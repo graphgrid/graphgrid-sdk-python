@@ -47,3 +47,10 @@ class SdkAuth:
 
     def get_auth_for_http(self, auth_type: RequestAuthType) -> dict:
         return RequestAuthFactory.from_auth_type(auth_type, self.credentials).get_auth_header()
+
+    def get_basic_header(self):
+        return self.get_auth_for_http(auth_type=RequestAuthType.BASIC)
+
+    def get_bearer_header(self):
+        return self.get_auth_for_http(auth_type=RequestAuthType.BEARER)
+

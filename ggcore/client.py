@@ -1,4 +1,5 @@
 import json
+import typing
 from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse
@@ -32,6 +33,9 @@ class AbstractApi:
         pass
 
     def http_method(self) -> HttpMethod:
+        pass
+
+    def headers(self) -> dict:
         pass
 
     def query_params(self) -> dict:
@@ -113,16 +117,18 @@ class NlpClient(GraphGridModuleClient):
     @dataclass
     class SaveDatasetApi(AbstractApi):
 
-        def __init__(self, client: GraphGridModuleClient):
+        _dataset_id: str
+        _generator: typing.Generator
+
+        def __init__(self, client: GraphGridModuleClient, dataset_id, generator):
             super().__init__(client)
+            self._dataset_id = dataset_id
+            self._generator = generator
 
         def endpoint(self):
-            return "dataset/save"
-            # how would this account for multiple endpoints like `dataset/{name}/save`
-
-        # def endpoint(self, dataset_id):
-        #     return "dataset/save" if not dataset_id else return f'dataset/{dataset_id}/save'
-        #     # how would this account for multiple endpoints like `dataset/{name}/save`
+            return f"dataset{ '/' + self._dataset_id if self._dataset_id else ''}/save"
+            # do we need a better generic way to account for multiple endpoints per api like this?
+            # or does this custom-logic-per-api cover us?
 
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BEARER
@@ -133,11 +139,11 @@ class NlpClient(GraphGridModuleClient):
         def query_params(self) -> dict:
             pass
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            # todo add test for non-200 status
-            if sdk_response.statusCode != 200:
-                raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
+        def body_fn(self):
+            return self._generator
 
-            # parse response
-            json_acceptable_string = sdk_response.response.replace("'", "\"")
-            return json.loads(json_acceptable_string)["access_token"]
+        def handler(self, sdk_response: SdkServiceResponse):
+            return sdk_response
+
+    def api_for_save_dataset(self,dataset_id: str, generator: typing.Generator) -> SaveDatasetApi:
+        return self.SaveDatasetApi(client=self, dataset_id=dataset_id, generator=generator)

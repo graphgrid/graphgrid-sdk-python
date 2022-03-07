@@ -1,10 +1,12 @@
+import typing
+
 from ggcore import http_base, client_factory
-from ggcore.client import ConfigClient, SecurityClient, AbstractApi
+from ggcore.client import ConfigClient, SecurityClient, AbstractApi, NlpClient
 from ggcore.config import SdkConfig
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuth
-from ggcore.session import SdkSession, SdkSessionFactory
-from ggcore.utils import CONFIG, SECURITY
+from ggcore.session import SdkSession, SdkSessionManager
+from ggcore.utils import CONFIG, SECURITY, NLP
 
 
 class SdkCore:
@@ -22,8 +24,9 @@ class SdkCore:
 
     _config_client: ConfigClient
     _security_client: SecurityClient
+    _nlp_client: NlpClient
 
-    _session: SdkSession
+    _session_manager: SdkSessionManager
 
     def __init__(self, sdk_config: SdkConfig):
         self._config = SdkConfig(sdk_config)
@@ -36,10 +39,11 @@ class SdkCore:
         # Setup Config Client
         self._config_client = client_factory.client(CONFIG)
         self._security_client = client_factory.client(SECURITY)
+        self._nlp_client = client_factory.client(NLP)
 
     def _setup_session(self,):
         # Setup Session
-        self._session = SdkSessionFactory.create_session(self._config)
+        self._session_manager = SdkSessionManager.create_session(self._config)
 
 
 
@@ -86,5 +90,7 @@ class SdkCore:
 
 
 
-    def save_data(self):
-        pass
+    def save_dataset(self, dataset_id: str, generator: typing.Generator,):
+        api_req = self._nlp_client.api_for_save_dataset(dataset_id=dataset_id, generator=generator)
+
+        self._session_manager.build_sdk_request(api_req)

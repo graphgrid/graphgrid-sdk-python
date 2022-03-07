@@ -8,7 +8,7 @@ OAUTH_TOKEN_URL = "OAUTH_TOKEN_URL"
 
 
 
-URL_BASE = "URL_BASE"
+URL_BASE = "URL_BASE"                           # rename/revalue to API_BASE ?
 OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"             # rename/revalue to ACCESS_KEY ?
 OAUTH_CLIENT_SECRET = "OAUTH_CLIENT_SECRET"     # rename/revalue to SECRET_ACCESS_KEY ?
 

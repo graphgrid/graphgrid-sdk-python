@@ -1,13 +1,14 @@
 import dataclasses
 from dataclasses import dataclass
 
-from ggcore.utils import RequestAuthType
+from ggcore.utils import RequestAuthType, HttpMethod
 
 
 @dataclass
 class SdkServiceRequest:
     _endpoint: str
-    # serviceUrl: str # see java sdk analog; used internally?
+
+    _http_method: HttpMethod
 
     _request_auth_method: RequestAuthType
 
@@ -25,6 +26,14 @@ class SdkServiceRequest:
     @endpoint.setter
     def endpoint(self, value):
         self._endpoint = value
+
+    @property
+    def http_method(self):
+        return self._http_method
+
+    @http_method.setter
+    def http_method(self, value: HttpMethod):
+        self._http_method = value
 
     @property
     def request_auth_method(self):
