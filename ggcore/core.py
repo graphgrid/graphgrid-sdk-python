@@ -66,6 +66,8 @@ class SdkCore:
                                         headers=auth_header,
                                         query_params=api_request.query_params())
 
+        # --- MOVE ABOVE into a single SdkServiceRequest setup call? ----
+
         # Execute Request
         sdk_response: SdkServiceResponse = http_base.execute_request(sdk_request, api_request.http_method())
 

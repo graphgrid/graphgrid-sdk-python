@@ -6,58 +6,57 @@ from ggcore.utils import RequestAuthType
 
 @dataclass
 class SdkServiceRequest:
-    endpoint: str
+    _endpoint: str
     # serviceUrl: str # see java sdk analog; used internally?
 
-    request_auth_method: RequestAuthType
+    _request_auth_method: RequestAuthType
 
-    headers: dict = dataclasses.field(default_factory=dict)
-    query_params: dict = dataclasses.field(default_factory=dict)
-    body: dict = dataclasses.field(default_factory=dict) # for the dataset_save this would be the generator passed in
+    _headers: dict = dataclasses.field(default_factory=dict)
+    _query_params: dict = dataclasses.field(default_factory=dict)
+    _body: dict = dataclasses.field(default_factory=dict) # for the dataset_save this would be the generator passed in
 
     # def __init__(self,):
     #     pass
 
-
     @property
     def endpoint(self):
-        return self.endpoint
+        return self._endpoint
     
     @endpoint.setter
     def endpoint(self, value):
-        pass
+        self._endpoint = value
 
     @property
     def request_auth_method(self):
-        return self.request_auth_method
+        return self._request_auth_method
 
     @request_auth_method.setter
     def request_auth_method(self, value):
-        pass
+        self._request_auth_method = value
 
     @property
     def body(self):
-        return self.body
+        return self._body
 
     @body.setter
     def body(self, value):
-        pass
+        self._body = value
 
     @property
     def headers(self):
-        return self.headers
+        return self._headers
 
     @headers.setter
     def headers(self, value):
-        pass
+        self._headers = value
 
     @property
     def query_params(self):
-        return self.query_params
+        return self._query_params
 
     @query_params.setter
     def query_params(self, value):
-        pass
+        self._query_params = value
 
 
 @dataclass
@@ -70,3 +69,10 @@ class SdkServiceResponse:
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
+
+
+class GetTokenRequest(SdkServiceRequest):
+    pass
+
+class GetTokenResponse(SdkServiceResponse):
+    pass
