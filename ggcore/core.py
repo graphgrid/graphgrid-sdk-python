@@ -26,7 +26,8 @@ class SdkCore:
     _security_client: SecurityClient
     _nlp_client: NlpClient
 
-    _session_manager: SdkSessionManager
+    # static class for session management
+    _session_manager: SdkSessionManager = SdkSessionManager
 
     def __init__(self, sdk_config: SdkConfig):
         self._config = SdkConfig(sdk_config)
@@ -43,7 +44,7 @@ class SdkCore:
 
     def _setup_session(self,):
         # Setup Session
-        self._session_manager = SdkSessionManager.create_session(self._config)
+        self._session_manager.create_session(self._config)
 
 
 
@@ -93,4 +94,4 @@ class SdkCore:
     def save_dataset(self, dataset_id: str, generator: typing.Generator,):
         api_req = self._nlp_client.api_for_save_dataset(dataset_id=dataset_id, generator=generator)
 
-        self._session_manager.build_sdk_request(api_req)
+        sdk_req = self._session_manager.build_sdk_request(api_req)

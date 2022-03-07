@@ -80,7 +80,9 @@ class SdkSessionManager:
 
         sdk_req.http_method = api_req.http_method()
         sdk_req.query_params = api_req.query_params()
-        sdk_req.body = api_req.body_fn()  # problematic?
+        sdk_req.body = api_req.body_fn()  # problematic? does this need to execute the body_fn & exhaust iterator, not pass it?
+
+        # does the api_req need to pass its handler along to the sdk_req?
 
         return sdk_req
 
