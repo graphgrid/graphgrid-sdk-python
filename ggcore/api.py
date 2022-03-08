@@ -2,10 +2,7 @@ import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.config import SdkConfig, SecurityConfig
-from ggcore.credentials import Credentials
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
-from ggcore.security_base import SdkAuth
 from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, CONTENT_TYPE_APP_JSON, USER_AGENT
 
@@ -134,32 +131,18 @@ class NlpApi(ApiGroup):
             return sdk_response
 
 
-class SdkRequestBuilder():
+class SdkRequestBuilder:
     @classmethod
-    def build_sdk_request(cls, api_req: AbstractApi, sec_conf: SecurityConfig) -> SdkServiceRequest:
+    def build_sdk_request(cls, api_req: AbstractApi ) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest()
 
-        # setting basic info for request
-        sdk_req.endpoint = f'http://{sec_conf.url_base}/1.0/{api_req.api_base()}/{api_req.endpoint()}'
-
-        # custom api headers
+        sdk_req.endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'
         sdk_req.headers = api_req.headers()
-
-        # authenticate (auth type+header)
-        sdk_auth = SdkAuth(credentials=sec_conf.credentials)
-        if api_req.auth_type() == RequestAuthType.BASIC:
-            sdk_req.request_auth_method = RequestAuthType.BASIC
-            sdk_req.headers.update(sdk_auth.get_basic_header())
-        elif api_req.auth_type() == RequestAuthType.BEARER:
-            sdk_req.request_auth_method = RequestAuthType.BEARER
-            sdk_req.headers.update(sdk_auth.get_bearer_header())
-
-        # fill in sdk request from api request
         sdk_req.http_method = api_req.http_method()
         sdk_req.query_params = api_req.query_params()
         sdk_req.body = api_req.body()
 
-        # higher-order function for response handler
+        # handler function reference
         sdk_req.api_response_handler = api_req.handler
 
         return sdk_req

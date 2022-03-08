@@ -31,8 +31,8 @@ class SdkHttpClient:
         sdk_response: SdkServiceResponse = cls.http_response_to_sdk_response(http_response)
         return sdk_response
 
-
     @classmethod
     def invoke(cls, sdk_request: SdkServiceRequest):
-        return sdk_request.api_response_handler(cls.execute_request(sdk_request))
+        sdk_response = cls.execute_request(sdk_request)
+        return sdk_request.api_response_handler(sdk_response)
 
