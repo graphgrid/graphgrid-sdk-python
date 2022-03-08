@@ -35,10 +35,9 @@ class SecurityClientBase(ClientBase):
     _token_factory: TokenFactory
 
     def __init__(self,sec_conf):
-        self.security_conf = sec_conf
-        self.configure_security()
+        super().__init__(sec_conf)
 
-    def configure_security(self, ):
+        # Configure security client and token factory
         self._security_client = SecurityClient(self.security_conf)
         self._token_factory = TokenFactory(self._security_client.get_token)
 

@@ -2,27 +2,29 @@ import typing
 from dataclasses import dataclass
 
 from ggcore import sdk_exceptions
-from ggcore.client import ConfigClient, SecurityClient, GraphGridModuleClient, NlpClient
+from ggcore.client import ConfigClient, SecurityClient, NlpClient, ClientBase
 from ggcore.utils import CONFIG, SECURITY, NLP
 
 
+# todo remove this file? tempted to keep it around for the future
+
 class GraphGridModuleClientFactory:
-    def create_client_instance(self) -> GraphGridModuleClient:
+    def create_client_instance(self) -> ClientBase:
         pass
 
 
 class ConfigClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
+    def create_client_instance(self) -> ClientBase:
         return ConfigClient()
 
 
 class SecurityClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
+    def create_client_instance(self) -> ClientBase:
         return SecurityClient()
 
 
 class NlpClientFactory(GraphGridModuleClientFactory):
-    def create_client_instance(self) -> GraphGridModuleClient:
+    def create_client_instance(self) -> ClientBase:
         return NlpClient()
 
 
@@ -40,11 +42,11 @@ class ClientFactory:
     }
 
     @classmethod
-    def call_module_client_factory(cls, validated_client_name) -> GraphGridModuleClient:
+    def call_module_client_factory(cls, validated_client_name) -> ClientBase:
         return cls._FACTORIES_DATA.get(validated_client_name).factory.create_client_instance()
 
     @classmethod
-    def create_client(cls, client_name) -> GraphGridModuleClient:
+    def create_client(cls, client_name) -> ClientBase:
         if client_name in cls._FACTORIES_DATA:
             return cls.call_module_client_factory(client_name)
         else:
@@ -52,5 +54,5 @@ class ClientFactory:
 
 # todo does this need to be a str creation at this point? Think we're not giving users low level access to the clients,
 #  so they wont need to pass in strings and we can directly access the objs programmatically.
-def client(s: str) -> GraphGridModuleClient:
+def client(s: str) -> ClientBase:
     return ClientFactory.create_client(s)

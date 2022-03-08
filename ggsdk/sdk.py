@@ -1,6 +1,6 @@
 import typing
 
-from ggcore.config import SdkConfig, URL_BASE, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET, SecurityConfig
+from ggcore.config import SecurityConfig
 from ggcore.core import SdkCore
 
 

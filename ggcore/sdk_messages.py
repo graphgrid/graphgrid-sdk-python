@@ -94,11 +94,3 @@ class SdkServiceRequest:
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
-
-
-class GetTokenRequest(SdkServiceRequest):
-    pass
-
-
-class GetTokenResponse(SdkServiceResponse):
-    pass

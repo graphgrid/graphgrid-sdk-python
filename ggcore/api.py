@@ -15,16 +15,17 @@ class AbstractApi:
     def api_base(self) -> str:
         pass
 
-    def endpoint(self) -> str:  # What about the cases where there are multiple possible endpoints for a single api?
+    def endpoint(self) -> str:
         pass
 
+    # todo no longer needed?
     def auth_type(self) -> RequestAuthType:
         return RequestAuthType.BEARER   # default is bearer
 
     def http_method(self) -> HttpMethod:
         pass
 
-    # overriding impls can/should call super() to get these default headers
+    # overriding impls can/should call super() to get these default headers. Move default header logic into sdk_request/client?
     def headers(self) -> dict:
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
@@ -133,7 +134,7 @@ class NlpApi(ApiGroup):
 
 class SdkRequestBuilder:
     @classmethod
-    def build_sdk_request(cls, api_req: AbstractApi ) -> SdkServiceRequest:
+    def build_sdk_request(cls, api_req: AbstractApi) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest()
 
         sdk_req.endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'
