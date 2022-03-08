@@ -37,8 +37,8 @@ class GraphGridSdk:
         self._core = SdkCore(self._config)
 
 
-    def experimental_get_token(self):
-        pass
+    def get_token(self):
+        return self._core.get_token()
 
     # so for here its required to pass in a generator for streaming purposes, and then this passes to the base client for the body_fn, but
     #   this kinda begs the question of whether the requests should even be passing through the core, and instead maybe just call the clients directly themselves

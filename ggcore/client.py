@@ -36,19 +36,19 @@ class AbstractApi:
         pass
 
     def headers(self) -> dict:
-        pass
+        return {}   # overrides provide api-specific static headers
 
     def query_params(self) -> dict:
-        pass
+        return {}   # overrides provide api-specific query-params
 
     def body_fn(self): # needs fleshed out...?
         return lambda x: None
 
     def handler(self, sdk_response: SdkServiceResponse):
-        pass
+        return sdk_response
 
     def client_name(self):
-        self._client.client_name()
+        return self._client.client_name
 
 
 class ConfigClient(GraphGridModuleClient):

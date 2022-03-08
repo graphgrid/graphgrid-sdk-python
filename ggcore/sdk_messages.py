@@ -1,10 +1,18 @@
 import dataclasses
+import typing
 from dataclasses import dataclass
 
 from ggcore.utils import RequestAuthType, HttpMethod
 
-
 @dataclass
+class SdkServiceResponse:
+    statusCode: int = None
+    statusText: str = None
+
+    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict/can it somehow get mapped to a dict from a string?
+    exception: Exception = None
+
+
 class SdkServiceRequest:
     _endpoint: str
 
@@ -12,9 +20,12 @@ class SdkServiceRequest:
 
     _request_auth_method: RequestAuthType
 
-    _headers: dict = dataclasses.field(default_factory=dict)
-    _query_params: dict = dataclasses.field(default_factory=dict)
-    _body: dict = dataclasses.field(default_factory=dict) # for the dataset_save this would be the generator passed in
+    _headers: dict = {}#dataclasses.field(default_factory=dict)
+    _query_params: dict = {}#dataclasses.field(default_factory=dict)
+    _body: dict = {}#dataclasses.field(default_factory=dict)  # for the dataset_save this would be the generator passed in
+
+    # default handler returns the SdkServiceResponse
+    _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] = lambda x: x
 
     # def __init__(self,):
     #     pass
@@ -22,7 +33,7 @@ class SdkServiceRequest:
     @property
     def endpoint(self):
         return self._endpoint
-    
+
     @endpoint.setter
     def endpoint(self, value):
         self._endpoint = value
@@ -67,14 +78,14 @@ class SdkServiceRequest:
     def query_params(self, value):
         self._query_params = value
 
+    @property
+    def api_response_handler(self) -> typing.Callable[[SdkServiceResponse], typing.Any]:
+        return self._api_response_handler
 
-@dataclass
-class SdkServiceResponse:
-    statusCode: int = None
-    statusText: str = None
+    @api_response_handler.setter
+    def api_response_handler(self, value):
+        self._api_response_handler = value
 
-    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict/can it somehow get mapped to a dict from a string?
-    exception: Exception = None
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None

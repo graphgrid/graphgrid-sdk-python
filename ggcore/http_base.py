@@ -21,7 +21,7 @@ def http_response_to_sdk_response(http_response: requests.Response):
 
 
 def execute_request(sdk_request: SdkServiceRequest,) -> SdkServiceResponse:
-    http_response: requests.Response = requests.request(method=sdk_request.http_method,
+    http_response: requests.Response = requests.request(method=sdk_request.http_method.value,
                                                         url=sdk_request.endpoint,
                                                         params=sdk_request.query_params,
                                                         data=sdk_request.body,
