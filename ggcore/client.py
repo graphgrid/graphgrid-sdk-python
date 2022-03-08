@@ -36,17 +36,18 @@ class AbstractApi:
         pass
 
     def headers(self) -> dict:
-        return {}   # overrides provide api-specific static headers
+        return {}   # overrides provide api-specific headers
 
     def query_params(self) -> dict:
         return {}   # overrides provide api-specific query-params
 
-    def body_fn(self): # needs fleshed out...?
-        return lambda x: None
+    def body(self):
+        return {}   # overrides provide api-specific body
 
     def handler(self, sdk_response: SdkServiceResponse):
         return sdk_response
 
+    # no need to override in subclasses
     def client_name(self):
         return self._client.client_name
 
@@ -139,7 +140,7 @@ class NlpClient(GraphGridModuleClient):
         def query_params(self) -> dict:
             pass
 
-        def body_fn(self):
+        def body(self):
             return self._generator
 
         def handler(self, sdk_response: SdkServiceResponse):

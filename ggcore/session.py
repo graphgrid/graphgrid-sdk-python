@@ -103,9 +103,9 @@ class SdkSessionManager:
         # fill in sdk request from api request
         sdk_req.http_method = api_req.http_method()
         sdk_req.query_params = api_req.query_params()
+        sdk_req.body = api_req.body()
 
-        # higher-order functions for body and response handler
-        sdk_req.body = {}#api_req.body_fn  # problematic? does this need to execute the body_fn & exhaust iterator, not pass it? what if the body isnt streamed?
+        # higher-order function for response handler
         sdk_req.api_response_handler = api_req.handler
 
         return sdk_req

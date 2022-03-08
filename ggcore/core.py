@@ -46,11 +46,11 @@ class SdkCore:
         # Setup Session
         self._session_manager.create_session(self._config)
 
-
     def _invoke(self,api_req: AbstractApi):
         sdk_req = self._session_manager.build_sdk_request(api_req)
         return self._session_manager.execute_api_request(sdk_req)
 
+    # todo remove; test purposes only
     def get_token(self):
         api_req = self._security_client.api_token_request()
         return self._invoke(api_req)
