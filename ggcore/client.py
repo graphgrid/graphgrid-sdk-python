@@ -1,117 +1,54 @@
-import json
-import typing
-from dataclasses import dataclass
-
-from ggcore.sdk_messages import SdkServiceResponse
-from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
-    GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, CONTENT_TYPE_APP_JSON, USER_AGENT
+from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi
+from ggcore.config import SecurityConfig
+from ggcore.http_base import SdkHttpClient
+from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
+from ggcore.session import TokenFactory
 
 
-class GraphGridModuleClient:
-    pass
+class ClientBase:
+    security_conf: SecurityConfig
+
+    def __init__(self, sec_conf):
+        self.security_conf = sec_conf
+
+    def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
+        return SdkHttpClient.invoke(sdk_req)
 
 
-class AbstractApi:
-    def api_base(self) -> str:
-        pass
-
-    def endpoint(self) -> str:  # What about the cases where there are multiple possible endpoints for a single api?
-        pass
-
-    def auth_type(self) -> RequestAuthType:
-        pass
-
-    def http_method(self) -> HttpMethod:
-        pass
-
-    # overriding impls can/should call super() to get these default headers
-    def headers(self) -> dict:
-        return {
-            CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
-            USER_AGENT: USER_AGENT
-        }
-
-    def query_params(self) -> dict:
-        return {}  # overrides provide api-specific query-params
-
-    def body(self):
-        return {}  # overrides provide api-specific body
-
-    def handler(self, sdk_response: SdkServiceResponse):
-        return sdk_response  # default handler returns entire SdkServiceResponse
+class SecurityClient(ClientBase):
+    def get_token(self):
+        sdk_request = SdkRequestBuilder.build_sdk_request(SecurityApi.get_token_api(), self.security_conf)
+        return self.make_request(sdk_request)
 
 
-class ConfigClient(GraphGridModuleClient):
-    class GetDataApi(AbstractApi):
-        def endpoint(self):
-            return "data"
+class SecurityClientBase(ClientBase):
+    _security_client: SecurityClient
+    _token_factory: TokenFactory
 
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BEARER
+    def __init__(self,sec_conf):
+        self.security_conf = sec_conf
+        self.configure_security()
 
+    def configure_security(self, ):
+        self._security_client = SecurityClient(self.security_conf)
+        self._token_factory = TokenFactory(self._security_client.get_token)
 
-class SecurityClient(GraphGridModuleClient):
-    @classmethod
-    def get_token_api(cls):
-        return cls.GetTokenApi()
-
-    class GetTokenApi(AbstractApi):
-        def api_base(self):
-            return SECURITY
-
-        def endpoint(self):
-            return "oauth/token"
-
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BASIC
-
-        def http_method(self) -> HttpMethod:
-            return HttpMethod.post
-
-        def query_params(self) -> dict:
-            return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
-
-        def handler(self, sdk_response: SdkServiceResponse):
-            # todo add test for non-200 status
-            if sdk_response.statusCode != 200:
-                raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
-
-            # parse response
-            json_acceptable_string = sdk_response.response.replace("'", "\"")
-            return json.loads(json_acceptable_string)["access_token"]
+    def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
+        self._token_factory.add_token_to_request(sdk_req)
+        return super().make_request(sdk_req)
 
 
-class NlpClient(GraphGridModuleClient):
-    @classmethod
-    def save_dataset_api(cls, dataset_id: str, generator: typing.Generator):
-        return cls.SaveDatasetApi(dataset_id, generator)
+class ConfigClient(SecurityClientBase):
+    def test_api(self):
+        api_call = ConfigApi.test_api()
+        sdk_request = SdkRequestBuilder.build_sdk_request(api_call, self.security_conf)
+        return self.make_request(sdk_request)
 
-    @dataclass
-    class SaveDatasetApi(AbstractApi):
 
-        _dataset_id: str
-        _generator: typing.Generator
+class NlpClient(SecurityClientBase):
+    def save_dataset(self, dataset_id, generator):
+        api_call = NlpApi.save_dataset_api(dataset_id, generator)
+        sdk_request = SdkRequestBuilder.build_sdk_request(api_call, self.security_conf)
+        return self.make_request(sdk_request)
 
-        def __init__(self, dataset_id: str, generator: typing.Generator):
-            self._dataset_id = dataset_id
-            self._generator = generator
 
-        def api_base(self) -> str:
-            return NLP
-
-        def endpoint(self):
-            return f"dataset{ '/' + self._dataset_id if self._dataset_id else ''}/save"
-            # do we need a better generic way to account for multiple endpoints per api like this?
-            # or does this custom-logic-per-api cover us?
-
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BEARER
-
-        def http_method(self) -> HttpMethod:
-            return HttpMethod.post
-
-        def body(self):
-            return self._generator
-
-        def handler(self, sdk_response: SdkServiceResponse):
-            return sdk_response

@@ -1,7 +1,8 @@
 import enum
+import typing
 
 from ggcore import http_base
-from ggcore.client import AbstractApi, SecurityClient
+from ggcore.api import AbstractApi
 from ggcore.config import SdkConfig
 from ggcore.credentials import Credentials
 from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
@@ -97,3 +98,21 @@ class SdkSessionManager:
             # retry token call w/ backoff
         elif self._session.state == SessionState.AUTH_SUCCESS_BASIC:
             pass
+
+# SessionFactory
+class TokenFactory():
+
+    _token_supplier: typing.Callable[[],str]
+
+    def __init__(self,token_supp):
+        self._token_supplier = token_supp
+
+
+    def add_token_to_request(self, sdk_req: SdkServiceRequest):
+        bearer_header = SdkAuth( Credentials(None, None, self.get_token_from_request()) ).get_bearer_header() #SdkAuth needs reworked...
+        sdk_req.headers.update(bearer_header)
+
+    def get_token_from_request(self):
+        return self._token_supplier()
+
+
