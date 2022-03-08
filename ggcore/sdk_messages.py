@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 from ggcore.utils import RequestAuthType, HttpMethod
 
+
 @dataclass
 class SdkServiceResponse:
     statusCode: int = None
@@ -90,12 +91,14 @@ class SdkServiceRequest:
         if overwrite or (header_key not in self._headers):
             self._headers[header_key] = value
 
+
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
 
 
 class GetTokenRequest(SdkServiceRequest):
     pass
+
 
 class GetTokenResponse(SdkServiceResponse):
     pass

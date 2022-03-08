@@ -35,7 +35,7 @@ class AbstractApi:
     def http_method(self) -> HttpMethod:
         pass
 
-    # overriding impls can/should usually call super() to get these default headers
+    # overriding impls can/should call super() to get these default headers
     def headers(self) -> dict:
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
@@ -43,13 +43,13 @@ class AbstractApi:
         }
 
     def query_params(self) -> dict:
-        return {}   # overrides provide api-specific query-params
+        return {}  # overrides provide api-specific query-params
 
     def body(self):
-        return {}   # overrides provide api-specific body
+        return {}  # overrides provide api-specific body
 
     def handler(self, sdk_response: SdkServiceResponse):
-        return sdk_response
+        return sdk_response  # default handler returns entire SdkServiceResponse
 
     # no need to override in subclasses
     def client_name(self):
@@ -69,9 +69,6 @@ class ConfigClient(GraphGridModuleClient):
 
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BEARER
-
-        def handler(self):
-            pass
 
 
 class SecurityClient(GraphGridModuleClient):
@@ -140,9 +137,6 @@ class NlpClient(GraphGridModuleClient):
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.post
-
-        def query_params(self) -> dict:
-            pass
 
         def body(self):
             return self._generator

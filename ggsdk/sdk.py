@@ -3,15 +3,6 @@ import typing
 from ggcore.config import SdkConfig, URL_BASE, OAUTH_CLIENT_ID, OAUTH_CLIENT_SECRET
 from ggcore.core import SdkCore
 
-"""
-example sdk usage?
-    sdk = GraphGridSdk()
-    
-    sdk.save( "path/to/dataset" )
-    
-    sdk.
-"""
-
 
 class GraphGridSdk:
     """
@@ -36,15 +27,10 @@ class GraphGridSdk:
     def _setup_core(self):
         self._core = SdkCore(self._config)
 
-
     def get_token(self):
         return self._core.get_token()
 
     # so for here its required to pass in a generator for streaming purposes, and then this passes to the base client for the body_fn, but
     #   this kinda begs the question of whether the requests should even be passing through the core, and instead maybe just call the clients directly themselves
-    def save_dataset(self, dataset_id: str, generator: typing.Generator ):
+    def save_dataset(self, dataset_id: str, generator: typing.Generator):
         self._core.save_dataset(dataset_id, generator)
-
-
-
-
