@@ -10,7 +10,7 @@ class SdkServiceResponse:
     statusCode: int = None
     statusText: str = None
 
-    response: dict = dataclasses.field(default_factory=dict)  # currently this is always a str, should it be a dict/can it somehow get mapped to a dict from a string?
+    response: str = dataclasses.field(default_factory=str)  # is a str response here OK or does this need to be more generic/different?
     exception: Exception = None
 
 
@@ -21,15 +21,12 @@ class SdkServiceRequest:
 
     _request_auth_method: RequestAuthType
 
-    _headers: dict = {}#dataclasses.field(default_factory=dict)
-    _query_params: dict = {}#dataclasses.field(default_factory=dict)
-    _body: dict = {}#dataclasses.field(default_factory=dict)  # for the dataset_save this would be the generator passed in
+    _headers: dict = {}
+    _query_params: dict = {}
+    _body: dict = {}
 
     # default handler returns the SdkServiceResponse
     _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] = lambda x: x
-
-    # def __init__(self,):
-    #     pass
 
     @property
     def endpoint(self):
@@ -94,3 +91,4 @@ class SdkServiceRequest:
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
+    save_path: str = None

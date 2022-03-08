@@ -41,6 +41,7 @@ class AbstractApi:
     def handler(self, sdk_response: SdkServiceResponse):
         return sdk_response  # default handler returns entire SdkServiceResponse
 
+
 class ConfigApi(ApiGroup):
 
     @classmethod
@@ -87,7 +88,7 @@ class SecurityApi(ApiGroup):
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
 
         def handler(self, sdk_response: SdkServiceResponse):
-            # todo add test for non-200 status
+            # todo how does this handler play into the token tracking?
             if sdk_response.statusCode != 200:
                 raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
 

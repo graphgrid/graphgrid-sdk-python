@@ -3,6 +3,7 @@ import requests
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.sdk_messages import SdkServiceResponse
 
+
 class SdkHttpClient:
     @classmethod
     def http_response_to_sdk_response(cls, http_response: requests.Response):
@@ -10,6 +11,7 @@ class SdkHttpClient:
 
         sdk_response.statusCode = http_response.status_code
 
+        # todo will need to map response body to specific response-type objs
         sdk_response.response = http_response.content.decode()
 
         try:

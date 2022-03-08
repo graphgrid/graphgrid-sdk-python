@@ -1,6 +1,7 @@
 import typing
 
 
+# todo how does Credentials and SecurityConfig mesh? Need to rewrite stuff and remove one? They overlap a lot
 class Credentials:
     access_key: typing.AnyStr
     secret_key: typing.AnyStr
