@@ -8,25 +8,14 @@ from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRA
 
 
 class GraphGridModuleClient:
-    """
-    client_name: subclass defined; static name of the client
-    """
-    _client_name: str
-
-    # this is being used as the api path within the api base, i.e. `http://localhost/{client_name}/...`. this kidna makes sense, but could we achieve this without having to pass in clients into the api innerclassses?
-    def client_name(self) -> str:
-        pass
+    pass
 
 
 class AbstractApi:
-    # currently making it so each api can reference the client its contained in, is this the right pattern here?
-    _client: GraphGridModuleClient
+    def api_base(self) -> str:
+        pass
 
-    def __init__(self, client: GraphGridModuleClient):
-        self._client = client
-
-    # What about the cases where there are multiple possible endpoints for a single api (ie. dataset save with/without a name)?
-    def endpoint(self) -> str:
+    def endpoint(self) -> str:  # What about the cases where there are multiple possible endpoints for a single api?
         pass
 
     def auth_type(self) -> RequestAuthType:
@@ -51,18 +40,8 @@ class AbstractApi:
     def handler(self, sdk_response: SdkServiceResponse):
         return sdk_response  # default handler returns entire SdkServiceResponse
 
-    # no need to override in subclasses
-    def client_name(self):
-        return self._client.client_name
-
 
 class ConfigClient(GraphGridModuleClient):
-    _client_name = CONFIG
-
-    @property
-    def client_name(self):
-        return self._client_name
-
     class GetDataApi(AbstractApi):
         def endpoint(self):
             return "data"
@@ -72,20 +51,13 @@ class ConfigClient(GraphGridModuleClient):
 
 
 class SecurityClient(GraphGridModuleClient):
-    _client_name = SECURITY
+    @classmethod
+    def get_token_api(cls):
+        return cls.GetTokenApi()
 
-    @property
-    def client_name(self):
-        return self._client_name
-
-    def api_token_request(self):
-        return self.GetTokenApi(self)
-
-    @dataclass
     class GetTokenApi(AbstractApi):
-
-        def __init__(self, client: GraphGridModuleClient):
-            super().__init__(client)
+        def api_base(self):
+            return SECURITY
 
         def endpoint(self):
             return "oauth/token"
@@ -110,11 +82,9 @@ class SecurityClient(GraphGridModuleClient):
 
 
 class NlpClient(GraphGridModuleClient):
-    _client_name = NLP
-
-    @property
-    def client_name(self):
-        return self._client_name
+    @classmethod
+    def save_dataset_api(cls, dataset_id: str, generator: typing.Generator):
+        return cls.SaveDatasetApi(dataset_id, generator)
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
@@ -122,10 +92,12 @@ class NlpClient(GraphGridModuleClient):
         _dataset_id: str
         _generator: typing.Generator
 
-        def __init__(self, client: GraphGridModuleClient, dataset_id, generator):
-            super().__init__(client)
+        def __init__(self, dataset_id: str, generator: typing.Generator):
             self._dataset_id = dataset_id
             self._generator = generator
+
+        def api_base(self) -> str:
+            return NLP
 
         def endpoint(self):
             return f"dataset{ '/' + self._dataset_id if self._dataset_id else ''}/save"
@@ -143,6 +115,3 @@ class NlpClient(GraphGridModuleClient):
 
         def handler(self, sdk_response: SdkServiceResponse):
             return sdk_response
-
-    def api_for_save_dataset(self,dataset_id: str, generator: typing.Generator) -> SaveDatasetApi:
-        return self.SaveDatasetApi(client=self, dataset_id=dataset_id, generator=generator)

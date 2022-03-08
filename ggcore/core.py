@@ -49,9 +49,9 @@ class SdkCore:
 
     # todo remove? test purposes only
     def get_token(self):
-        api_req = self._security_client.api_token_request()
+        api_req = SecurityClient.get_token_api()
         return self._invoke(api_req)
 
     def save_dataset(self, dataset_id: str, generator: typing.Generator, ):
-        api_req = self._nlp_client.api_for_save_dataset(dataset_id=dataset_id, generator=generator)
+        api_req = NlpClient.save_dataset_api(dataset_id=dataset_id, generator=generator)
         return self._invoke(api_req)

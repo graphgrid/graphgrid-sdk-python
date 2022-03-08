@@ -1,7 +1,7 @@
 import enum
 
 from ggcore import http_base
-from ggcore.client import AbstractApi
+from ggcore.client import AbstractApi, SecurityClient
 from ggcore.config import SdkConfig
 from ggcore.credentials import Credentials
 from ggcore.sdk_messages import SdkServiceRequest, SdkServiceResponse
@@ -12,10 +12,10 @@ from ggcore.utils import RequestAuthType
 # todo experimental WIP
 class SessionState(enum.Enum):
     INITIAL = "INITIAL"
-    WAIT_FOR_SECURITY = "WAIT_FOR_SECURITY"
+    WAIT_FOR_SECURITY = "WAIT_FOR_SECURITY" # todo do we even want the sdk waiting around for security? or if we get a 404 just bomb?
     AUTH_SUCCESS_BASIC = "AUTH_SUCCESS_BASIC"
     AUTH_SUCCESS_BEARER = "AUTH_SUCCESS_BEARER"
-    BAD_BASIC_AUTH = "BAD_BASIC_AUTH"
+    ERROR_STATE = "ERROR_STATE"
 
 
 class SdkSession:
@@ -26,6 +26,7 @@ class SdkSession:
 
     # WIP using a set of static states of the SdkSession (as a FSM) may make sense here?
     _state: SessionState = SessionState.INITIAL
+    _state_info: str = "No extra state info"   # extra info about the current state
 
     def __init__(self,credentials:Credentials):
         self._credentials = credentials
@@ -58,7 +59,7 @@ class SdkSessionManager:
         sdk_req = SdkServiceRequest()
 
         # setting basic info for request
-        sdk_req.endpoint = f'http://{cls._config.url_base()}/1.0/{api_req.client_name()}/{api_req.endpoint()}'
+        sdk_req.endpoint = f'http://{cls._config.url_base()}/1.0/{api_req.api_base()}/{api_req.endpoint()}'
 
         # custom api headers
         sdk_req.headers = api_req.headers()
