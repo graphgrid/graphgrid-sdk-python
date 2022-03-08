@@ -86,6 +86,9 @@ class SdkServiceRequest:
     def api_response_handler(self, value):
         self._api_response_handler = value
 
+    def add_header(self, header_key, value, overwrite=True):
+        if overwrite or (header_key not in self._headers):
+            self._headers[header_key] = value
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None

@@ -35,7 +35,6 @@ class SdkCore:
         self._setup_clients()
         self._setup_session()
 
-
     def _setup_clients(self,):
         # Setup Config Client
         self._config_client = client_factory.client(CONFIG)

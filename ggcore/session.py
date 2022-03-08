@@ -78,7 +78,7 @@ class SdkSessionManager:
 
     @classmethod
     def build_sdk_request(cls, api_req: AbstractApi, ) -> SdkServiceRequest:
-        sdk_req = SdkServiceRequest()  # will this result in error?
+        sdk_req = SdkServiceRequest()
 
         # setting basic info for request
         sdk_req.endpoint = f'http://{cls._config.url_base()}/1.0/{api_req.client_name()}/{api_req.endpoint()}'
@@ -86,19 +86,14 @@ class SdkSessionManager:
         # custom api headers
         sdk_req.headers = api_req.headers()
 
-        # auth header
-        auth_header = dict
+        # authenticate (auth type+header)
         sdk_auth = SdkAuth(credentials=cls._session.credentials)
-
-        # Set request_auth_method and add necessary headers
         if api_req.auth_type() == RequestAuthType.BASIC:
             sdk_req.request_auth_method = RequestAuthType.BASIC
             sdk_req.headers.update(sdk_auth.get_basic_header())
-
         elif api_req.auth_type() == RequestAuthType.BEARER:
             sdk_req.request_auth_method = RequestAuthType.BEARER
             sdk_req.headers.update(sdk_auth.get_bearer_header())
-
 
         # fill in sdk request from api request
         sdk_req.http_method = api_req.http_method()

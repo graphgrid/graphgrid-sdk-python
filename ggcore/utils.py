@@ -39,6 +39,10 @@ GRANT_TYPE_KEY = "grant_type"
 PASSWORD_KEY = "password"
 USERNAME_KEY = "username"
 
+USER_AGENT = "User-Agent"
+CONTENT_TYPE_HEADER_KEY = "Content-type"
+CONTENT_TYPE_APP_JSON = "application/json"
+
 GRANT_TYPE_CLIENT_CREDENTIALS = "client_credentials"
 
 

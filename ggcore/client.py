@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
-    GRANT_TYPE_CLIENT_CREDENTIALS
+    GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, CONTENT_TYPE_APP_JSON, USER_AGENT
 
 
 class GraphGridModuleClient:
@@ -35,8 +35,12 @@ class AbstractApi:
     def http_method(self) -> HttpMethod:
         pass
 
+    # overriding impls can/should usually call super() to get these default headers
     def headers(self) -> dict:
-        return {}   # overrides provide api-specific headers
+        return {
+            CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
+            USER_AGENT: USER_AGENT
+        }
 
     def query_params(self) -> dict:
         return {}   # overrides provide api-specific query-params
