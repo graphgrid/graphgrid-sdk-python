@@ -2,7 +2,7 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
-from ggcore.security_base import SdkAuth
+from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 
 
@@ -30,7 +30,7 @@ class SecurityClient(ClientBase):
     def request_and_store_token(self):
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(SecurityApi.get_token_api())
 
-        auth_basic_header = SdkAuth.get_basic_header(self._security_config)
+        auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(self._security_config)
         sdk_request.headers.update(auth_basic_header)
 
         token = self.make_request(sdk_request)
@@ -66,7 +66,7 @@ class SecurityClientBase(ClientBase):
             self._token_factory.get_token_from_request()
 
         # add token header to request
-        sdk_req.add_headers(SdkAuth.get_bearer_header(self._security_client.security_config))
+        sdk_req.add_headers(SdkAuthHeaderBuilder.get_bearer_header(self._security_client.security_config))
 
         return super().make_request(sdk_req)
 

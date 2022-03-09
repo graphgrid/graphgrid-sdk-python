@@ -41,7 +41,7 @@ class BearerAuth(RequestAuth):
         return BEARER_HEADER_KEY
 
 
-class SdkAuth:
+class SdkAuthHeaderBuilder:
     @classmethod
     def get_basic_header(self, sec_conf: SdkSecurityConfig) -> dict:
         return BasicAuth(sec_conf).get_auth_header()
