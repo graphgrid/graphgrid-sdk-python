@@ -3,7 +3,7 @@ import typing
 from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
-from ggcore.utils import CONFIG, SECURITY, NLP, RequestAuthType, HttpMethod, GRANT_TYPE_KEY, \
+from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, CONTENT_TYPE_APP_JSON, USER_AGENT
 
 
@@ -68,6 +68,7 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.get
 
+
 class SecurityApi(ApiGroup):
     @classmethod
     def get_token_api(cls):
@@ -79,9 +80,6 @@ class SecurityApi(ApiGroup):
 
         def endpoint(self):
             return "oauth/token"
-
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BASIC
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.post
