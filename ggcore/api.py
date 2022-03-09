@@ -101,29 +101,31 @@ class SecurityApi(ApiGroup):
 
 class NlpApi(ApiGroup):
     @classmethod
-    def save_dataset_api(cls, dataset_id: str, generator: typing.Generator):
-        return cls.SaveDatasetApi(dataset_id, generator)
+    def save_dataset_api(cls, generator: typing.Generator, dataset_id: str, overwrite: bool):
+        return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
-        _dataset_id: str
         _generator: typing.Generator
+        _dataset_id: str
+        _overwrite: bool
 
-        def __init__(self, dataset_id: str, generator: typing.Generator):
-            self._dataset_id = dataset_id
+        def __init__(self, generator: typing.Generator, dataset_id: str, overwrite: bool):
             self._generator = generator
+            self._dataset_id = dataset_id
+            self._overwrite = overwrite
 
         def api_base(self) -> str:
             return NLP
 
         def endpoint(self):
-            return f"dataset{ '/' + self._dataset_id if self._dataset_id else ''}/save"
-
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BEARER
+            return f"dataset{'/' + self._dataset_id if self._dataset_id else ''}/save"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.post
+
+        def query_params(self) -> dict:
+            return {"overwrite": "true"} if self._overwrite else {}
 
         def body(self):
             return self._generator

@@ -1,3 +1,5 @@
+import typing
+
 from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
@@ -79,9 +81,7 @@ class ConfigClient(SecurityClientBase):
 
 
 class NlpClient(SecurityClientBase):
-    def save_dataset(self, dataset_id, generator):
-        api_call = NlpApi.save_dataset_api(dataset_id, generator)
+    def save_dataset(self, generator: typing.Generator, dataset_id: str, overwrite: bool):
+        api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
-
-

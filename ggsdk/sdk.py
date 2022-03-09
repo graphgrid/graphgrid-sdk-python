@@ -22,6 +22,5 @@ class GraphGridSdk:
     def test_api(self):
         return self._core.test_api()
 
-    # todo dataset_id optional, overwrite added in (default false)
-    def save_dataset(self, dataset_id: str, generator: typing.Generator):
-        self._core.save_dataset(dataset_id, generator)
+    def save_dataset(self, data_generator: typing.Generator, dataset_id: str = None, overwrite=False):
+        self._core.save_dataset(data_generator, dataset_id, overwrite)
