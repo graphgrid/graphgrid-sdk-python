@@ -88,6 +88,9 @@ class SdkServiceRequest:
         if overwrite or (header_key not in self._headers):
             self._headers[header_key] = value
 
+    def add_headers(self, header_dict: dict, overwrite=True):
+        for k, v in header_dict.items():
+            self.add_header(k, v, overwrite)
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None

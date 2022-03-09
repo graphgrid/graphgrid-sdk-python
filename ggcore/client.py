@@ -1,5 +1,5 @@
 from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi
-from ggcore.config import SecurityConfig
+from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuth
@@ -8,42 +8,70 @@ from ggcore.utils import RequestAuthType
 
 
 class ClientBase:
-    security_conf: SecurityConfig
+    _bootstrap_config: SdkBootstrapConfig
 
-    def __init__(self, sec_conf):
-        self.security_conf = sec_conf
+    def __init__(self, bootstrap_config):
+        self._bootstrap_config = bootstrap_config
 
     def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
         # apply url base to sdk endpoint
-        sdk_req.endpoint = f'http://{self.security_conf.url_base}/1.0/{sdk_req.endpoint}'
+        sdk_req.endpoint = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_req.endpoint}'
         return SdkHttpClient.invoke(sdk_req)
 
 
 class SecurityClient(ClientBase):
-    def get_token(self):
+
+    _security_config: SdkSecurityConfig
+
+
+    def __init__(self, bootstrap_config):
+        super().__init__(bootstrap_config)
+        self._security_config = SdkSecurityConfig(bootstrap_config)
+
+    def request_and_store_token(self):
         sdk_request = SdkRequestBuilder.build_sdk_request(SecurityApi.get_token_api())
 
-        sdk_auth = SdkAuth(credentials=self.security_conf.credentials)
         sdk_request.request_auth_method = RequestAuthType.BASIC
-        sdk_request.headers.update(sdk_auth.get_basic_header())
 
-        return self.make_request(sdk_request)
+        auth_basic_header = SdkAuth.get_basic_header(self._security_config)
+        sdk_request.headers.update(auth_basic_header)
+
+        token = self.make_request(sdk_request)
+
+        self._security_config.token = token
+
+        return token
+
+    def is_token_present(self):
+        return True if self._security_config.token else False
+
+    @property
+    def security_config(self):
+        return self._security_config
 
 
 class SecurityClientBase(ClientBase):
     _security_client: SecurityClient
     _token_factory: TokenFactory
 
-    def __init__(self,sec_conf):
-        super().__init__(sec_conf)
+    def __init__(self,bootstrap_conf):
+        super().__init__(bootstrap_conf)
 
         # Configure security client and token factory
-        self._security_client = SecurityClient(self.security_conf)
-        self._token_factory = TokenFactory(self._security_client.get_token)
+        self._security_client = SecurityClient(self._bootstrap_config)
+        self._token_factory = TokenFactory(self._security_client.request_and_store_token)
 
     def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
-        # apply token to sdk request
-        self._token_factory.add_token_to_request(sdk_req)
+
+        # todo Add support for getting new token when the present one expires
+        # very basic token management, gets token once then uses that
+        if not self._security_client.is_token_present():
+            # token not present, so get and store it
+            self._token_factory.get_token_from_request()
+
+        # add token header to request
+        sdk_req.add_headers(SdkAuth.get_bearer_header(self._security_client.security_config))
+
         return super().make_request(sdk_req)
 
 

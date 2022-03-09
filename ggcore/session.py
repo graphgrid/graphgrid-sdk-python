@@ -1,10 +1,6 @@
 import enum
 import typing
 
-from ggcore.credentials import Credentials
-from ggcore.sdk_messages import SdkServiceRequest
-from ggcore.security_base import SdkAuth
-
 
 # todo experimental WIP
 class SessionState(enum.Enum):
@@ -30,10 +26,11 @@ class TokenFactory:
     def __init__(self, token_supp):
         self._token_supplier = token_supp
 
-    def add_token_to_request(self, sdk_req: SdkServiceRequest):
-        bearer_header = SdkAuth(
-            Credentials(None, None, self.get_token_from_request())).get_bearer_header()  # SdkAuth needs reworked...
-        sdk_req.headers.update(bearer_header)
+    # def add_token_to_request(self, sdk_req: SdkServiceRequest):
+    #     bearer_header = SdkAuth.get_bearer_header(SdkSecurityConfig(url_base=None, access_key=None, )
+    #         Credentials(None, None, self.get_token_from_request())).get_bearer_header()  # SdkAuth needs reworked...
+    #     sdk_req.headers.update(bearer_header)
 
+    # maybe rename method since this supplier always gets and then stores the token?
     def get_token_from_request(self):
         return self._token_supplier()

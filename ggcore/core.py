@@ -1,18 +1,17 @@
 import typing
 
 from ggcore.client import ConfigClient, NlpClient
-from ggcore.config import SecurityConfig
+from ggcore.config import SdkBootstrapConfig
 
 
 class SdkCore:
-    _configuration: SecurityConfig  # Possible rename this to avoid confusing _config with _config_client
+    _configuration: SdkBootstrapConfig
 
     _config_client: ConfigClient
-    # _security_client: SecurityClient
     _nlp_client: NlpClient
 
-    def __init__(self, sec_conf: SecurityConfig):
-        self._configuration = sec_conf
+    def __init__(self, bootstrap_config: SdkBootstrapConfig):
+        self._configuration = bootstrap_config
 
         self._setup_clients()
 
