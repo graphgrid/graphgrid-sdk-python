@@ -117,8 +117,6 @@ class NlpApi(ApiGroup):
 
         def endpoint(self):
             return f"dataset{ '/' + self._dataset_id if self._dataset_id else ''}/save"
-            # do we need a better generic way to account for multiple endpoints per api like this?
-            # or does this custom-logic-per-api cover us?
 
         def auth_type(self) -> RequestAuthType:
             return RequestAuthType.BEARER

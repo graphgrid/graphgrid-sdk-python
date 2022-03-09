@@ -9,6 +9,8 @@ class GraphGridSdk:
     GraphGridSdk is the user-facing resource to interact with GraphGrid modules
     """
     _core: SdkCore
+
+    # will we want to replace with more generic config and then create a SecurityConfig later in the code from the generic config?
     _config: SecurityConfig
 
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
