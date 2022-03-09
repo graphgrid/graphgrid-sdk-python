@@ -15,11 +15,14 @@ class SdkServiceResponse:
 
 
 class SdkServiceRequest:
-    _endpoint: str
+    # Full url used for the http request. Ex: 'http://localhost/1.0/security/oauth/token'
+    _url: str
 
+    # Endpoint constructed from the API definition (AbstractApi#api_base + AbstractApi#endpoint). Ex: 'security/oauth/token'
+    _api_endpoint: str
+
+    # HttpMethod. Ex. GET
     _http_method: HttpMethod
-
-    _request_auth_method: RequestAuthType
 
     _headers: dict = {}
     _query_params: dict = {}
@@ -29,12 +32,20 @@ class SdkServiceRequest:
     _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] = lambda x: x
 
     @property
-    def endpoint(self):
-        return self._endpoint
+    def url(self):
+        return self._url
 
-    @endpoint.setter
-    def endpoint(self, value):
-        self._endpoint = value
+    @url.setter
+    def url(self, value):
+        self._url = value
+
+    @property
+    def api_endpoint(self):
+        return self._api_endpoint
+
+    @api_endpoint.setter
+    def api_endpoint(self, value):
+        self._api_endpoint = value
 
     @property
     def http_method(self):
@@ -43,14 +54,6 @@ class SdkServiceRequest:
     @http_method.setter
     def http_method(self, value: HttpMethod):
         self._http_method = value
-
-    @property
-    def request_auth_method(self):
-        return self._request_auth_method
-
-    @request_auth_method.setter
-    def request_auth_method(self, value):
-        self._request_auth_method = value
 
     @property
     def body(self):

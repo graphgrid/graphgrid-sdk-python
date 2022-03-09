@@ -15,7 +15,7 @@ class ClientBase:
 
     def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
         # apply url base to sdk endpoint
-        sdk_req.endpoint = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_req.endpoint}'
+        sdk_req.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_req.api_endpoint}'
         return SdkHttpClient.invoke(sdk_req)
 
 
@@ -29,9 +29,7 @@ class SecurityClient(ClientBase):
         self._security_config = SdkSecurityConfig(bootstrap_config)
 
     def request_and_store_token(self):
-        sdk_request = SdkRequestBuilder.build_sdk_request(SecurityApi.get_token_api())
-
-        sdk_request.request_auth_method = RequestAuthType.BASIC
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(SecurityApi.get_token_api())
 
         auth_basic_header = SdkAuth.get_basic_header(self._security_config)
         sdk_request.headers.update(auth_basic_header)
@@ -78,14 +76,14 @@ class SecurityClientBase(ClientBase):
 class ConfigClient(SecurityClientBase):
     def test_api(self):
         api_call = ConfigApi.test_api()
-        sdk_request = SdkRequestBuilder.build_sdk_request(api_call)
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
 
 
 class NlpClient(SecurityClientBase):
     def save_dataset(self, dataset_id, generator):
         api_call = NlpApi.save_dataset_api(dataset_id, generator)
-        sdk_request = SdkRequestBuilder.build_sdk_request(api_call)
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
 
 

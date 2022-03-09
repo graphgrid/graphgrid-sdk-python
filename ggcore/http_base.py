@@ -25,7 +25,7 @@ class SdkHttpClient:
     @classmethod
     def execute_request(cls, sdk_request: SdkServiceRequest,) -> SdkServiceResponse:
         http_response: requests.Response = requests.request(method=sdk_request.http_method.value,
-                                                            url=sdk_request.endpoint,
+                                                            url=sdk_request.url,
                                                             params=sdk_request.query_params,
                                                             data=sdk_request.body,
                                                             headers=sdk_request.headers)

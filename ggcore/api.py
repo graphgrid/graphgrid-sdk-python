@@ -53,7 +53,7 @@ class ConfigApi(ApiGroup):
             return CONFIG
 
         def endpoint(self) -> str:
-            return "/this/is/a/test"
+            return "this/is/a/test"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.get
@@ -133,10 +133,10 @@ class NlpApi(ApiGroup):
 
 class SdkRequestBuilder:
     @classmethod
-    def build_sdk_request(cls, api_req: AbstractApi) -> SdkServiceRequest:
+    def build_partial_sdk_request(cls, api_req: AbstractApi) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest()
 
-        sdk_req.endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'
+        sdk_req.api_endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'
         sdk_req.headers = api_req.headers()
         sdk_req.http_method = api_req.http_method()
         sdk_req.query_params = api_req.query_params()
