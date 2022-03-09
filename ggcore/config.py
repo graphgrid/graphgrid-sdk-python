@@ -1,7 +1,7 @@
 import typing
 from dataclasses import dataclass
 
-URL_BASE = "URL_BASE"  # rename/revalue to SERVICE_BASE ?
+URL_BASE = "URL_BASE"
 OAUTH_CLIENT_ID = "OAUTH_CLIENT_ID"
 OAUTH_CLIENT_SECRET = "OAUTH_CLIENT_SECRET"
 

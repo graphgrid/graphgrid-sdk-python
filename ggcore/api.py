@@ -18,14 +18,10 @@ class AbstractApi:
     def endpoint(self) -> str:
         pass
 
-    # todo no longer needed?
-    def auth_type(self) -> RequestAuthType:
-        return RequestAuthType.BEARER   # default is bearer
-
     def http_method(self) -> HttpMethod:
         pass
 
-    # overriding impls can/should call super() to get these default headers. Move default header logic into sdk_request/client?
+    # overriding impls should call super().headers() to get these default headers
     def headers(self) -> dict:
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
@@ -48,6 +44,10 @@ class ConfigApi(ApiGroup):
     def test_api(cls):
         return cls.TestApi()
 
+    @classmethod
+    def get_data_api(cls):
+        return cls.GetDataApi()
+
     class TestApi(AbstractApi):
         def api_base(self) -> str:
             return CONFIG
@@ -59,12 +59,14 @@ class ConfigApi(ApiGroup):
             return HttpMethod.get
 
     class GetDataApi(AbstractApi):
+        def api_base(self) -> str:
+            return CONFIG
+
         def endpoint(self):
             return "data"
 
-        def auth_type(self) -> RequestAuthType:
-            return RequestAuthType.BEARER
-
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.get
 
 class SecurityApi(ApiGroup):
     @classmethod
@@ -104,7 +106,6 @@ class NlpApi(ApiGroup):
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
-
         _dataset_id: str
         _generator: typing.Generator
 

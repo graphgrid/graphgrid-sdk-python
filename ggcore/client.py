@@ -4,7 +4,6 @@ from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuth
 from ggcore.session import TokenFactory
-from ggcore.utils import RequestAuthType
 
 
 class ClientBase:
@@ -14,15 +13,15 @@ class ClientBase:
         self._bootstrap_config = bootstrap_config
 
     def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
-        # apply url base to sdk endpoint
+        # set sdk request url
         sdk_req.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_req.api_endpoint}'
+
+        # invoke request
         return SdkHttpClient.invoke(sdk_req)
 
 
 class SecurityClient(ClientBase):
-
     _security_config: SdkSecurityConfig
-
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
@@ -60,7 +59,6 @@ class SecurityClientBase(ClientBase):
         self._token_factory = TokenFactory(self._security_client.request_and_store_token)
 
     def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
-
         # todo Add support for getting new token when the present one expires
         # very basic token management, gets token once then uses that
         if not self._security_client.is_token_present():

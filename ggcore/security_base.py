@@ -30,12 +30,6 @@ class BasicAuth(RequestAuth):
     def get_auth_key(self) -> str:
         return BASIC_HEADER_KEY
 
-    # def get_auth_header(self):
-    #     key_secret_string = f'{self.credentials.access_key}:{self.credentials.secret_key}'
-    #     b64_encoded_basic_auth = base64.b64encode(f'{key_secret_string}'.encode())
-    #
-    #     return {AUTH_HEADER_KEY: f'{BASIC_HEADER_KEY} {b64_encoded_basic_auth.decode()}'}
-
 
 @dataclass
 class BearerAuth(RequestAuth):
@@ -46,9 +40,6 @@ class BearerAuth(RequestAuth):
     def get_auth_key(self) -> str:
         return BEARER_HEADER_KEY
 
-    # def get_auth_header(self):
-    #     return {AUTH_HEADER_KEY: f'{BEARER_HEADER_KEY} {self.credentials.token}'}
-
 
 class SdkAuth:
     @classmethod
@@ -58,4 +49,3 @@ class SdkAuth:
     @classmethod
     def get_bearer_header(self, sec_conf: SdkSecurityConfig) -> dict:
         return BearerAuth(sec_conf).get_auth_header()
-

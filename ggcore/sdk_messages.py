@@ -2,7 +2,7 @@ import dataclasses
 import typing
 from dataclasses import dataclass
 
-from ggcore.utils import RequestAuthType, HttpMethod
+from ggcore.utils import HttpMethod
 
 
 @dataclass
@@ -10,7 +10,9 @@ class SdkServiceResponse:
     statusCode: int = None
     statusText: str = None
 
-    response: str = dataclasses.field(default_factory=str)  # is a str response here OK or does this need to be more generic/different?
+    # is a str response here OK or does this need to be more generic/different?
+    response: str = dataclasses.field(default_factory=str)
+
     exception: Exception = None
 
 
@@ -94,6 +96,7 @@ class SdkServiceRequest:
     def add_headers(self, header_dict: dict, overwrite=True):
         for k, v in header_dict.items():
             self.add_header(k, v, overwrite)
+
 
 class SavaDatasetResponse(SdkServiceResponse):
     dataset_id: str = None

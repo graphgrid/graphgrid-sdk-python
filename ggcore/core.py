@@ -20,7 +20,7 @@ class SdkCore:
         self._config_client = ConfigClient(self._configuration)
         self._nlp_client = NlpClient(self._configuration)
 
-    # todo remove? test purposes only
+    # test purposes only
     def test_api(self):
         return self._config_client.test_api()
 
