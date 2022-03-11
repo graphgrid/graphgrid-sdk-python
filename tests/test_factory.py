@@ -5,7 +5,6 @@ from ggcore.sdk_exceptions import SdkInvalidClient
 
 
 class TestFactory(TestCase):
-
     def test_client_objects(self):
         """
         Tests that the factory instantiates all supported client object.

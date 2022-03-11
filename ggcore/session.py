@@ -1,17 +1,12 @@
-import ggcore.credentials
+import typing
 
 
-class SessionCore:
+class TokenFactory:
+    _token_supplier: typing.Callable[[], str]
 
-    def __init__(self, ):
-        self._credentials = None
+    def __init__(self, token_supp):
+        self._token_supplier = token_supp
 
-    def module(self):
-        pass
-
-    def set_credentials(self, access_key, secret_key, token=None):
-        self._credentials = ggcore.credentials.Credentials(access_key, secret_key, token)
-
-
-def get_session(env_vars=None):
-    return SessionCore(env_vars)
+    # maybe rename method since this supplier always gets and then stores the token?
+    def get_token_from_request(self) -> str:
+        return self._token_supplier()

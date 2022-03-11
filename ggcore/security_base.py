@@ -1,51 +1,49 @@
 import base64
 from dataclasses import dataclass
 
-from ggcore import sdk_exceptions
-from ggcore.credentials import Credentials
-from ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, BEARER_HEADER_KEY, RequestAuthType
+from ggcore.config import SdkSecurityConfig
+from ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, BEARER_HEADER_KEY
 
 
 @dataclass
 class RequestAuth:
-    credentials: Credentials
+    security_config: SdkSecurityConfig
 
-    def get_auth_header(self) -> dict:
+    def get_auth_value(self) -> str:
         pass
 
+    def get_auth_key(self) -> str:
+        pass
 
-@dataclass
-class RequestAuthFactory:
-
-    @classmethod
-    def from_auth_type(cls, request_type: RequestAuthType, credentials: Credentials) -> RequestAuth:
-        if request_type == request_type.BASIC:
-            return BasicAuth(credentials)
-        elif request_type == request_type.BEARER:
-            return BearerAuth(credentials)
-        raise sdk_exceptions.SdkAuthTypeException()
+    def get_auth_header(self) -> dict:
+        return {AUTH_HEADER_KEY: f'{self.get_auth_key()} {self.get_auth_value()}'}
 
 
 @dataclass
 class BasicAuth(RequestAuth):
-
-    def get_auth_header(self):
-        key_secret_string = f'{self.credentials.access_key}:{self.credentials.secret_key}'
+    def get_auth_value(self) -> str:
+        key_secret_string = f'{self.security_config.access_key}:{self.security_config.secret_key}'
         b64_encoded_basic_auth = base64.b64encode(f'{key_secret_string}'.encode())
+        return b64_encoded_basic_auth.decode()
 
-        return {AUTH_HEADER_KEY: f'{BASIC_HEADER_KEY} {b64_encoded_basic_auth.decode()}'}
+    def get_auth_key(self) -> str:
+        return BASIC_HEADER_KEY
 
 
 @dataclass
 class BearerAuth(RequestAuth):
+    def get_auth_value(self) -> str:
+        return self.security_config.token
 
-    def get_auth_header(self):
-        return {AUTH_HEADER_KEY: f'{BEARER_HEADER_KEY} {self.credentials.token}'}
+    def get_auth_key(self) -> str:
+        return BEARER_HEADER_KEY
 
 
-@dataclass
-class SdkAuth():
-    credentials: Credentials
+class SdkAuthHeaderBuilder:
+    @classmethod
+    def get_basic_header(self, sec_conf: SdkSecurityConfig) -> dict:
+        return BasicAuth(sec_conf).get_auth_header()
 
-    def get_auth_for_http(self, auth_type: RequestAuthType) -> dict:
-        return RequestAuthFactory.from_auth_type(auth_type, self.credentials).get_auth_header()
+    @classmethod
+    def get_bearer_header(self, sec_conf: SdkSecurityConfig) -> dict:
+        return BearerAuth(sec_conf).get_auth_header()
