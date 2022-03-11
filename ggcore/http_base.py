@@ -16,7 +16,7 @@ class SdkHttpClient:
 
         try:
             http_response.raise_for_status()
-        except requests.HTTPError as e:
+        except requests.RequestException as e:
             sdk_response.exception = e
 
         sdk_response.statusText = http_response.reason

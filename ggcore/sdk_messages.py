@@ -2,6 +2,8 @@ import dataclasses
 import typing
 from dataclasses import dataclass
 
+import requests
+
 from ggcore.utils import HttpMethod
 
 
@@ -13,7 +15,7 @@ class SdkServiceResponse:
     # is a str response here OK or does this need to be more generic/different?
     response: str = dataclasses.field(default_factory=str)
 
-    exception: Exception = typing.Optional[Exception]
+    exception: requests.RequestException = typing.Optional[requests.RequestException]
 
 
 class SdkServiceRequest:
