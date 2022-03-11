@@ -14,12 +14,13 @@ class ClientBase:
     def __init__(self, bootstrap_config):
         self._bootstrap_config = bootstrap_config
 
-    def make_request(self, sdk_req: SdkServiceRequest) -> SdkServiceResponse:
+    def make_request(self, sdk_request: SdkServiceRequest) -> SdkServiceResponse:
+        """Base make_request call that populates the sdk_request url property and then invokes the request."""
         # set sdk request url
-        sdk_req.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_req.api_endpoint}'
+        sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_request.api_endpoint}'
 
         # invoke request
-        return SdkHttpClient.invoke(sdk_req)
+        return SdkHttpClient.invoke(sdk_request)
 
 
 class SecurityClient(ClientBase):
@@ -53,7 +54,7 @@ class SecurityClientBase(ClientBase):
     _security_client: SecurityClient
     _token_factory: TokenFactory
 
-    def __init__(self,bootstrap_conf):
+    def __init__(self, bootstrap_conf):
         super().__init__(bootstrap_conf)
 
         # Configure security client and token factory

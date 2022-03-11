@@ -8,5 +8,5 @@ class TokenFactory:
         self._token_supplier = token_supp
 
     # maybe rename method since this supplier always gets and then stores the token?
-    def get_token_from_request(self):
+    def get_token_from_request(self) -> str:
         return self._token_supplier()

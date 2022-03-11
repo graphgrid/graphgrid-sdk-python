@@ -5,9 +5,7 @@ from ggcore.core import SdkCore
 
 
 class GraphGridSdk:
-    """
-    GraphGridSdk is the user-facing resource to interact with GraphGrid modules
-    """
+    """Initializes the SDK Core for SDK calls. Exposes those SDK calls as methods."""
     _core: SdkCore
     _config: SdkBootstrapConfig
 

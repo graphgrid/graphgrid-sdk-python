@@ -7,13 +7,13 @@ from ggcore.utils import HttpMethod
 
 @dataclass
 class SdkServiceResponse:
-    statusCode: int = None
-    statusText: str = None
+    statusCode: int = typing.Optional[int]
+    statusText: str = typing.Optional[str]
 
     # is a str response here OK or does this need to be more generic/different?
     response: str = dataclasses.field(default_factory=str)
 
-    exception: Exception = None
+    exception: Exception = typing.Optional[Exception]
 
 
 class SdkServiceRequest:

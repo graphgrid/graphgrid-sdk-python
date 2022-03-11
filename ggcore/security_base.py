@@ -21,7 +21,6 @@ class RequestAuth:
 
 @dataclass
 class BasicAuth(RequestAuth):
-
     def get_auth_value(self) -> str:
         key_secret_string = f'{self.security_config.access_key}:{self.security_config.secret_key}'
         b64_encoded_basic_auth = base64.b64encode(f'{key_secret_string}'.encode())
@@ -33,7 +32,6 @@ class BasicAuth(RequestAuth):
 
 @dataclass
 class BearerAuth(RequestAuth):
-
     def get_auth_value(self) -> str:
         return self.security_config.token
 
