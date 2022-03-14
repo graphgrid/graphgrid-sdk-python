@@ -16,14 +16,16 @@ class RequestAuth:
         pass
 
     def get_auth_header(self) -> dict:
-        return {AUTH_HEADER_KEY: f'{self.get_auth_key()} {self.get_auth_value()}'}
+        return {
+            AUTH_HEADER_KEY: f'{self.get_auth_key()} {self.get_auth_value()}'}
 
 
 @dataclass
 class BasicAuth(RequestAuth):
     def get_auth_value(self) -> str:
         key_secret_string = f'{self.security_config.access_key}:{self.security_config.secret_key}'
-        b64_encoded_basic_auth = base64.b64encode(f'{key_secret_string}'.encode())
+        b64_encoded_basic_auth = base64.b64encode(
+            f'{key_secret_string}'.encode())
         return b64_encoded_basic_auth.decode()
 
     def get_auth_key(self) -> str:

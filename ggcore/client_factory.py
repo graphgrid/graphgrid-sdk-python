@@ -43,10 +43,12 @@ class ClientFactory:
 
     @classmethod
     def call_module_client_factory(cls, validated_client_name) -> ClientBase:
-        return cls._FACTORIES_DATA.get(validated_client_name).factory.create_client_instance()
+        return cls._FACTORIES_DATA.get(
+            validated_client_name).factory.create_client_instance()
 
     @classmethod
     def create_client(cls, client_name) -> ClientBase:
+        """create client from string"""
         if client_name in cls._FACTORIES_DATA:
             return cls.call_module_client_factory(client_name)
         else:
@@ -54,4 +56,5 @@ class ClientFactory:
 
 
 def client(s: str) -> ClientBase:
+    """create client from string"""
     return ClientFactory.create_client(s)

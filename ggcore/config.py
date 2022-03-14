@@ -21,7 +21,8 @@ class SdkSecurityConfig(SdkBootstrapConfig):
     _token: typing.AnyStr = None
 
     def __init__(self, bootstrap_config: SdkBootstrapConfig, token=None):
-        super().__init__(bootstrap_config.url_base, bootstrap_config.access_key, bootstrap_config.secret_key)
+        super().__init__(bootstrap_config.url_base, bootstrap_config.access_key,
+                         bootstrap_config.secret_key)
         self._token = token
 
     @property

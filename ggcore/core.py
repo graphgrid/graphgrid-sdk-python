@@ -24,5 +24,8 @@ class SdkCore:
     def test_api(self):
         return self._config_client.test_api()
 
-    def save_dataset(self, generator: typing.Generator, dataset_id: str, overwrite: bool):
-        return self._nlp_client.save_dataset(generator=generator, dataset_id=dataset_id, overwrite=overwrite)
+    def save_dataset(self, generator: typing.Generator, dataset_id: str,
+                     overwrite: bool):
+        return self._nlp_client.save_dataset(generator=generator,
+                                             dataset_id=dataset_id,
+                                             overwrite=overwrite)

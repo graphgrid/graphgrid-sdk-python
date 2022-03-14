@@ -4,7 +4,8 @@ from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
-    GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, CONTENT_TYPE_APP_JSON, USER_AGENT
+    GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
+    CONTENT_TYPE_APP_JSON, USER_AGENT
 
 
 class ApiGroup:
@@ -21,7 +22,8 @@ class AbstractApi:
     def http_method(self) -> HttpMethod:
         pass
 
-    # overriding impls should call super().headers() to get these default headers
+    # overriding impls should call super().headers() to get these default
+    # headers
     def headers(self) -> dict:
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
@@ -90,7 +92,8 @@ class SecurityApi(ApiGroup):
         def handler(self, sdk_response: SdkServiceResponse):
             # todo how does this handler play into the token tracking?
             if sdk_response.statusCode != 200:
-                raise RuntimeError(f'Unable to get security token. Response: "{sdk_response.response}"')
+                raise RuntimeError(
+                    f'Unable to get security token. Response: "{sdk_response.response}"')
 
             # parse response
             json_acceptable_string = sdk_response.response.replace("'", "\"")
@@ -99,7 +102,8 @@ class SecurityApi(ApiGroup):
 
 class NlpApi(ApiGroup):
     @classmethod
-    def save_dataset_api(cls, generator: typing.Generator, dataset_id: str, overwrite: bool):
+    def save_dataset_api(cls, generator: typing.Generator, dataset_id: str,
+                         overwrite: bool):
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @dataclass
@@ -108,7 +112,8 @@ class NlpApi(ApiGroup):
         _dataset_id: str
         _overwrite: bool
 
-        def __init__(self, generator: typing.Generator, dataset_id: str, overwrite: bool):
+        def __init__(self, generator: typing.Generator, dataset_id: str,
+                     overwrite: bool):
             self._generator = generator
             self._dataset_id = dataset_id
             self._overwrite = overwrite
@@ -134,7 +139,8 @@ class NlpApi(ApiGroup):
 
 class SdkRequestBuilder:
     @classmethod
-    def build_partial_sdk_request(cls, api_req: AbstractApi) -> SdkServiceRequest:
+    def build_partial_sdk_request(cls,
+                                  api_req: AbstractApi) -> SdkServiceRequest:
         sdk_req = SdkServiceRequest()
 
         sdk_req.api_endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'

@@ -5,13 +5,16 @@ from ggcore.core import SdkCore
 
 
 class GraphGridSdk:
-    """Initializes the SDK Core for SDK calls. Exposes those SDK calls as methods."""
+    """Initializes the SDK Core for SDK calls. Exposes those SDK calls as
+    methods. """
     _core: SdkCore
     _config: SdkBootstrapConfig
 
-    # todo init so they can just pass in a config map instead of individual params like above?
+    # todo init so they can just pass in a config map instead of individual
+    #  params like above?
     def __init__(self, access_key, secret_access_key, url_base="localhost"):
-        self._config = SdkBootstrapConfig(url_base, access_key, secret_access_key)
+        self._config = SdkBootstrapConfig(url_base, access_key,
+                                          secret_access_key)
         self._setup_core()
 
     def _setup_core(self):
@@ -20,5 +23,6 @@ class GraphGridSdk:
     def test_api(self):
         return self._core.test_api()
 
-    def save_dataset(self, data_generator: typing.Generator, dataset_id: str = None, overwrite=False):
+    def save_dataset(self, data_generator: typing.Generator,
+                     dataset_id: str = None, overwrite=False):
         self._core.save_dataset(data_generator, dataset_id, overwrite)
