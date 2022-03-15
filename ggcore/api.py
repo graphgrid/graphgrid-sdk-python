@@ -74,7 +74,7 @@ class ConfigApi(ApiGroup):
             return "this/is/a/test"
 
         def http_method(self) -> HttpMethod:
-            return HttpMethod.get
+            return HttpMethod.GET
 
     class GetDataApi(AbstractApi):
         """GetDataApi api definition"""
@@ -86,7 +86,7 @@ class ConfigApi(ApiGroup):
             return "data"
 
         def http_method(self) -> HttpMethod:
-            return HttpMethod.get
+            return HttpMethod.GET
 
 
 class SecurityApi(ApiGroup):
@@ -107,7 +107,7 @@ class SecurityApi(ApiGroup):
             return "oauth/token"
 
         def http_method(self) -> HttpMethod:
-            return HttpMethod.post
+            return HttpMethod.POST
 
         def query_params(self) -> dict:
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
@@ -152,7 +152,7 @@ class NlpApi(ApiGroup):
             return f"dataset{'/' + self._dataset_id if self._dataset_id else ''}/save"
 
         def http_method(self) -> HttpMethod:
-            return HttpMethod.post
+            return HttpMethod.POST
 
         def query_params(self) -> dict:
             return {"overwrite": "true"} if self._overwrite else {}

@@ -25,15 +25,15 @@ TRACE = "trace"
 
 class HttpMethod(enum.Enum):
     """HTTP methods"""
-    post = POST
-    get = GET
-    put = PUT
-    delete = DELETE
-    patch = PATCH
-    options = OPTIONS
-    connect = CONNECT
-    head = HEAD
-    trace = TRACE
+    POST = POST
+    GET = GET
+    PUT = PUT
+    DELETE = DELETE
+    PATCH = PATCH
+    OPTIONS = OPTIONS
+    CONNECT = CONNECT
+    HEAD = HEAD
+    TRACE = TRACE
 
 
 """SECURITY"""
