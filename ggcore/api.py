@@ -9,58 +9,64 @@ from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
 
 
+# pylint: disable=too-few-public-methods
 class ApiGroup:
-    """abstract api grouping"""
-    pass
+    """Abstract api grouping"""
 
 
 class AbstractApi:
-    """abstract api class"""
+    """Abstract api class"""
+
     def api_base(self) -> str:
-        """get api_base ex. config, security, nlp"""
-        pass
+        """Get api_base ex. config, security, nlp"""
 
     def endpoint(self) -> str:
-        """api endpoint"""
-        pass
+        """Api endpoint"""
 
     def http_method(self) -> HttpMethod:
-        """http method type"""
-        pass
+        """Http method type"""
 
-    # overriding impls should call super().headers() to get these default
-    # headers
+    # pylint: disable=no-self-use
     def headers(self) -> dict:
-        """headers for the http request"""
+        """Provides headers for the http request. Overriding impls should call super(
+        ).headers() to get these default headers """
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
             USER_AGENT: USER_AGENT
         }
 
+    # pylint: disable=no-self-use
     def query_params(self) -> dict:
-        """query params for the http request"""
+        """Query params for the http request"""
         return {}  # overrides provide api-specific query-params
 
+    # pylint: disable=no-self-use
     def body(self):
-        """body of the http request"""
+        """Body of the http request"""
         return {}  # overrides provide api-specific body
 
+    # pylint: disable=no-self-use
     def handler(self, sdk_response: SdkServiceResponse):
-        """handler for the sdk response"""
+        """Handler for the sdk response"""
         return sdk_response  # default handler returns entire SdkServiceResponse
 
 
 class ConfigApi(ApiGroup):
+    """Config api definitions"""
 
     @classmethod
     def test_api(cls):
+        """Returns test api"""
         return cls.TestApi()
 
     @classmethod
     def get_data_api(cls):
+        """Returns get data api"""
         return cls.GetDataApi()
 
     class TestApi(AbstractApi):
+        """TestApi api definition"""
+
         def api_base(self) -> str:
             return CONFIG
 
@@ -71,6 +77,8 @@ class ConfigApi(ApiGroup):
             return HttpMethod.get
 
     class GetDataApi(AbstractApi):
+        """GetDataApi api definition"""
+
         def api_base(self) -> str:
             return CONFIG
 
@@ -82,11 +90,16 @@ class ConfigApi(ApiGroup):
 
 
 class SecurityApi(ApiGroup):
+    """Security api definitions"""
+
     @classmethod
     def get_token_api(cls):
+        """Returns get token api"""
         return cls.GetTokenApi()
 
     class GetTokenApi(AbstractApi):
+        """GetTokenApi api definition"""
+
         def api_base(self):
             return SECURITY
 
@@ -111,13 +124,17 @@ class SecurityApi(ApiGroup):
 
 
 class NlpApi(ApiGroup):
+    """Nlp api definitions"""
+
     @classmethod
     def save_dataset_api(cls, generator: typing.Generator, dataset_id: str,
                          overwrite: bool):
+        """Returns save dataset api"""
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
+        """SaveDatasetApi api definition"""
         _generator: typing.Generator
         _dataset_id: str
         _overwrite: bool
@@ -148,18 +165,21 @@ class NlpApi(ApiGroup):
 
 
 class SdkRequestBuilder:
+    """Helper class for building sdk requests"""
+
     @classmethod
     def build_partial_sdk_request(cls,
-                                  api_req: AbstractApi) -> SdkServiceRequest:
+                                  api_def: AbstractApi) -> SdkServiceRequest:
+        """Build partial sdk request from an api definition"""
         sdk_req = SdkServiceRequest()
 
-        sdk_req.api_endpoint = f'{api_req.api_base()}/{api_req.endpoint()}'
-        sdk_req.headers = api_req.headers()
-        sdk_req.http_method = api_req.http_method()
-        sdk_req.query_params = api_req.query_params()
-        sdk_req.body = api_req.body()
+        sdk_req.api_endpoint = f'{api_def.api_base()}/{api_def.endpoint()}'
+        sdk_req.headers = api_def.headers()
+        sdk_req.http_method = api_def.http_method()
+        sdk_req.query_params = api_def.query_params()
+        sdk_req.body = api_def.body()
 
         # handler function reference
-        sdk_req.api_response_handler = api_req.handler
+        sdk_req.api_response_handler = api_def.handler
 
         return sdk_req
