@@ -1,10 +1,13 @@
 """Define methods to run tests and configure test output"""
+
 import os
 import subprocess
 from pathlib import Path
+
 from clover.coverage2clover import Clover, Cobertura
 
 
+# pylint: disable=invalid-name
 def main():
     """Run the test suite"""
     top_level_dir = Path(__file__).parent.parent.absolute()
