@@ -1,3 +1,4 @@
+"""GraphGrid SDK"""
 import typing
 
 from ggcore.config import SdkBootstrapConfig
@@ -21,8 +22,10 @@ class GraphGridSdk:
         self._core = SdkCore(self._config)
 
     def test_api(self):
+        """Call test api"""
         return self._core.test_api()
 
     def save_dataset(self, data_generator: typing.Generator,
                      dataset_id: str = None, overwrite=False):
+        """Call save dataset api"""
         self._core.save_dataset(data_generator, dataset_id, overwrite)
