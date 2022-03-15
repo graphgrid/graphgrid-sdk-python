@@ -1,7 +1,10 @@
+"""Classes around session tracking and token management"""
 import typing
 
 
+# pylint: disable=too-few-public-methods
 class TokenFactory:
+    """TokenFactory is the dynamic caller for getting a token"""
     _token_supplier: typing.Callable[[], str]
 
     def __init__(self, token_supp):
