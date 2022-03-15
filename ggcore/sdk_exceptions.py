@@ -1,3 +1,5 @@
+"""Sdk exception classes"""
+
 class SdkException(Exception):
     """Top level custom sdk exception"""
 
