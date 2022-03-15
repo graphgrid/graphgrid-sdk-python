@@ -1,3 +1,4 @@
+"""Api related classes for the sdk."""
 import json
 import typing
 from dataclasses import dataclass
@@ -9,34 +10,43 @@ from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
 
 
 class ApiGroup:
+    """abstract api grouping"""
     pass
 
 
 class AbstractApi:
+    """abstract api class"""
     def api_base(self) -> str:
+        """get api_base ex. config, security, nlp"""
         pass
 
     def endpoint(self) -> str:
+        """api endpoint"""
         pass
 
     def http_method(self) -> HttpMethod:
+        """http method type"""
         pass
 
     # overriding impls should call super().headers() to get these default
     # headers
     def headers(self) -> dict:
+        """headers for the http request"""
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
             USER_AGENT: USER_AGENT
         }
 
     def query_params(self) -> dict:
+        """query params for the http request"""
         return {}  # overrides provide api-specific query-params
 
     def body(self):
+        """body of the http request"""
         return {}  # overrides provide api-specific body
 
     def handler(self, sdk_response: SdkServiceResponse):
+        """handler for the sdk response"""
         return sdk_response  # default handler returns entire SdkServiceResponse
 
 
