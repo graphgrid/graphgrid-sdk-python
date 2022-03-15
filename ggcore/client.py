@@ -72,8 +72,8 @@ class SecurityClientBase(ClientBase):
     _security_client: SecurityClient
     _token_factory: TokenFactory
 
-    def __init__(self, bootstrap_conf):
-        super().__init__(bootstrap_conf)
+    def __init__(self, bootstrap_config):
+        super().__init__(bootstrap_config)
 
         # Configure security client and token factory
         self._security_client = SecurityClient(self._bootstrap_config)
