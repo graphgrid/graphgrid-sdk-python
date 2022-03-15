@@ -1,6 +1,5 @@
-"""
-Client related classes for the sdk
-"""
+"""Client related classes for the sdk"""
+
 import typing
 
 from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi

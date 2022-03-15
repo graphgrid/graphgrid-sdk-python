@@ -13,7 +13,7 @@ class SdkHttpClient:
         """Builds an SdkServiceResponse from the http response"""
         sdk_response = SdkServiceResponse()
 
-        sdk_response.statusCode = http_response.status_code
+        sdk_response.status_code = http_response.status_code
 
         # todo will need to map response body to specific response-type objs
         sdk_response.response = http_response.content.decode()
@@ -23,7 +23,7 @@ class SdkHttpClient:
         except requests.RequestException as request_exception:
             sdk_response.exception = request_exception
 
-        sdk_response.statusText = http_response.reason
+        sdk_response.status_text = http_response.reason
         return sdk_response
 
     @classmethod

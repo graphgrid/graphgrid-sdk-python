@@ -114,7 +114,7 @@ class SecurityApi(ApiGroup):
 
         def handler(self, sdk_response: SdkServiceResponse):
             # todo how does this handler play into the token tracking?
-            if sdk_response.statusCode != 200:
+            if sdk_response.status_code != 200:
                 raise RuntimeError(
                     f'Unable to get security token. Response: "{sdk_response.response}"')
 

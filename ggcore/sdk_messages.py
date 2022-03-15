@@ -1,3 +1,5 @@
+"""Classes for sdk service request/response objects"""
+
 import dataclasses
 import typing
 from dataclasses import dataclass
@@ -9,8 +11,10 @@ from ggcore.utils import HttpMethod
 
 @dataclass
 class SdkServiceResponse:
-    statusCode: int = typing.Optional[int]
-    statusText: str = typing.Optional[str]
+    """Sdk service response class"""
+
+    status_code: int = typing.Optional[int]
+    status_text: str = typing.Optional[str]
 
     # is a str response here OK or does this need to be more generic/different?
     response: str = dataclasses.field(default_factory=str)
@@ -19,7 +23,11 @@ class SdkServiceResponse:
         requests.RequestException]
 
 
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=missing-function-docstring
 class SdkServiceRequest:
+    """Sdk service request class"""
+
     # Full url used for the http request.
     #   Ex: 'http://localhost/1.0/security/oauth/token'
     _url: str
@@ -102,10 +110,12 @@ class SdkServiceRequest:
             self._headers[header_key] = value
 
     def add_headers(self, header_dict: dict, overwrite=True):
-        for k, v in header_dict.items():
-            self.add_header(k, v, overwrite)
+        for key, value in header_dict.items():
+            self.add_header(key, value, overwrite)
 
 
+# pylint: disable=too-few-public-methods
 class SavaDatasetResponse(SdkServiceResponse):
+    """SaveDatasetResponse represents the response to the save data sdk call"""
     dataset_id: str = None
     save_path: str = None
