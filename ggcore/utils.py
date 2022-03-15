@@ -1,4 +1,8 @@
+"""Contains util constants and enums"""
+
 import enum
+
+# pylint: disable=pointless-string-statement
 
 """GG MODULE CLIENTS"""
 CONFIG = 'config'
@@ -20,6 +24,7 @@ TRACE = "trace"
 
 
 class HttpMethod(enum.Enum):
+    """HTTP methods"""
     post = POST
     get = GET
     put = PUT
@@ -46,5 +51,6 @@ CONTENT_TYPE_APP_JSON = "application/json"
 
 
 class RequestAuthType(enum.Enum):
+    """Auth type keys"""
     BASIC = BASIC_HEADER_KEY
     BEARER = BEARER_HEADER_KEY
