@@ -4,14 +4,14 @@ import enum
 
 # pylint: disable=pointless-string-statement
 
-"""GG MODULE CLIENTS"""
+# GG MODULE CLIENTS
 CONFIG = 'config'
 SECURITY = 'security'
 NLP = 'nlp'
 
 SUPPORTED_CLIENTS = [CONFIG, SECURITY, NLP, ]
 
-"""HTTP METHODS"""
+# HTTP METHODS
 POST = "post"
 GET = "get"
 PUT = "put"
