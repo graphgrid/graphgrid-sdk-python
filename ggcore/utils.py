@@ -2,8 +2,6 @@
 
 import enum
 
-# pylint: disable=pointless-string-statement
-
 # GG MODULE CLIENTS
 CONFIG = 'config'
 SECURITY = 'security'
@@ -36,7 +34,7 @@ class HttpMethod(enum.Enum):
     TRACE = TRACE
 
 
-"""SECURITY"""
+# SECURITY
 AUTH_HEADER_KEY = "Authorization"
 BASIC_HEADER_KEY = "Basic"
 BEARER_HEADER_KEY = "Bearer"
