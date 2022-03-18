@@ -1,4 +1,4 @@
-"""Classes for sdk service request/response objects"""
+"""Define classes for sdk service request/response objects."""
 
 import dataclasses
 import typing
@@ -11,7 +11,7 @@ from ggcore.utils import HttpMethod
 
 @dataclass
 class SdkServiceResponse:
-    """Sdk service response class"""
+    """Define base class representing sdk service response."""
 
     status_code: int = typing.Optional[int]
     status_text: str = typing.Optional[str]
@@ -26,7 +26,7 @@ class SdkServiceResponse:
 # pylint: disable=too-many-instance-attributes
 # pylint: disable=missing-function-docstring
 class SdkServiceRequest:
-    """Sdk service request class"""
+    """Define base class representing sdk service request."""
 
     # Full url used for the http request.
     #   Ex: 'http://localhost/1.0/security/oauth/token'
@@ -116,6 +116,6 @@ class SdkServiceRequest:
 
 # pylint: disable=too-few-public-methods
 class SavaDatasetResponse(SdkServiceResponse):
-    """SaveDatasetResponse represents the response to the save data sdk call"""
+    """Define class representing a save dataset api call response."""
     dataset_id: str = None
     save_path: str = None
