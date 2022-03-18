@@ -1,4 +1,4 @@
-"""Client related classes for the sdk"""
+"""Define client related classes for the sdk."""
 
 import typing
 
@@ -12,7 +12,7 @@ from ggcore.session import TokenFactory
 
 # pylint: disable=too-few-public-methods
 class ClientBase:
-    """Serves as the base class for the other clients"""
+    """Define base class for the other clients."""
     _bootstrap_config: SdkBootstrapConfig
 
     def __init__(self, bootstrap_config):
@@ -20,8 +20,9 @@ class ClientBase:
 
     def make_request(self,
                      sdk_request: SdkServiceRequest) -> SdkServiceResponse:
-        """Base make_request that all client calls pass through. Constructs
-        sdk request url. Invokes the request. """
+        """Define base make_request that all client calls pass through.
+        Constructs sdk request url then invokes the request.
+        """
         # set sdk request url
         sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_request.api_endpoint}'
 
@@ -30,9 +31,10 @@ class ClientBase:
 
 
 class SecurityClient(ClientBase):
-    """Security client for bootstrapping the sdk. Makes http requests to the
-    SecurityModule. Stores state of the current SdkSecurityConfig (includes
-    token) """
+    """Define Security client for bootstrapping the sdk. Makes http requests
+    to the SecurityModule. Stores state of the current SdkSecurityConfig (
+    includes token).
+    """
     _security_config: SdkSecurityConfig
 
     def __init__(self, bootstrap_config):
@@ -41,7 +43,8 @@ class SecurityClient(ClientBase):
 
     def request_and_store_token(self):
         """Build and execute request to get the security token, store the
-        token result """
+        token result.
+        """
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(
             SecurityApi.get_token_api())
 
@@ -56,7 +59,7 @@ class SecurityClient(ClientBase):
         return token
 
     def is_token_present(self):
-        """Returns true if token is present with the security config"""
+        """Return true if token is present with the security config."""
         return bool(self._security_config.token)
 
     # pylint: disable=missing-function-docstring
@@ -66,8 +69,9 @@ class SecurityClient(ClientBase):
 
 
 class SecurityClientBase(ClientBase):
-    """Security client base which provides authentication headers to client
-    subclasses """
+    """Define Security client base. Provide authentication headers to client
+    subclasses. Instantiates TokenFactory for get token calls.
+    """
     _security_client: SecurityClient
     _token_factory: TokenFactory
 
@@ -81,7 +85,9 @@ class SecurityClientBase(ClientBase):
 
     def make_request(self,
                      sdk_request: SdkServiceRequest) -> SdkServiceResponse:
-        """Adds bearer auth headers for the sdk request"""
+        """Define make_request that adds bearer auth headers for the sdk
+        request.
+        """
         # todo Add support for getting new token when the present one expires
         # very basic token management, gets token once then uses that
         if not self._security_client.is_token_present():
@@ -96,21 +102,21 @@ class SecurityClientBase(ClientBase):
 
 
 class ConfigClient(SecurityClientBase):
-    """ConfigClient holds the config sdk calls"""
+    """Define ConfigClient to hold the config sdk calls."""
 
     def test_api(self):
-        """Test api sdk call"""
+        """Return test api sdk call."""
         api_call = ConfigApi.test_api()
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
 
 
 class NlpClient(SecurityClientBase):
-    """NlpClient holds the nlp sdk calls"""
+    """Define NlpClient to hold the nlp sdk calls."""
 
     def save_dataset(self, generator: typing.Generator, dataset_id: str,
                      overwrite: bool):
-        """Save dataset sdk call"""
+        """Return save dataset sdk call."""
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
