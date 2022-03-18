@@ -1,4 +1,4 @@
-"""Contains util constants and enums"""
+"""Define util constants and enums."""
 
 import enum
 
@@ -24,7 +24,7 @@ TRACE = "trace"
 
 
 class HttpMethod(enum.Enum):
-    """HTTP methods"""
+    """Define HTTP methods."""
     POST = POST
     GET = GET
     PUT = PUT
@@ -51,6 +51,6 @@ CONTENT_TYPE_APP_JSON = "application/json"
 
 
 class RequestAuthType(enum.Enum):
-    """Auth type keys"""
+    """Define auth type keys."""
     BASIC = BASIC_HEADER_KEY
     BEARER = BEARER_HEADER_KEY
