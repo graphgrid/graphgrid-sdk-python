@@ -1,4 +1,4 @@
-"""Classes and constants for controlling sdk configuration"""
+"""Define classes and constants for controlling sdk configuration."""
 
 import typing
 from dataclasses import dataclass
@@ -14,7 +14,7 @@ BOOTSTRAP_CONFIG_KEYS = [URL_BASE,
 
 @dataclass
 class SdkBootstrapConfig:
-    """Bootstrap sdk configuration"""
+    """Define class representing bootstrap sdk configuration."""
     url_base: typing.AnyStr
     access_key: typing.AnyStr
     secret_key: typing.AnyStr
@@ -22,7 +22,7 @@ class SdkBootstrapConfig:
 
 # pylint: disable=too-few-public-methods
 class SdkSecurityConfig(SdkBootstrapConfig):
-    """Security base sdk configuration"""
+    """Define class representing Security base sdk configuration."""
     _token: typing.AnyStr = None
 
     def __init__(self, bootstrap_config: SdkBootstrapConfig, token=None):
