@@ -1,4 +1,4 @@
-"""Api related classes for the sdk."""
+"""Define api related classes for the sdk."""
 import json
 import typing
 from dataclasses import dataclass
@@ -11,25 +11,26 @@ from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
 
 # pylint: disable=too-few-public-methods
 class ApiGroup:
-    """Abstract api grouping"""
+    """Define base class for abstract api groupings."""
 
 
 class AbstractApi:
-    """Abstract api class"""
+    """Define base class for abstract apis."""
 
     def api_base(self) -> str:
-        """Get api_base ex. config, security, nlp"""
+        """Return api_base ex. config, security, nlp."""
 
     def endpoint(self) -> str:
-        """Api endpoint"""
+        """Return api endpoint."""
 
     def http_method(self) -> HttpMethod:
-        """Http method type"""
+        """Return http method type."""
 
     # pylint: disable=no-self-use
     def headers(self) -> dict:
-        """Provides headers for the http request. Overriding impls should call super(
-        ).headers() to get these default headers """
+        """Return headers for the http request. Overriding impls should call super(
+        ).headers() to get these default headers.
+        """
         return {
             CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_JSON,
             USER_AGENT: USER_AGENT
@@ -37,35 +38,35 @@ class AbstractApi:
 
     # pylint: disable=no-self-use
     def query_params(self) -> dict:
-        """Query params for the http request"""
+        """Return query params for the http request."""
         return {}  # overrides provide api-specific query-params
 
     # pylint: disable=no-self-use
     def body(self):
-        """Body of the http request"""
+        """Return body of the http request."""
         return {}  # overrides provide api-specific body
 
     # pylint: disable=no-self-use
     def handler(self, sdk_response: SdkServiceResponse):
-        """Handler for the sdk response"""
+        """Handle the sdk response."""
         return sdk_response  # default handler returns entire SdkServiceResponse
 
 
 class ConfigApi(ApiGroup):
-    """Config api definitions"""
+    """Define grouping of Config api definitions."""
 
     @classmethod
     def test_api(cls):
-        """Returns test api"""
+        """Return test api."""
         return cls.TestApi()
 
     @classmethod
     def get_data_api(cls):
-        """Returns get data api"""
+        """Return get data api."""
         return cls.GetDataApi()
 
     class TestApi(AbstractApi):
-        """TestApi api definition"""
+        """Define TestApi api."""
 
         def api_base(self) -> str:
             return CONFIG
@@ -77,7 +78,7 @@ class ConfigApi(ApiGroup):
             return HttpMethod.GET
 
     class GetDataApi(AbstractApi):
-        """GetDataApi api definition"""
+        """Define GetDataApi api."""
 
         def api_base(self) -> str:
             return CONFIG
@@ -90,15 +91,15 @@ class ConfigApi(ApiGroup):
 
 
 class SecurityApi(ApiGroup):
-    """Security api definitions"""
+    """Define grouping of Security api definitions."""
 
     @classmethod
     def get_token_api(cls):
-        """Returns get token api"""
+        """Return get token api."""
         return cls.GetTokenApi()
 
     class GetTokenApi(AbstractApi):
-        """GetTokenApi api definition"""
+        """Define GetTokenApi api."""
 
         def api_base(self):
             return SECURITY
@@ -124,17 +125,17 @@ class SecurityApi(ApiGroup):
 
 
 class NlpApi(ApiGroup):
-    """Nlp api definitions"""
+    """Define grouping of Nlp api definitions."""
 
     @classmethod
     def save_dataset_api(cls, generator: typing.Generator, dataset_id: str,
                          overwrite: bool):
-        """Returns save dataset api"""
+        """Return save dataset api."""
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
-        """SaveDatasetApi api definition"""
+        """Define SaveDatasetApi api."""
         _generator: typing.Generator
         _dataset_id: str
         _overwrite: bool
@@ -165,12 +166,12 @@ class NlpApi(ApiGroup):
 
 
 class SdkRequestBuilder:
-    """Helper class for building sdk requests"""
+    """Define helper class for building sdk requests."""
 
     @classmethod
     def build_partial_sdk_request(cls,
                                   api_def: AbstractApi) -> SdkServiceRequest:
-        """Build partial sdk request from an api definition"""
+        """Build partial sdk request from an api definition."""
         sdk_req = SdkServiceRequest()
 
         sdk_req.api_endpoint = f'{api_def.api_base()}/{api_def.endpoint()}'
