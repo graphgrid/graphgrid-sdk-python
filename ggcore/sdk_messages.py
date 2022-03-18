@@ -1,3 +1,5 @@
+"""Define classes for sdk service request/response objects."""
+
 import dataclasses
 import typing
 from dataclasses import dataclass
@@ -9,20 +11,30 @@ from ggcore.utils import HttpMethod
 
 @dataclass
 class SdkServiceResponse:
-    statusCode: int = typing.Optional[int]
-    statusText: str = typing.Optional[str]
+    """Define base class representing sdk service response."""
+
+    status_code: int = typing.Optional[int]
+    status_text: str = typing.Optional[str]
 
     # is a str response here OK or does this need to be more generic/different?
     response: str = dataclasses.field(default_factory=str)
 
-    exception: requests.RequestException = typing.Optional[requests.RequestException]
+    exception: requests.RequestException = typing.Optional[
+        requests.RequestException]
 
 
+# pylint: disable=too-many-instance-attributes
+# pylint: disable=missing-function-docstring
 class SdkServiceRequest:
-    # Full url used for the http request. Ex: 'http://localhost/1.0/security/oauth/token'
+    """Define base class representing sdk service request."""
+
+    # Full url used for the http request.
+    #   Ex: 'http://localhost/1.0/security/oauth/token'
     _url: str
 
-    # Endpoint constructed from the API definition (AbstractApi#api_base + AbstractApi#endpoint). Ex: 'security/oauth/token'
+    # Endpoint constructed from the API definition (AbstractApi#api_base +
+    # AbstractApi#endpoint).
+    #   Ex: 'security/oauth/token'
     _api_endpoint: str
 
     # HttpMethod. Ex. GET
@@ -33,7 +45,8 @@ class SdkServiceRequest:
     _body: dict = {}
 
     # default handler returns the SdkServiceResponse
-    _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] = lambda x: x
+    _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] \
+        = lambda x: x
 
     @property
     def url(self):
@@ -84,7 +97,8 @@ class SdkServiceRequest:
         self._query_params = value
 
     @property
-    def api_response_handler(self) -> typing.Callable[[SdkServiceResponse], typing.Any]:
+    def api_response_handler(self) -> typing.Callable[[SdkServiceResponse],
+                                                      typing.Any]:
         return self._api_response_handler
 
     @api_response_handler.setter
@@ -96,10 +110,12 @@ class SdkServiceRequest:
             self._headers[header_key] = value
 
     def add_headers(self, header_dict: dict, overwrite=True):
-        for k, v in header_dict.items():
-            self.add_header(k, v, overwrite)
+        for key, value in header_dict.items():
+            self.add_header(key, value, overwrite)
 
 
+# pylint: disable=too-few-public-methods
 class SavaDatasetResponse(SdkServiceResponse):
+    """Define class representing a save dataset api call response."""
     dataset_id: str = None
     save_path: str = None

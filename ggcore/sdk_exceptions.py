@@ -1,14 +1,17 @@
+"""Define sdk exception classes."""
+
+
 class SdkException(Exception):
-    """Top level custom sdk exception"""
+    """Define top level custom sdk exception."""
 
 
 class SdkInvalidClient(SdkException):
-    """The client requested is invalid"""
+    """Define exception for when the client requested is invalid."""
 
 
 class SdkAuthTypeException(SdkException):
-    """Tried using an invalid auth type"""
+    """Define exception for when an invalid auth type is used."""
 
 
 class SdkInvalidConfigKey(SdkException):
-    """Tried referencing an invalid config key"""
+    """Define exception for when invalid config key is referenced."""

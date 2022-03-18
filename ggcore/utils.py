@@ -1,13 +1,15 @@
+"""Define util constants and enums."""
+
 import enum
 
-"""GG MODULE CLIENTS"""
+# GG MODULE CLIENTS
 CONFIG = 'config'
 SECURITY = 'security'
 NLP = 'nlp'
 
 SUPPORTED_CLIENTS = [CONFIG, SECURITY, NLP, ]
 
-"""HTTP METHODS"""
+# HTTP METHODS
 POST = "post"
 GET = "get"
 PUT = "put"
@@ -20,18 +22,19 @@ TRACE = "trace"
 
 
 class HttpMethod(enum.Enum):
-    post = POST
-    get = GET
-    put = PUT
-    delete = DELETE
-    patch = PATCH
-    options = OPTIONS
-    connect = CONNECT
-    head = HEAD
-    trace = TRACE
+    """Define HTTP methods."""
+    POST = POST
+    GET = GET
+    PUT = PUT
+    DELETE = DELETE
+    PATCH = PATCH
+    OPTIONS = OPTIONS
+    CONNECT = CONNECT
+    HEAD = HEAD
+    TRACE = TRACE
 
 
-"""SECURITY"""
+# SECURITY
 AUTH_HEADER_KEY = "Authorization"
 BASIC_HEADER_KEY = "Basic"
 BEARER_HEADER_KEY = "Bearer"
@@ -46,5 +49,6 @@ CONTENT_TYPE_APP_JSON = "application/json"
 
 
 class RequestAuthType(enum.Enum):
+    """Define auth type keys."""
     BASIC = BASIC_HEADER_KEY
     BEARER = BEARER_HEADER_KEY
