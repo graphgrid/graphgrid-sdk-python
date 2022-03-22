@@ -128,3 +128,9 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
+
+    def promote_model(self, model_name: str, nlp_task: str, environment: str):
+        """Return promote model sdk call."""
+        api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        return self.make_request(sdk_request)

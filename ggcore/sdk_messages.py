@@ -121,6 +121,13 @@ class SavaDatasetResponse(SdkServiceResponse):
     save_path: str = None
 
 
+class PromoteModelResponse(SdkServiceResponse):
+    """Define class representing a promote model api call response."""
+    model_name: str
+    task: str
+    param_key: str
+
+
 class PropertySource:
     """Define class representing a source of name/value property pairs."""
     def __init__(self, name: str, source: typing.Dict[typing.Any, typing.Any]):
