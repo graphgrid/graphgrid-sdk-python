@@ -122,7 +122,7 @@ class SavaDatasetResponse(SdkServiceResponse):
 
 
 class PropertySource:
-    """Define class representing a source of name/value property pairs"""
+    """Define class representing a source of name/value property pairs."""
     def __init__(self, name: str, source: typing.Dict[typing.Any, typing.Any]):
         self.name = name
         self.source = source
@@ -130,7 +130,7 @@ class PropertySource:
 
 # pylint: disable=too-many-arguments
 class GetDataResponse(SdkServiceResponse):
-    """Define class representing the enviornment response from get data"""
+    """Define class representing the enviornment response from get data."""
     def __init__(self, name: str, profiles: typing.List[str], label: str,
                  property_sources: typing.List[PropertySource], version: str,
                  state: str):
