@@ -38,3 +38,14 @@ class GraphGridSdk:
             exists (default=False)
         """
         self._core.save_dataset(data_generator, dataset_id, overwrite)
+
+    def get_data(self, module: str,
+                 profiles: typing.Union[str, typing.List[str]],
+                 revision: str):
+        """Call get data api.
+
+        :param module: Name of the module for the spring param path, e.g., nlp
+        :param profiles: List or string for the module's profile, e.g., test
+        :param revision: The revision for the associated param path, e.g., 2.0
+        """
+        return self._core.get_data(module, profiles, revision)

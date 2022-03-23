@@ -110,6 +110,14 @@ class ConfigClient(SecurityClientBase):
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
         return self.make_request(sdk_request)
 
+    def get_data(self, module: str,
+                 profiles: typing.Union[str, typing.List[str]],
+                 revision: str):
+        """Return get data sdk call."""
+        api_call = ConfigApi.get_data_api(module, profiles, revision)
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        return self.make_request(sdk_request)
+
 
 class NlpClient(SecurityClientBase):
     """Define NlpClient to hold the nlp sdk calls."""
