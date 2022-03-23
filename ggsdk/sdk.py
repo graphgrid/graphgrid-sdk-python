@@ -4,7 +4,7 @@ import json
 
 from ggcore.config import SdkBootstrapConfig
 from ggcore.core import SdkCore
-from ggcore.sdk_messages import EnvironmentResponse
+from ggcore.sdk_messages import GetDataResponse
 
 
 class GraphGridSdk:
@@ -50,6 +50,4 @@ class GraphGridSdk:
         :param profiles: List or string for the module's profile, e.g., test
         :param revision: The revision for the associated param path, e.g., 2.0
         """
-        return EnvironmentResponse(**json.loads(
-            self._core.get_data(module, profiles, revision).response.replace(
-                "propertySources", "property_sources")))
+        return self._core.get_data(module, profiles, revision)

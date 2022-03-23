@@ -3,7 +3,8 @@ import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
+from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
+    GetDataResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -102,6 +103,11 @@ class ConfigApi(ApiGroup):
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return GetDataResponse(**json.loads(
+                sdk_response.response.replace("propertySources",
+                                              "property_sources")))
 
 
 class SecurityApi(ApiGroup):

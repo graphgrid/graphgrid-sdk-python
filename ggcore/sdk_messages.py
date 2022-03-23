@@ -129,7 +129,7 @@ class PropertySource:
 
 
 # pylint: disable=too-many-arguments
-class EnvironmentResponse(SdkServiceResponse):
+class GetDataResponse(SdkServiceResponse):
     """Define class representing the enviornment response from get data"""
     def __init__(self, name: str, profiles: typing.List[str], label: str,
                  property_sources: typing.List[PropertySource], version: str,
