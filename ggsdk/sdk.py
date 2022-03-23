@@ -41,7 +41,8 @@ class GraphGridSdk:
         """
         self._core.save_dataset(data_generator, dataset_id, overwrite)
 
-    def promote_model(self, model_name: str, nlp_task: str, environment: str):
+    def promote_model(self, model_name: str, nlp_task: str,
+                      environment: str = "default"):
         """Call promote model api.
 
         :param model_name: Name of the model to promote within cloud storage
