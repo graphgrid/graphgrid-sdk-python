@@ -34,9 +34,9 @@ class GraphGridSdk:
                      overwrite=False):
         """Call save dataset api.
 
-        @param: data_generator  The generator providing dataset lines
-        @param: dataset_id  Name/id for the dataset (default=None)
-        @param: overwrite   Whether to overwrite the dataset if it already
+        :param data_generator:  The generator providing dataset lines
+        :param dataset_id:  Name/id for the dataset (default=None)
+        :param overwrite:   Whether to overwrite the dataset if it already
             exists (default=False)
         """
         self._core.save_dataset(data_generator, dataset_id, overwrite)
