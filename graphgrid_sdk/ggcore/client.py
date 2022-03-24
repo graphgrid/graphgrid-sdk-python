@@ -2,14 +2,15 @@
 
 import typing
 
-from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
-    AbstractApi
-from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
-from ggcore.http_base import SdkHttpClient
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
-from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.session import TokenFactory
-from ggcore.utils import DOCKER_NGINX_PORT
+from graphgrid_sdk.ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, \
+    ConfigApi, AbstractApi
+from graphgrid_sdk.ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
+from graphgrid_sdk.ggcore.http_base import SdkHttpClient
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
+    SdkServiceRequest
+from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
+from graphgrid_sdk.ggcore.session import TokenFactory
+from graphgrid_sdk.ggcore.utils import DOCKER_NGINX_PORT
 
 
 # pylint: disable=too-few-public-methods

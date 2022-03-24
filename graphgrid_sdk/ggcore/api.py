@@ -3,10 +3,10 @@ import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse, TestApiResponse, SaveDatasetResponse
-from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
-    GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
+    SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse
+from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
+    GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
 
 

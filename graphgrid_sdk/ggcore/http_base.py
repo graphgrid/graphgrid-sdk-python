@@ -1,8 +1,8 @@
 """Define classes for building, executing, processing http requests."""
 import requests
 
-from ggcore.sdk_messages import SdkServiceRequest
-from ggcore.sdk_messages import SdkServiceResponse
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse
 
 
 class SdkHttpClient:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import requests
 
-from ggcore.utils import HttpMethod
+from graphgrid_sdk.ggcore.utils import HttpMethod
 
 
 @dataclass

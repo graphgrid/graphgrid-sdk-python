@@ -1,7 +1,7 @@
 """Define tests around the security base and auth header creation."""
 
-from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.utils import AUTH_HEADER_KEY
+from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
+from graphgrid_sdk.ggcore.utils import AUTH_HEADER_KEY
 from tests.test_base import TestBootstrapBase
 
 

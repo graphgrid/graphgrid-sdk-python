@@ -3,9 +3,10 @@
 import typing
 from dataclasses import dataclass
 
-from ggcore import sdk_exceptions
-from ggcore.client import ConfigClient, SecurityClient, NlpClient, ClientBase
-from ggcore.utils import CONFIG, SECURITY, NLP
+from graphgrid_sdk.ggcore import sdk_exceptions
+from graphgrid_sdk.ggcore.client import ConfigClient, SecurityClient, \
+    NlpClient, ClientBase
+from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP
 
 
 # todo remove this file? could be used in the future, but currently unused
