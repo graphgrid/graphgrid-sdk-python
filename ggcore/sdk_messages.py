@@ -119,3 +119,25 @@ class SavaDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
     dataset_id: str = None
     save_path: str = None
+
+
+class PropertySource:
+    """Define class representing a source of name/value property pairs."""
+    def __init__(self, name: str, source: typing.Dict[typing.Any, typing.Any]):
+        self.name = name
+        self.source = source
+
+
+# pylint: disable=too-many-arguments
+class GetDataResponse(SdkServiceResponse):
+    """Define class representing the enviornment response from get data."""
+    def __init__(self, name: str, profiles: typing.List[str], label: str,
+                 property_sources: typing.List[PropertySource], version: str,
+                 state: str):
+        self.name = name
+        self.profiles = profiles
+        self.label = label
+        self.property_sources = [PropertySource(**property_source) for
+                                 property_source in property_sources]
+        self.version = version
+        self.state = state

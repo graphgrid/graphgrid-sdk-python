@@ -3,7 +3,8 @@ import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
+from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
+    GetDataResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -61,9 +62,11 @@ class ConfigApi(ApiGroup):
         return cls.TestApi()
 
     @classmethod
-    def get_data_api(cls):
+    def get_data_api(cls, module: str,
+                     profiles: typing.Union[str, typing.List[str]],
+                     revision: str):
         """Return get data api."""
-        return cls.GetDataApi()
+        return cls.GetDataApi(module, profiles, revision)
 
     class TestApi(AbstractApi):
         """Define TestApi api."""
@@ -79,15 +82,32 @@ class ConfigApi(ApiGroup):
 
     class GetDataApi(AbstractApi):
         """Define GetDataApi api."""
+        _module: str
+        _profiles: typing.Union[str, typing.List[str]]
+        _revision: str
+
+        def __init__(self, module: str,
+                     profiles: typing.Union[str, typing.List[str]],
+                     revision: str):
+            self._module = module
+            self._profiles = profiles
+            self._profiles = ",".join(self._profiles) if isinstance(
+                self._profiles, list) else self._profiles
+            self._revision = revision
 
         def api_base(self) -> str:
             return CONFIG
 
         def endpoint(self):
-            return "data"
+            return f"data/{self._module}/{self._profiles}/{self._revision}"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return GetDataResponse(**json.loads(
+                sdk_response.response.replace("propertySources",
+                                              "property_sources")))
 
 
 class SecurityApi(ApiGroup):

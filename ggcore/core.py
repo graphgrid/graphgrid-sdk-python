@@ -35,3 +35,9 @@ class SdkCore:
         return self._nlp_client.save_dataset(generator=generator,
                                              dataset_id=dataset_id,
                                              overwrite=overwrite)
+
+    def get_data(self, module: str,
+                 profiles: typing.Union[str, typing.List[str]],
+                 revision: str):
+        """Execute get data call."""
+        return self._config_client.get_data(module, profiles, revision)
