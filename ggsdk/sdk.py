@@ -34,12 +34,22 @@ class GraphGridSdk:
                      overwrite=False):
         """Call save dataset api.
 
-        @param: data_generator  The generator providing dataset lines
-        @param: dataset_id  Name/id for the dataset (default=None)
-        @param: overwrite   Whether to overwrite the dataset if it already
+        :param data_generator:  The generator providing dataset lines
+        :param dataset_id:  Name/id for the dataset (default=None)
+        :param overwrite:   Whether to overwrite the dataset if it already
             exists (default=False)
         """
         self._core.save_dataset(data_generator, dataset_id, overwrite)
+
+    def promote_model(self, model_name: str, nlp_task: str,
+                      environment: str = "default"):
+        """Call promote model api.
+
+        :param model_name: Name of the model to promote within cloud storage
+        :param nlp_task: The associated NLP task for the given model
+        :param environment: The config environment of the param to persist
+        """
+        self._core.promote_model(model_name, nlp_task, environment)
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],

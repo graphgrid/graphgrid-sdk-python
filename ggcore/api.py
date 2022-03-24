@@ -153,6 +153,12 @@ class NlpApi(ApiGroup):
         """Return save dataset api."""
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
+    @classmethod
+    def promote_model_api(cls, model_name: str, nlp_task: str,
+                          environment: str):
+        """Return promote model api."""
+        return cls.PromoteModelApi(model_name, nlp_task, environment)
+
     @dataclass
     class SaveDatasetApi(AbstractApi):
         """Define SaveDatasetApi api."""
@@ -180,6 +186,30 @@ class NlpApi(ApiGroup):
 
         def body(self):
             return self._generator
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return sdk_response
+
+    @dataclass
+    class PromoteModelApi(AbstractApi):
+        """Define PromoteModelApi api."""
+        _model_name: str
+        _nlp_task: str
+        _environment: str
+
+        def __init__(self, model_name: str, nlp_task: str, environment: str):
+            self._model_name = model_name
+            self._nlp_task = nlp_task
+            self._environment = environment
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            return f"promoteModel/{self._environment}/{self._nlp_task}/{self._model_name}"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.POST
 
         def handler(self, sdk_response: SdkServiceResponse):
             return sdk_response
