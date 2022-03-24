@@ -1,6 +1,7 @@
 """Define classes for sdk service request/response objects."""
 
 import dataclasses
+import json
 import typing
 from dataclasses import dataclass
 
@@ -113,9 +114,20 @@ class SdkServiceRequest:
         for key, value in header_dict.items():
             self.add_header(key, value, overwrite)
 
+    def __eq__(self, other):
+        if isinstance(other, SdkServiceRequest):
+            return self._url == other._url \
+                   and self._headers == other._headers \
+                   and self._body == other._body \
+                   and self._api_endpoint == other._api_endpoint \
+                   and self._http_method == other._http_method \
+                   and self._query_params == other._query_params \
+                   and self._api_response_handler == self._api_response_handler
+        return False
+
 
 # pylint: disable=too-few-public-methods
-class SavaDatasetResponse(SdkServiceResponse):
+class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
     dataset_id: str = None
     save_path: str = None
@@ -130,6 +142,7 @@ class PromoteModelResponse(SdkServiceResponse):
 
 class PropertySource:
     """Define class representing a source of name/value property pairs."""
+
     def __init__(self, name: str, source: typing.Dict[typing.Any, typing.Any]):
         self.name = name
         self.source = source
@@ -138,6 +151,7 @@ class PropertySource:
 # pylint: disable=too-many-arguments
 class GetDataResponse(SdkServiceResponse):
     """Define class representing the enviornment response from get data."""
+
     def __init__(self, name: str, profiles: typing.List[str], label: str,
                  property_sources: typing.List[PropertySource], version: str,
                  state: str):
@@ -148,3 +162,17 @@ class GetDataResponse(SdkServiceResponse):
                                  property_source in property_sources]
         self.version = version
         self.state = state
+
+
+class TestApiResponse(SdkServiceResponse):
+    """Define class representing a test api call response."""
+    response_str: str = None
+
+    # better way to populate? will all responses have to do this?
+    def __init__(self, sdk_response: SdkServiceResponse):
+        self.response = sdk_response.response
+        self.status_text = sdk_response.status_text
+        self.status_code = sdk_response.status_code
+        self.exception = sdk_response.exception
+
+        self.response_str = json.loads(self.response)["content"]
