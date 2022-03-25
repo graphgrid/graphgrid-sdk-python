@@ -2,7 +2,8 @@
 
 import typing
 
-from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi
+from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
+    AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
@@ -18,16 +19,21 @@ class ClientBase:
     def __init__(self, bootstrap_config):
         self._bootstrap_config = bootstrap_config
 
+    # pylint: disable=no-self-use
     def make_request(self,
                      sdk_request: SdkServiceRequest) -> SdkServiceResponse:
-        """Define base make_request that all client calls pass through.
-        Constructs sdk request url then invokes the request.
-        """
-        # set sdk request url
-        sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_request.api_endpoint}'
-
+        """Define base make_request that all client calls pass through."""
         # invoke request
         return SdkHttpClient.invoke(sdk_request)
+
+    def build_sdk_request(self,
+                          api_def: AbstractApi) -> SdkServiceRequest:
+        """Define base build_sdk_request that all client calls pass through.
+        Sets the 'url' property of SdkServiceRequest based on bootstrap config.
+        """
+        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_def)
+        sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_request.api_endpoint}'
+        return sdk_request
 
 
 class SecurityClient(ClientBase):
@@ -45,7 +51,7 @@ class SecurityClient(ClientBase):
         """Build and execute request to get the security token, store the
         token result.
         """
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(
+        sdk_request = self.build_sdk_request(
             SecurityApi.get_token_api())
 
         auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
@@ -83,31 +89,29 @@ class SecurityClientBase(ClientBase):
         self._token_factory = TokenFactory(
             self._security_client.request_and_store_token)
 
-    def make_request(self,
-                     sdk_request: SdkServiceRequest) -> SdkServiceResponse:
-        """Define make_request that adds bearer auth headers for the sdk
-        request.
-        """
+    def build_sdk_request(self,
+                          api_def: AbstractApi) -> SdkServiceRequest:
+        sdk_request = super().build_sdk_request(api_def)
+
         # todo Add support for getting new token when the present one expires
         # very basic token management, gets token once then uses that
         if not self._security_client.is_token_present():
             # token not present, so get and store it
             self._token_factory.get_token_from_request()
 
-        # add token header to request
         sdk_request.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
             self._security_client.security_config))
 
-        return super().make_request(sdk_request)
+        return sdk_request
 
 
 class ConfigClient(SecurityClientBase):
     """Define ConfigClient to hold the config sdk calls."""
 
-    def test_api(self):
+    def test_api(self, test_message: str):
         """Return test api sdk call."""
-        api_call = ConfigApi.test_api()
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        api_call = ConfigApi.test_api(test_message)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
 
     def get_data(self, module: str,
@@ -115,7 +119,7 @@ class ConfigClient(SecurityClientBase):
                  revision: str):
         """Return get data sdk call."""
         api_call = ConfigApi.get_data_api(module, profiles, revision)
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
 
 
@@ -126,11 +130,11 @@ class NlpClient(SecurityClientBase):
                      overwrite: bool):
         """Return save dataset sdk call."""
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
 
     def promote_model(self, model_name: str, nlp_task: str, environment: str):
         """Return promote model sdk call."""
         api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)

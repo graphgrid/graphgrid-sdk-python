@@ -4,7 +4,7 @@ import typing
 from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse
+    GetDataResponse, TestApiResponse, SaveDatasetResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -57,9 +57,9 @@ class ConfigApi(ApiGroup):
     """Define grouping of Config api definitions."""
 
     @classmethod
-    def test_api(cls):
+    def test_api(cls, test_message: str = None):
         """Return test api."""
-        return cls.TestApi()
+        return cls.TestApi(test_message)
 
     @classmethod
     def get_data_api(cls, module: str,
@@ -70,6 +70,10 @@ class ConfigApi(ApiGroup):
 
     class TestApi(AbstractApi):
         """Define TestApi api."""
+        _test_message: str
+
+        def __init__(self, test_message):
+            self._test_message = test_message
 
         def api_base(self) -> str:
             return CONFIG
@@ -79,6 +83,9 @@ class ConfigApi(ApiGroup):
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return TestApiResponse(sdk_response)
 
     class GetDataApi(AbstractApi):
         """Define GetDataApi api."""
@@ -188,7 +195,12 @@ class NlpApi(ApiGroup):
             return self._generator
 
         def handler(self, sdk_response: SdkServiceResponse):
-            return sdk_response
+            loaded = json.loads(sdk_response.response)
+
+            sdr = SaveDatasetResponse()
+            sdr.save_path = loaded['path']
+            sdr.dataset_id = loaded['datasetId']
+            return sdr
 
     @dataclass
     class PromoteModelApi(AbstractApi):

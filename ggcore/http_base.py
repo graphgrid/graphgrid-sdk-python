@@ -19,7 +19,11 @@ class SdkHttpClient:
         sdk_response.response = http_response.content.decode()
 
         try:
+            # raise exception if one occurred
             http_response.raise_for_status()
+
+            # otherwise, set exception to None
+            sdk_response.exception = None
         except requests.RequestException as request_exception:
             sdk_response.exception = request_exception
 

@@ -1,10 +1,10 @@
 """Define user-facing GraphGrid SDK."""
 import typing
-import json
 
 from ggcore.config import SdkBootstrapConfig
 from ggcore.core import SdkCore
-from ggcore.sdk_messages import GetDataResponse
+from ggcore.sdk_messages import TestApiResponse, SaveDatasetResponse, \
+    GetDataResponse
 
 
 class GraphGridSdk:
@@ -24,14 +24,18 @@ class GraphGridSdk:
     def _setup_core(self):
         self._core = SdkCore(self._config)
 
-    def test_api(self):
-        """Call test api."""
-        return self._core.test_api()
+    def test_api(self,
+                 message: str = None) -> TestApiResponse:
+        """Call test api.
+
+        :param message:  The test message that is both send and received
+        """
+        return self._core.test_api(message)
 
     def save_dataset(self,
                      data_generator: typing.Generator,
                      dataset_id: str = None,
-                     overwrite=False):
+                     overwrite=False) -> SaveDatasetResponse:
         """Call save dataset api.
 
         :param data_generator:  The generator providing dataset lines
@@ -39,7 +43,7 @@ class GraphGridSdk:
         :param overwrite:   Whether to overwrite the dataset if it already
             exists (default=False)
         """
-        self._core.save_dataset(data_generator, dataset_id, overwrite)
+        return self._core.save_dataset(data_generator, dataset_id, overwrite)
 
     def promote_model(self, model_name: str, nlp_task: str,
                       environment: str = "default"):
@@ -53,7 +57,7 @@ class GraphGridSdk:
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],
-                 revision: str):
+                 revision: str) -> GetDataResponse:
         """Call get data api.
 
         :param module: Name of the module for the spring param path, e.g., nlp
