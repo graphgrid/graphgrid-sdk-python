@@ -4,7 +4,8 @@ import typing
 from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse, TestApiResponse, SaveDatasetResponse
+    GetDataResponse, TestApiResponse, SaveDatasetResponse, GetJobStatusApi, \
+    GetJobResultsApi
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -166,6 +167,16 @@ class NlpApi(ApiGroup):
         """Return promote model api."""
         return cls.PromoteModelApi(model_name, nlp_task, environment)
 
+    @classmethod
+    def get_job_results_api(cls, dag_id: str, dag_run_id: str):
+        """Return get job results sdk call."""
+        return cls.GetJobResultsApi(dag_id, dag_run_id)
+
+    @classmethod
+    def get_job_status_api(cls, dag_id: str, dag_run_id: str):
+        """Return get job results sdk call."""
+        return cls.GetJobStatusApi(dag_id, dag_run_id)
+
     @dataclass
     class SaveDatasetApi(AbstractApi):
         """Define SaveDatasetApi api."""
@@ -225,6 +236,69 @@ class NlpApi(ApiGroup):
 
         def handler(self, sdk_response: SdkServiceResponse):
             return sdk_response
+
+    @dataclass
+    class GetJobResultsApi(AbstractApi):
+        _dag_id: str
+        _dag_run_id: str
+
+        def __init__(self, dag_id: str, dag_run_id: str):
+            self._dag_id = dag_id
+            self._dag_run_id = dag_run_id
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            # todo
+            return f""
+
+        def body(self):
+            return {
+                "dag_id": self._dag_id,
+                "dag_run_id": self._dag_run_id
+            }
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.GET
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return GetJobResultsApi(**json.loads(
+                sdk_response.response.replace("dagId", "dag_id").replace(
+                    "dagRunId", "dag_run_id").replace("startDate",
+                                                      "start_date").replace(
+                    "endDate", "end_date")))
+
+    @dataclass
+    class GetJobStatusApi(AbstractApi):
+        _dag_id: str
+        _dag_run_id: str
+
+        def __init__(self, dag_id: str, dag_run_id: str):
+            self._dag_id = dag_id
+            self._dag_run_id = dag_run_id
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            # todo
+            return f""
+
+        def body(self):
+            return {
+                "dag_id": self._dag_id,
+                "dag_run_id": self._dag_run_id
+            }
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.GET
+
+        def handler(self, sdk_response: SdkServiceResponse):
+            return GetJobStatusApi(**json.loads(
+                sdk_response.response.replace("dagId", "dag_id").replace(
+                    "dagRunId", "dag_run_id").replace("startDate",
+                                                      "start_date")))
 
 
 class SdkRequestBuilder:

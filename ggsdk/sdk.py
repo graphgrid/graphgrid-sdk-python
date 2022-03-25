@@ -65,3 +65,19 @@ class GraphGridSdk:
         :param revision: The revision for the associated param path, e.g., 2.0
         """
         return self._core.get_data(module, profiles, revision)
+
+    def get_job_results(self, dag_id: str, dag_run_id: str):
+        """Call get job results api
+
+        :param dag_id: The name or id of the dag
+        :param dag_run_id: The unique id for the finished DAG run.
+        """
+        return self._core.get_job_results(dag_id, dag_run_id)
+
+    def get_job_status(self, dag_id: str, dag_run_id: str):
+        """Call get job status api
+
+        :param dag_id: The name or id of the dag
+        :param dag_run_id: The unique id for the finished DAG run.
+        """
+        return self._core.get_job_status(dag_id, dag_run_id)
