@@ -142,11 +142,11 @@ class NlpClient(SecurityClientBase):
     def get_job_results(self, dag_id: str, dag_run_id: str):
         """Return get job results sdk call."""
         api_call = NlpApi.get_job_results_api(dag_id, dag_run_id)
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
 
     def get_job_status(self, dag_id: str, dag_run_id: str):
         """Return get job status sdk call."""
         api_call = NlpApi.get_job_status_api(dag_id, dag_run_id)
-        sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_call)
+        sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
