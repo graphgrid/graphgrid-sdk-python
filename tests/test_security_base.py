@@ -12,7 +12,8 @@ class TestAuth(TestCase):
     _test_credentials = SdkSecurityConfig(
         SdkBootstrapConfig(access_key='a3847750f486bd931de26c6e683b1dc4',
                            secret_key='81a62cea53883f4a163a96355d47656e',
-                           url_base='localhost'),
+                           url_base='localhost',
+                           is_docker_context=False),
         "d04ce18b-24ba-4a49-b80a-cf3730f36908"
     )
 
