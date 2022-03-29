@@ -6,7 +6,7 @@ from ggcore.api import ConfigApi, AbstractApi
 from ggcore.client import ConfigClient
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.utils import HttpMethod
+from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
 from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase
 
 
@@ -110,6 +110,7 @@ class TestClientDockerContext(TestBootstrapDockerBase):
         # setup expected service request
         expected = SdkServiceRequest()
         expected.http_method = HttpMethod.GET
+        expected.docker_base = test_api.api_base()
         expected.api_endpoint = "config/this/is/a/test"
         expected.headers = AbstractApi().headers()
         expected.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
@@ -117,7 +118,8 @@ class TestClientDockerContext(TestBootstrapDockerBase):
         expected.query_params = {}
         expected.body = {}
         expected.api_response_handler = AbstractApi().handler
-        expected.url = f'http://{test_api.api_base()}/1.0/{expected.api_endpoint}'
+        expected.url = f'http://{test_api.api_base()}:{DOCKER_NGINX_PORT}' \
+                       f'/1.0/{expected.api_endpoint}'
 
         # build actual service request from api definition
         actual = config_client.build_sdk_request(test_api)

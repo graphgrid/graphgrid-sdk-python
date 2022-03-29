@@ -9,6 +9,7 @@ from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
+from ggcore.utils import DOCKER_NGINX_PORT
 
 
 # pylint: disable=too-few-public-methods
@@ -36,7 +37,9 @@ class ClientBase:
         if self._bootstrap_config.is_docker_context:
             # sdk running in docker context, set the host to be the same as
             # the api endpoint.
-            sdk_request.url = f'http://{sdk_request.docker_base}/1.0/{sdk_request.api_endpoint}'
+            sdk_request.url = f'http://{sdk_request.docker_base}' \
+                              f':{DOCKER_NGINX_PORT}' \
+                              f'/1.0/{sdk_request.api_endpoint}'
         else:
             # sdk running natively, set the host to be the static url base
             # passed in on init.
