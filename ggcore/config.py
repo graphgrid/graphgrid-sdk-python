@@ -19,6 +19,8 @@ class SdkBootstrapConfig:
     access_key: typing.AnyStr
     secret_key: typing.AnyStr
 
+    is_docker_context: typing.Optional[bool]
+
 
 # pylint: disable=too-few-public-methods
 class SdkSecurityConfig(SdkBootstrapConfig):
@@ -26,8 +28,10 @@ class SdkSecurityConfig(SdkBootstrapConfig):
     _token: typing.AnyStr = None
 
     def __init__(self, bootstrap_config: SdkBootstrapConfig, token=None):
-        super().__init__(bootstrap_config.url_base, bootstrap_config.access_key,
-                         bootstrap_config.secret_key)
+        super().__init__(bootstrap_config.url_base,
+                         bootstrap_config.access_key,
+                         bootstrap_config.secret_key,
+                         bootstrap_config.is_docker_context)
         self._token = token
 
     # pylint: disable=missing-function-docstring

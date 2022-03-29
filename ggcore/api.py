@@ -236,6 +236,7 @@ class SdkRequestBuilder:
         """Build partial sdk request from an api definition."""
         sdk_req = SdkServiceRequest()
 
+        sdk_req.docker_base = api_def.api_base()
         sdk_req.api_endpoint = f'{api_def.api_base()}/{api_def.endpoint()}'
         sdk_req.headers = api_def.headers()
         sdk_req.http_method = api_def.http_method()

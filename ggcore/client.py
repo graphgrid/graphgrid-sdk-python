@@ -32,7 +32,17 @@ class ClientBase:
         Sets the 'url' property of SdkServiceRequest based on bootstrap config.
         """
         sdk_request = SdkRequestBuilder.build_partial_sdk_request(api_def)
-        sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/{sdk_request.api_endpoint}'
+
+        if self._bootstrap_config.is_docker_context:
+            # sdk running in docker context, set the host to be the same as
+            # the api endpoint.
+            sdk_request.url = f'http://{sdk_request.docker_base}/1.0/{sdk_request.api_endpoint}'
+        else:
+            # sdk running natively, set the host to be the static url base
+            # passed in on init.
+            sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/' \
+                              f'{sdk_request.api_endpoint}'
+
         return sdk_request
 
 

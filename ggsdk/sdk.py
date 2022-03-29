@@ -16,9 +16,10 @@ class GraphGridSdk:
 
     # todo init so they can just pass in a config map instead of individual
     #  params like above?
-    def __init__(self, access_key, secret_access_key, url_base="localhost"):
+    def __init__(self, access_key, secret_access_key, url_base="localhost",
+                 is_docker_context=False):
         self._config = SdkBootstrapConfig(url_base, access_key,
-                                          secret_access_key)
+                                          secret_access_key, is_docker_context)
         self._setup_core()
 
     def _setup_core(self):
