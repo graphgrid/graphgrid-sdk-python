@@ -4,8 +4,8 @@ import typing
 from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse, TestApiResponse, SaveDatasetResponse, GetJobStatusApi, \
-    GetJobResultsApi
+    GetDataResponse, TestApiResponse, SaveDatasetResponse, \
+    GetJobStatusResponse, GetJobResultsResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -250,8 +250,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            # todo
-            return f""
+            return f"status/{self._dag_id}/{self._dag_run_id}"
 
         def body(self):
             return {
@@ -263,7 +262,7 @@ class NlpApi(ApiGroup):
             return HttpMethod.GET
 
         def handler(self, sdk_response: SdkServiceResponse):
-            return GetJobResultsApi(**json.loads(
+            return GetJobResultsResponse(**json.loads(
                 sdk_response.response.replace("dagId", "dag_id").replace(
                     "dagRunId", "dag_run_id").replace("startDate",
                                                       "start_date").replace(
@@ -282,8 +281,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            # todo
-            return f""
+            return f"status/{self._dag_id}/{self._dag_run_id}"
 
         def body(self):
             return {
@@ -295,10 +293,12 @@ class NlpApi(ApiGroup):
             return HttpMethod.GET
 
         def handler(self, sdk_response: SdkServiceResponse):
-            return GetJobStatusApi(**json.loads(
+            return GetJobStatusResponse(**json.loads(
                 sdk_response.response.replace("dagId", "dag_id").replace(
                     "dagRunId", "dag_run_id").replace("startDate",
-                                                      "start_date")))
+                                                      "start_date").replace(
+                    "statusText", "status_text").replace("statusCode",
+                                                         "status_code")))
 
 
 class SdkRequestBuilder:

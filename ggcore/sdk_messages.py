@@ -177,35 +177,21 @@ class TestApiResponse(SdkServiceResponse):
         self.response_str = json.loads(self.response)["content"]
 
 
-class GetJobStatusApi(SdkServiceResponse):
+@dataclass
+class GetJobStatusResponse(SdkServiceResponse):
     """Define class representing the get job status response"""
-    _dag_id: str
-    _dag_run_id: str
-    _start_date: str
-    _state: str
-
-    def __int__(self, dag_id: str, dag_run_id: str, start_date: str,
-                state: str):
-        self._dag_id = dag_id
-        self._dag_run_id = dag_run_id
-        self._start_date = start_date
-        self._state = state
+    dag_id: typing.Optional[str] = None
+    dag_run_id: typing.Optional[str] = None
+    start_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None
 
 
-class GetJobResultsApi(SdkServiceResponse):
+@dataclass
+class GetJobResultsResponse(SdkServiceResponse):
     """Define class representing the get job status response"""
-    _dag_id: str
-    _dag_run_id: str
-    _start_date: str
-    _end_date: str
-    _state: str
-    _save_location: str
-
-    def __int__(self, dag_id: str, dag_run_id: str, start_date: str,
-                end_date: str, state: str, save_location: str):
-        self._dag_id = dag_id
-        self._dag_run_id = dag_run_id
-        self._start_date = start_date
-        self._end_date = end_date
-        self._state = state
-        self._save_location = save_location
+    dag_id: typing.Optional[str] = None
+    dag_run_id: typing.Optional[str] = None
+    start_date: typing.Optional[str] = None
+    end_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    save_location: typing.Optional[str] = None
