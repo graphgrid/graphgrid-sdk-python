@@ -239,6 +239,7 @@ class NlpApi(ApiGroup):
 
     @dataclass
     class GetJobResultsApi(AbstractApi):
+        """Define GetJobResultsApi api."""
         _dag_id: str
         _dag_run_id: str
 
@@ -272,6 +273,7 @@ class NlpApi(ApiGroup):
 
     @dataclass
     class GetJobStatusApi(AbstractApi):
+        """Define GetJobStatusApi api."""
         _dag_id: str
         _dag_run_id: str
 
