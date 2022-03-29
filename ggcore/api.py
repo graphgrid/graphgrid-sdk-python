@@ -266,7 +266,9 @@ class NlpApi(ApiGroup):
                 sdk_response.response.replace("dagId", "dag_id").replace(
                     "dagRunId", "dag_run_id").replace("startDate",
                                                       "start_date").replace(
-                    "endDate", "end_date")))
+                    "endDate", "end_date").replace("statusText",
+                                                   "status_text").replace(
+                    "statusCode", "status_code")))
 
     @dataclass
     class GetJobStatusApi(AbstractApi):
