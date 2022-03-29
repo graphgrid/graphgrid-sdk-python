@@ -33,8 +33,7 @@ class SdkServiceRequest:
     #   Ex: 'http://localhost/1.0/security/oauth/token'
     _url: str
 
-
-    # Api base from the API definition
+    # Docker base used for the host address when in docker context.
     #   Ex: 'security'
     _docker_base: str
 

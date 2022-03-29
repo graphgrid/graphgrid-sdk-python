@@ -43,8 +43,8 @@ class ClientBase:
         else:
             # sdk running natively, set the host to be the static url base
             # passed in on init.
-            sdk_request.url = f'http://{self._bootstrap_config.url_base}/1.0/' \
-                              f'{sdk_request.api_endpoint}'
+            sdk_request.url = f'http://{self._bootstrap_config.url_base}' \
+                              f'/1.0/{sdk_request.api_endpoint}'
 
         return sdk_request
 
