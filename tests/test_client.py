@@ -1,12 +1,12 @@
 """Define test classes for testing client-level features."""
 from unittest.mock import patch
 
-import ggcore.http_base
-from ggcore.api import ConfigApi, AbstractApi
-from ggcore.client import ConfigClient
-from ggcore.sdk_messages import SdkServiceRequest
-from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
+from graphgrid_sdk import ggcore
+from graphgrid_sdk.ggcore.api import ConfigApi, AbstractApi
+from graphgrid_sdk.ggcore.client import ConfigClient
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest
+from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
+from graphgrid_sdk.ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
 from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase
 
 

@@ -1,7 +1,7 @@
 """Define test base classes used throughout the tests."""
 from unittest import TestCase
 
-from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
+from graphgrid_sdk.ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 
 
 class TestBootstrapBase(TestCase):
