@@ -33,6 +33,10 @@ class SdkServiceRequest:
     #   Ex: 'http://localhost/1.0/security/oauth/token'
     _url: str
 
+    # Docker base used for the host address when in docker context.
+    #   Ex: 'security'
+    _docker_base: str
+
     # Endpoint constructed from the API definition (AbstractApi#api_base +
     # AbstractApi#endpoint).
     #   Ex: 'security/oauth/token'
@@ -56,6 +60,14 @@ class SdkServiceRequest:
     @url.setter
     def url(self, value):
         self._url = value
+
+    @property
+    def docker_base(self):
+        return self._docker_base
+
+    @docker_base.setter
+    def docker_base(self, value):
+        self._docker_base = value
 
     @property
     def api_endpoint(self):
