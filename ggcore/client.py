@@ -6,8 +6,7 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetTokenResponse
+from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 from ggcore.utils import DOCKER_NGINX_PORT
@@ -72,12 +71,7 @@ class SecurityClient(ClientBase):
             self._security_config)
         sdk_request.headers.update(auth_basic_header)
 
-        get_token_response: GetTokenResponse = self.make_request(sdk_request)
-        token = get_token_response.access_token
-
-        self._security_config.token = token
-
-        return token
+        return self.make_request(sdk_request)
 
     def is_token_present(self):
         """Return true if token is present with the security config."""
@@ -108,12 +102,9 @@ class SecurityClientBase(ClientBase):
                           api_def: AbstractApi) -> SdkServiceRequest:
         sdk_request = super().build_sdk_request(api_def)
 
-        # todo Add support for getting new token when the present one expires
-        # very basic token management, gets token once then uses that
-
-        # todo what i think i want to push the logic for checking out of this and into the security client/session/tokenfactory itself
-        if not self._security_client.is_token_present():
-            # token not present, so get and store it
+        # token handling
+        if not self._token_factory.is_token_ready():
+            # token is not ready, request new token
             self._token_factory.call_for_request_token()
 
         sdk_request.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
