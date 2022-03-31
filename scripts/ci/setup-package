@@ -6,7 +6,7 @@ cd $1
 pypi_repo=$3
 local_dry_run=$4
 
-if [ "$local_dry_run" = true ] ; then
+if [ "$local_dry_run" = true ]; then
   bash $1/scripts/local/run-pypiserver &
   pypi_repo=local
 else
@@ -17,3 +17,7 @@ docker build -t sdk-package-image -f package.dockerfile .
 
 in_container_pypirc_path=/opt/graphgrid-sdk-python/pypirc/
 docker run --rm --net=host --name python-sdk-container --mount src=$2,target=$in_container_pypirc_path sdk-package-image $pypi_repo $local_dry_run "${in_container_pypirc_path}"
+
+if [ "$local_dry_run" = true ]; then
+  docker rm -f pypiserver
+fi
