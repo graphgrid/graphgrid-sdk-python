@@ -23,7 +23,10 @@ config_flag="--config-file $pypirc_path"
 
 python3 -m build
 python3 -m twine upload --verbose --non-interactive --repository $repo --disable-progress-bar $config_flag dist/*
+exit_code=$?
 
 if [ "$2" = true ]; then
   rm ~/.pypirc
 fi
+
+exit $exit_code
