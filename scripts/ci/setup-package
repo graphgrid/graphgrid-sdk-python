@@ -17,9 +17,9 @@ docker build -t sdk-package-image -f package.dockerfile .
 
 in_container_pypirc_path=/opt/graphgrid-sdk-python/.pypirc
 id=$(docker create --net=host --name python-sdk-container sdk-package-image $pypi_repo $local_dry_run $in_container_pypirc_path)
-if [ -f $3 ]; then
-  echo "Copying $3 into the package container"
-  docker cp $3 $id:/opt/graphgrid-sdk-python/.pypirc
+if [ -f $2 ]; then
+  echo "Copying $2 into the package container"
+  docker cp $2 $id:/opt/graphgrid-sdk-python/.pypirc
 fi
 
 docker start --attach $id
