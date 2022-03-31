@@ -8,6 +8,7 @@ pypirc_path=$3
 if [ "$2" = true ]; then
   repo=local
   repo_url=http://localhost:8080
+  pypirc_path=~/.pypirc
   echo "[distutils]" >> "${pypirc_path}"
   echo "index-servers =" >> "${pypirc_path}"
   echo "    local" >> "${pypirc_path}"
@@ -22,3 +23,6 @@ config_flag="--config-file $pypirc_path"
 
 python3 -m build
 python3 -m twine upload --non-interactive --repository $repo --disable-progress-bar $config_flag dist/*
+
+if [ "$2" = true ]; then
+  rm ~/.pypirc
