@@ -16,7 +16,7 @@ fi
 docker build -t sdk-package-image -f package.dockerfile .
 
 in_container_pypirc_path=/opt/graphgrid-sdk-python/pypirc
-docker run --rm --net=host --name python-sdk-container --mount src=$2,target=$in_container_pypirc_path sdk-package-image $pypi_repo $local_dry_run "${in_container_pypirc_path}/.pypirc"
+docker run --rm --net=host --name python-sdk-container -v $2:$in_container_pypirc_path sdk-package-image $pypi_repo $local_dry_run "${in_container_pypirc_path}/.pypirc"
 
 if [ "$local_dry_run" = true ]; then
   docker rm -f pypiserver
