@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from setuptools import setup, find_packages
 
 PACKAGE_NAME = "graphgrid-sdk-python"
@@ -26,7 +27,13 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     install_requires=[
+        "pytest==5.3.0",
+        "pytest-cov==2.10.0",
+        "pylint==2.7.4",
+        "coverage2clover==3.3.0",
         "requests~=2.27.1",
+        "responses==0.20.0",
+        "setuptools~=57.0.0",
     ],
     python_requires="!=3.9.*, >=3.6",
 )
