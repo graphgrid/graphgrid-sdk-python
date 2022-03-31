@@ -31,7 +31,7 @@ class TokenFactory:
     def __init__(self, token_supp):
         self._token_supplier = token_supp
 
-    def call_for_request_token(self):
+    def call_for_token(self):
         """Execute call to get a new token and populate the TokenTracker."""
         get_token_response = self._token_supplier()
 
