@@ -110,9 +110,11 @@ class SecurityClientBase(ClientBase):
 
         # todo Add support for getting new token when the present one expires
         # very basic token management, gets token once then uses that
+
+        # todo what i think i want to push the logic for checking out of this and into the security client/session/tokenfactory itself
         if not self._security_client.is_token_present():
             # token not present, so get and store it
-            self._token_factory.get_token_from_request()
+            self._token_factory.call_for_request_token()
 
         sdk_request.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
             self._security_client.security_config))
