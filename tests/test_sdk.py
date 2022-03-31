@@ -22,7 +22,7 @@ class TestSdkTestApi(TestSdkBase):
     @responses.activate  # mock responses
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
     def test_sdk_call__test_api__200(self, mock_get_auth_value,
                                      mock_is_token_present):

@@ -20,7 +20,7 @@ class TestClientSdkRequestBuilding(TestClientBase):
     # pylint: disable=unused-argument
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
     def test_client_feature__build_sdk_request__test_api(self,
                                                          mock_get_auth_value,
@@ -94,7 +94,7 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     # pylint: disable=unused-argument
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
     def test_client_feature__is_docker_context(self, mock_get_auth_value,
                                                mock_is_token_present):
