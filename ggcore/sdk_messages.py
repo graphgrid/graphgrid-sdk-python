@@ -1,27 +1,54 @@
 """Define classes for sdk service request/response objects."""
 
-import dataclasses
 import json
 import typing
-from dataclasses import dataclass
 
 import requests
 
 from ggcore.utils import HttpMethod
 
 
-@dataclass
+# pylint: disable=too-few-public-methods
+class SdkResponseHelper:
+    """Define helper class that serves as an inbetween for HTTP responses and
+    SdkServiceResponses.
+    """
+    status_code: int
+    status_text: str
+    response: str
+    exception: requests.RequestException
+
+    def __init__(self, status_code=None, status_text=None, response=None,
+                 exception=None):
+        self.status_code = status_code
+        self.status_text = status_text
+        self.response = response
+        self.exception = exception
+
+
+# pylint: disable=too-few-public-methods
 class SdkServiceResponse:
     """Define base class representing sdk service response."""
 
-    status_code: int = typing.Optional[int]
-    status_text: str = typing.Optional[str]
+    status_code: typing.Optional[int] = None
+    status_text: typing.Optional[str] = None
+    response: typing.Optional[str] = None
+    exception: typing.Optional[requests.RequestException] = None
 
-    # is a str response here OK or does this need to be more generic/different?
-    response: str = dataclasses.field(default_factory=str)
+    def __init__(self, sdk_response_obj: SdkResponseHelper):
+        """Define method to init these base fields from SdkResponseHelper."""
+        self.response = sdk_response_obj.response
+        self.status_text = sdk_response_obj.status_text
+        self.status_code = sdk_response_obj.status_code
+        self.exception = sdk_response_obj.exception
 
-    exception: requests.RequestException = typing.Optional[
-        requests.RequestException]
+    def __eq__(self, other):
+        if isinstance(other, SdkServiceResponse):
+            return self.response == other.response \
+                   and self.status_code == other.status_code \
+                   and self.status_text == other.status_text \
+                   and self.exception == other.exception
+        return False
 
 
 # pylint: disable=too-many-instance-attributes
@@ -50,7 +77,8 @@ class SdkServiceRequest:
     _body: dict = {}
 
     # default handler returns the SdkServiceResponse
-    _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] \
+    _api_response_handler: typing.Callable[
+        [SdkResponseHelper], SdkServiceResponse] \
         = lambda x: x
 
     @property
@@ -110,8 +138,8 @@ class SdkServiceRequest:
         self._query_params = value
 
     @property
-    def api_response_handler(self) -> typing.Callable[[SdkServiceResponse],
-                                                      typing.Any]:
+    def api_response_handler(self) -> typing.Callable[[SdkResponseHelper],
+                                                      SdkServiceResponse]:
         return self._api_response_handler
 
     @api_response_handler.setter
@@ -144,12 +172,27 @@ class SaveDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
     save_path: str = None
 
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)
+
+        loaded = json.loads(sdk_response.response)
+        self.save_path = loaded['path']
+        self.dataset_id = loaded['datasetId']
+
 
 class PromoteModelResponse(SdkServiceResponse):
     """Define class representing a promote model api call response."""
     model_name: str
     task: str
     param_key: str
+
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)
+
+        loaded = json.loads(sdk_response.response)
+        self.model_name = loaded['modelName']
+        self.task = loaded['task']
+        self.param_key = loaded['paramKey']
 
 
 class PropertySource:
@@ -162,29 +205,44 @@ class PropertySource:
 
 # pylint: disable=too-many-arguments
 class GetDataResponse(SdkServiceResponse):
-    """Define class representing the enviornment response from get data."""
+    """Define class representing the environment response from get data."""
 
-    def __init__(self, name: str, profiles: typing.List[str], label: str,
-                 property_sources: typing.List[PropertySource], version: str,
-                 state: str):
-        self.name = name
-        self.profiles = profiles
-        self.label = label
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)
+
+        loaded = json.loads(sdk_response.response)
+        self.name = loaded["name"]
+        self.profiles = loaded["profiles"]
+        self.label = loaded["label"]
         self.property_sources = [PropertySource(**property_source) for
-                                 property_source in property_sources]
-        self.version = version
-        self.state = state
+                                 property_source in loaded["propertySources"]]
+        self.version = loaded["version"]
+        self.state = loaded["state"]
 
 
 class TestApiResponse(SdkServiceResponse):
     """Define class representing a test api call response."""
     response_str: str = None
 
-    # better way to populate? will all responses have to do this?
-    def __init__(self, sdk_response: SdkServiceResponse):
-        self.response = sdk_response.response
-        self.status_text = sdk_response.status_text
-        self.status_code = sdk_response.status_code
-        self.exception = sdk_response.exception
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)
 
-        self.response_str = json.loads(self.response)["content"]
+        loaded = json.loads(sdk_response.response)
+        self.response_str = loaded['content']
+
+
+class GetTokenResponse(SdkServiceResponse):
+    """Define class representing a token call response."""
+    access_token: str
+    token_type: str
+    expires_in: str
+    created_at: str
+
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)
+
+        loaded = json.loads(sdk_response.response)
+        self.access_token = loaded['access_token']
+        self.token_type = loaded['token_type']
+        self.expires_in = loaded['expires_in']
+        self.created_at = loaded['createdAt']

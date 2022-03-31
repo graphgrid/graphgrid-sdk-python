@@ -7,7 +7,7 @@ import responses
 import ggcore
 import ggsdk.sdk
 from ggcore.api import ConfigApi
-from ggcore.sdk_messages import TestApiResponse, SdkServiceResponse
+from ggcore.sdk_messages import TestApiResponse, SdkResponseHelper
 from tests.test_base import TestBootstrapBase
 
 
@@ -52,7 +52,7 @@ class TestSdkTestApi(TestSdkBase):
 
         # setup expected TestApiResponse obj
         expected_response = TestApiResponse(
-            SdkServiceResponse(200, "OK", json.dumps(json_body), None))
+            SdkResponseHelper(200, "OK", json.dumps(json_body), None))
 
         # call sdk method for test api
         actual_response: TestApiResponse = sdk.test_api(expected_message)

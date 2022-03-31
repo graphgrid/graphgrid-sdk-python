@@ -1,8 +1,7 @@
 """Define classes for building, executing, processing http requests."""
 import requests
 
-from ggcore.sdk_messages import SdkServiceRequest
-from ggcore.sdk_messages import SdkServiceResponse
+from ggcore.sdk_messages import SdkServiceRequest, SdkResponseHelper
 
 
 class SdkHttpClient:
@@ -11,7 +10,7 @@ class SdkHttpClient:
     @classmethod
     def http_response_to_sdk_response(cls, http_response: requests.Response):
         """Build an SdkServiceResponse from the http response."""
-        sdk_response = SdkServiceResponse()
+        sdk_response = SdkResponseHelper()
 
         sdk_response.status_code = http_response.status_code
 
@@ -32,7 +31,7 @@ class SdkHttpClient:
 
     @classmethod
     def execute_request(cls,
-                        sdk_request: SdkServiceRequest) -> SdkServiceResponse:
+                        sdk_request: SdkServiceRequest) -> SdkResponseHelper:
         """Build and execute http request."""
         http_response: requests.Response = requests.request(
             method=sdk_request.http_method.value,
@@ -41,7 +40,7 @@ class SdkHttpClient:
             data=sdk_request.body,
             headers=sdk_request.headers)
 
-        sdk_response: SdkServiceResponse = cls.http_response_to_sdk_response(
+        sdk_response: SdkResponseHelper = cls.http_response_to_sdk_response(
             http_response)
         return sdk_response
 

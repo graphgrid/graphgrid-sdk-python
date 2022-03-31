@@ -1,10 +1,10 @@
 """Define api related classes for the sdk."""
-import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse, TestApiResponse, SaveDatasetResponse
+from ggcore.sdk_messages import SdkServiceRequest, \
+    GetDataResponse, TestApiResponse, SaveDatasetResponse, GetTokenResponse, \
+    SdkResponseHelper, PromoteModelResponse, SdkServiceResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT
@@ -48,9 +48,10 @@ class AbstractApi:
         return {}  # overrides provide api-specific body
 
     # pylint: disable=no-self-use
-    def handler(self, sdk_response: SdkServiceResponse):
+    def handler(self, sdk_response: SdkResponseHelper):
         """Handle the sdk response."""
-        return sdk_response  # default handler returns entire SdkServiceResponse
+        # default handler returns entire SdkResponseHelper
+        return SdkServiceResponse(sdk_response)
 
 
 class ConfigApi(ApiGroup):
@@ -84,7 +85,7 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
+        def handler(self, sdk_response: SdkResponseHelper):
             return TestApiResponse(sdk_response)
 
     class GetDataApi(AbstractApi):
@@ -111,10 +112,8 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return GetDataResponse(**json.loads(
-                sdk_response.response.replace("propertySources",
-                                              "property_sources")))
+        def handler(self, sdk_response: SdkResponseHelper):
+            return GetDataResponse(sdk_response)
 
 
 class SecurityApi(ApiGroup):
@@ -140,15 +139,13 @@ class SecurityApi(ApiGroup):
         def query_params(self) -> dict:
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
 
-        def handler(self, sdk_response: SdkServiceResponse):
+        def handler(self, sdk_response: SdkResponseHelper):
             # todo how does this handler play into the token tracking?
             if sdk_response.status_code != 200:
                 raise RuntimeError(
                     f'Unable to get security token. Response: "{sdk_response.response}"')
 
-            # parse response
-            json_acceptable_string = sdk_response.response.replace("'", "\"")
-            return json.loads(json_acceptable_string)["access_token"]
+            return GetTokenResponse(sdk_response)
 
 
 class NlpApi(ApiGroup):
@@ -194,13 +191,8 @@ class NlpApi(ApiGroup):
         def body(self):
             return self._generator
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            loaded = json.loads(sdk_response.response)
-
-            sdr = SaveDatasetResponse()
-            sdr.save_path = loaded['path']
-            sdr.dataset_id = loaded['datasetId']
-            return sdr
+        def handler(self, sdk_response: SdkResponseHelper):
+            return SaveDatasetResponse(sdk_response)
 
     @dataclass
     class PromoteModelApi(AbstractApi):
@@ -223,8 +215,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return sdk_response
+        def handler(self, sdk_response: SdkResponseHelper):
+            return PromoteModelResponse(sdk_response)
 
 
 class SdkRequestBuilder:

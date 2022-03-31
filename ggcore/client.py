@@ -6,7 +6,8 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
+from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
+    GetTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 from ggcore.utils import DOCKER_NGINX_PORT
@@ -71,7 +72,8 @@ class SecurityClient(ClientBase):
             self._security_config)
         sdk_request.headers.update(auth_basic_header)
 
-        token = self.make_request(sdk_request)
+        get_token_response: GetTokenResponse = self.make_request(sdk_request)
+        token = get_token_response.access_token
 
         self._security_config.token = token
 
