@@ -8,7 +8,6 @@ pypirc_path=$3
 if [ "$2" = true ]; then
   repo=local
   repo_url=http://localhost:8080
-  pypirc_path=~/.pypirc
   echo "[distutils]" >> "${pypirc_path}"
   echo "index-servers =" >> "${pypirc_path}"
   echo "    local" >> "${pypirc_path}"

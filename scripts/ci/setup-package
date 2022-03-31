@@ -15,8 +15,15 @@ fi
 
 docker build -t sdk-package-image -f package.dockerfile .
 
-in_container_pypirc_path=/opt/graphgrid-sdk-python/pypirc
-docker run --rm --net=host --name python-sdk-container -v $2:$in_container_pypirc_path sdk-package-image $pypi_repo $local_dry_run "${in_container_pypirc_path}/.pypirc"
+in_container_pypirc_path=/opt/graphgrid-sdk-python/.pypirc
+id=$(docker create --net=host --name python-sdk-container sdk-package-image $pypi_repo $local_dry_run $in_container_pypirc_path)
+if [ -f $3 ]; then
+  echo "Copying $3 into the package container"
+  docker cp $3 $id:/opt/graphgrid-sdk-python/.pypirc
+fi
+
+docker start --attach $id
+docker rm $id
 
 if [ "$local_dry_run" = true ]; then
   docker rm -f pypiserver
