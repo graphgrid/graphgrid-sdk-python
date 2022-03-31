@@ -26,3 +26,4 @@ python3 -m twine upload --non-interactive --repository $repo --disable-progress-
 
 if [ "$2" = true ]; then
   rm ~/.pypirc
+fi
