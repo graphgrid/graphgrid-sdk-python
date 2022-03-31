@@ -22,7 +22,7 @@ fi
 config_flag="--config-file $pypirc_path"
 
 python3 -m build
-python3 -m twine upload --non-interactive --repository $repo --disable-progress-bar $config_flag dist/*
+python3 -m twine upload --verbose --non-interactive --repository $repo --disable-progress-bar $config_flag dist/*
 
 if [ "$2" = true ]; then
   rm ~/.pypirc
