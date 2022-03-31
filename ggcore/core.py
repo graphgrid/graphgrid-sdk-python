@@ -55,3 +55,7 @@ class SdkCore:
     def get_job_status(self, dag_id: str, dag_run_id: str):
         """Execute get job status call."""
         return self._nlp_client.get_job_status(dag_id, dag_run_id)
+
+    def job_train(self, request_body, dag_id: str):
+        """Execute get job train call."""
+        return self._nlp_client.job_train(request_body, dag_id)

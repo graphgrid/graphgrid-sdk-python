@@ -195,3 +195,11 @@ class GetJobResultsResponse(SdkServiceResponse):
     end_date: typing.Optional[str] = None
     state: typing.Optional[str] = None
     save_location: typing.Optional[str] = None
+
+
+@dataclass
+class JobTrainResponse(SdkServiceResponse):
+    """Define class representing the job train response"""
+    dag_run_id: typing.Optional[str] = None
+    logical_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None

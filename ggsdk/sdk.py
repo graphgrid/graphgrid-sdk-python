@@ -81,3 +81,11 @@ class GraphGridSdk:
         :param dag_run_id: The unique id for the finished DAG run.
         """
         return self._core.get_job_status(dag_id, dag_run_id)
+
+    def job_train(self, request_body, dag_id: str):
+        """Call job train api
+
+        :param request_body: Config values to be used in DAG run.
+        :param dag_id: The name or id of the dag.
+        """
+        return self._core.job_train(request_body, dag_id)
