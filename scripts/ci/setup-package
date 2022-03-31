@@ -23,8 +23,11 @@ if [ -f $3 ]; then
 fi
 
 docker start --attach $id
+exit_code=$(docker inspect $id --format='{{.State.ExitCode}}')
 docker rm $id
 
 if [ "$local_dry_run" = true ]; then
   docker rm -f pypiserver
 fi
+
+exit $exit_code
