@@ -151,7 +151,7 @@ class NlpClient(SecurityClientBase):
         sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
 
-    def job_train(self, request_body, dag_id: str):
+    def job_train(self, request_body: dict, dag_id: str):
         """Return job train sdk call."""
         api_call = NlpApi.job_train_api(request_body, dag_id)
         sdk_request = self.build_sdk_request(api_call)

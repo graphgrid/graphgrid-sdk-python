@@ -314,7 +314,7 @@ class NlpApi(ApiGroup):
         _request_body: dict
         _dag_id: str
 
-        def __init__(self, request_body, dag_id: str):
+        def __init__(self, request_body: dict, dag_id: str):
             self._request_body = request_body
             self._dag_id = dag_id
 
@@ -325,7 +325,7 @@ class NlpApi(ApiGroup):
             return f"train/{self._dag_id}"
 
         def body(self):
-            return self._request_body
+            return json.dumps(self._request_body)
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST

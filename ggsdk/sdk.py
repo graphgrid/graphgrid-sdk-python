@@ -82,7 +82,7 @@ class GraphGridSdk:
         """
         return self._core.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body, dag_id: str):
+    def job_train(self, request_body: dict, dag_id: str):
         """Call job train api
 
         :param request_body: Config values to be used in DAG run.
