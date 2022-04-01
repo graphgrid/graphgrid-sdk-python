@@ -45,5 +45,26 @@ class TestTokenFactory(TestBootstrapBase):
 
         assert False, "Token should be present after token_handling call."
 
-    def test_token_factory__expired_token(self):
+    def test_token_factory__expired_token__expiration_logic(self):
+        """Test expiration logic functions properly."""
+
+    @responses.activate
+    def test_token_factory__expired_token__get_new_token_after_expiry(self):
         """Test new token retrieved after current token expires."""
+
+        expiration_time_for_test_ms = 1_000  # expiration time in ms
+
+        security_client = SecurityClient(self._test_bootstrap_config)
+        token_factory = TokenFactory(security_client.request_and_store_token)
+
+        json_body = {"access_token": self.TEST_TOKEN,
+                     "token_type": RequestAuthType.BEARER.value,
+                     "expires_in": str(expiration_time_for_test_ms),  # cast?
+                     "createdAt": "2022-04-01T19:48:47.647Z"}
+
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json=json_body, status=200)
+
+        token_factory.token_handling()
