@@ -30,6 +30,7 @@ class TokenFactory:
 
     def __init__(self, token_supp):
         self._token_supplier = token_supp
+        self._token_tracker = None
 
     def call_for_token(self):
         """Execute call to get a new token and populate the TokenTracker."""
@@ -61,3 +62,11 @@ class TokenFactory:
     def is_token_ready(self):
         """Return whether the token is ready for use."""
         return self.is_token_present() and not self.is_token_expired()
+
+    def token_handling(self) -> TokenTracker:
+        """Return token"""
+        if not self.is_token_ready():
+            # token is not ready, request new token
+            self.call_for_token()
+
+        return self._token_tracker

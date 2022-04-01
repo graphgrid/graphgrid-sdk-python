@@ -103,9 +103,9 @@ class SecurityClientBase(ClientBase):
         sdk_request = super().build_sdk_request(api_def)
 
         # token handling
-        if not self._token_factory.is_token_ready():
-            # token is not ready, request new token
-            self._token_factory.call_for_token()
+        token_tracker = self._token_factory.token_handling()
+
+        self._security_client.security_config.token = token_tracker.token
 
         sdk_request.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
             self._security_client.security_config))
