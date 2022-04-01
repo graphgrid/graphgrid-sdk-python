@@ -10,7 +10,7 @@ with open(os.path.join(top_level_path, "README.md"), "r", encoding="utf-8") as f
 
 setup(
     name=PACKAGE_NAME,
-    version="2.0.0rc1",
+    version="2.0.0a1",
     packages=find_packages(),
     url="https://docs.graphgrid.com/2.0/#/",
     license="",
