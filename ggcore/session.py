@@ -26,11 +26,10 @@ class TokenFactory:
     """Define class to dynamically call for a token."""
     _token_supplier: typing.Callable[[], GetTokenResponse]
 
-    _token_tracker: TokenTracker
+    _token_tracker: TokenTracker = None
 
     def __init__(self, token_supp):
         self._token_supplier = token_supp
-        self._token_tracker = None
 
     def call_for_token(self):
         """Execute call to get a new token and populate the TokenTracker."""

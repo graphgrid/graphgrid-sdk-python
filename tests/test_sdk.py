@@ -8,7 +8,8 @@ import ggcore
 import ggsdk.sdk
 from ggcore.api import ConfigApi
 from ggcore.sdk_messages import TestApiResponse, SdkResponseHelper
-from tests.test_base import TestBootstrapBase
+from ggcore.session import TokenTracker
+from tests.test_base import TestBootstrapBase, TestBase
 
 
 class TestSdkBase(TestBootstrapBase):
@@ -18,12 +19,14 @@ class TestSdkBase(TestBootstrapBase):
 class TestSdkTestApi(TestSdkBase):
     """Define test class for TestApi sdk calls."""
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,duplicate-code
     @responses.activate  # mock responses
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
+                  return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_sdk_call__test_api__200(self, mock_get_auth_value,
                                      mock_is_token_present):
         """Test sdk TestApi call when response is 200 OK.

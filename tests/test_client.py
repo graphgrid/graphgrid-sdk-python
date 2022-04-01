@@ -1,4 +1,5 @@
 """Define test classes for testing client-level features."""
+# pylint: disable=duplicate-code
 from unittest.mock import patch
 
 import ggcore.http_base
@@ -6,8 +7,10 @@ from ggcore.api import ConfigApi, AbstractApi
 from ggcore.client import ConfigClient
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
+from ggcore.session import TokenTracker
 from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
-from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase
+from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase, \
+    TestBase
 
 
 class TestClientBase(TestBootstrapBase):
@@ -19,9 +22,11 @@ class TestClientSdkRequestBuilding(TestClientBase):
 
     # pylint: disable=unused-argument
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
+                  return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_client_feature__build_sdk_request__test_api(self,
                                                          mock_get_auth_value,
                                                          mock_is_token_present):
@@ -93,9 +98,11 @@ class TestClientDockerContext(TestBootstrapDockerBase):
 
     # pylint: disable=unused-argument
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
+                  return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
                   return_value="true")
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_client_feature__is_docker_context(self, mock_get_auth_value,
                                                mock_is_token_present):
         """Test that sdk requests built from the test docker base use the
