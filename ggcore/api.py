@@ -127,7 +127,8 @@ class SecurityApi(ApiGroup):
 
     @classmethod
     def check_token_api(cls, token: str):
-        return cls.CheckTokenApi()
+        """Return check token api."""
+        return cls.CheckTokenApi(token)
 
     class GetTokenApi(AbstractApi):
         """Define GetTokenApi api."""

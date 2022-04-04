@@ -21,4 +21,3 @@ class SdkBadOauthCredentials(SdkException):
     """Define exception for when the base client credentials for getting a
     token are invalid.
     """
-

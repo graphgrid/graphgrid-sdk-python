@@ -249,6 +249,7 @@ class GetTokenResponse(SdkServiceResponse):
             self.created_at = loaded['createdAt']
 
 
+# pylint: disable=useless-super-delegation
 class CheckTokenResponse(SdkServiceResponse):
     """Define class representing a check token call response."""
 
