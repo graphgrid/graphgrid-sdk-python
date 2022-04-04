@@ -45,9 +45,8 @@ class SdkHttpClient:
         return sdk_response
 
     @classmethod
-    def invoke(cls, sdk_request: SdkServiceRequest):
+    def invoke(cls, sdk_request: SdkServiceRequest) -> SdkResponseHelper:
         """Invoke the sdk request: execute the corresponding http request
-        and processing the response.
+        and return the SdkResponseHelper inbetween.
         """
-        sdk_response = cls.execute_request(sdk_request)
-        return sdk_request.api_response_handler(sdk_response)
+        return cls.execute_request(sdk_request)

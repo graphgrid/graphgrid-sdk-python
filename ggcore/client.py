@@ -6,7 +6,8 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest
+from ggcore.sdk_messages import SdkServiceRequest, \
+    SdkResponseHelper, CheckTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 from ggcore.utils import DOCKER_NGINX_PORT
@@ -22,7 +23,7 @@ class ClientBase:
 
     # pylint: disable=no-self-use
     def make_request(self,
-                     sdk_request: SdkServiceRequest) -> SdkServiceResponse:
+                     sdk_request: SdkServiceRequest) -> SdkResponseHelper:
         """Define base make_request that all client calls pass through."""
         # invoke request
         return SdkHttpClient.invoke(sdk_request)
@@ -71,11 +72,27 @@ class SecurityClient(ClientBase):
             self._security_config)
         sdk_request.headers.update(auth_basic_header)
 
-        return self.make_request(sdk_request)
+        sdk_response_helper = self.make_request(sdk_request)
+
+        return sdk_request.api_response_handler(sdk_response_helper)
 
     def is_token_present(self):
         """Return true if token is present with the security config."""
         return bool(self._security_config.token)
+
+    def check_token_builtin(self) -> CheckTokenResponse:
+        """Define method that runs a check token call."""
+        sdk_request = self.build_sdk_request(
+            SecurityApi.check_token_api(self.security_config.token))
+
+        auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
+            self._security_config)
+
+        sdk_request.headers.update(auth_basic_header)
+
+        sdk_response_helper = self.make_request(sdk_request)
+
+        return sdk_request.api_response_handler(sdk_response_helper)
 
     # pylint: disable=missing-function-docstring
     @property
@@ -112,6 +129,39 @@ class SecurityClientBase(ClientBase):
 
         return sdk_request
 
+    def call_api(self, api: AbstractApi):
+        """Define method that builds and makes SDK requests from an API
+        definition.
+        """
+        sdk_request = self.build_sdk_request(api)
+        sdk_response_helper = self.make_request(sdk_request)
+
+        # if the request returns a 401 Unauthorized then check token
+        # and possibly retry
+        if sdk_response_helper.status_code == 401:
+            # request hit a 401, call check token
+            check_token_response = self._security_client.check_token_builtin()
+
+            # token is valid, surface issue
+            if check_token_response.status_code == 200:
+                raise RuntimeError(
+                    f"Error: Request returned a '401 Unauthorized' but "
+                    f"check_token confirmed a valid token is being used. "
+                    f"Original response error '"
+                    f"{sdk_response_helper.response}'.")
+
+            # token is invalid, get token again and retry
+            if check_token_response.status_code == 400:
+                # call for a new token
+                self._token_factory.call_for_token()
+
+                # build new sdk request and make new request
+                sdk_request = self.build_sdk_request(api)
+                sdk_response_helper = self.make_request(sdk_request)
+
+        # custom handler call if response passes generic checks
+        return sdk_request.api_response_handler(sdk_response_helper)
+
 
 class ConfigClient(SecurityClientBase):
     """Define ConfigClient to hold the config sdk calls."""
@@ -119,16 +169,14 @@ class ConfigClient(SecurityClientBase):
     def test_api(self, test_message: str):
         """Return test api sdk call."""
         api_call = ConfigApi.test_api(test_message)
-        sdk_request = self.build_sdk_request(api_call)
-        return self.make_request(sdk_request)
+        return self.call_api(api_call)
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],
                  revision: str):
         """Return get data sdk call."""
         api_call = ConfigApi.get_data_api(module, profiles, revision)
-        sdk_request = self.build_sdk_request(api_call)
-        return self.make_request(sdk_request)
+        return self.call_api(api_call)
 
 
 class NlpClient(SecurityClientBase):
@@ -138,11 +186,9 @@ class NlpClient(SecurityClientBase):
                      overwrite: bool):
         """Return save dataset sdk call."""
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
-        sdk_request = self.build_sdk_request(api_call)
-        return self.make_request(sdk_request)
+        return self.call_api(api_call)
 
     def promote_model(self, model_name: str, nlp_task: str, environment: str):
         """Return promote model sdk call."""
         api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
-        sdk_request = self.build_sdk_request(api_call)
-        return self.make_request(sdk_request)
+        return self.call_api(api_call)
