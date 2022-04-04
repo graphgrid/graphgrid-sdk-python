@@ -73,20 +73,38 @@ class TestClientSdkRequestBuilding(TestClientBase):
         PromoteModelApi definition.
         """
 
+    def test_client_feature__build_sdk_request__check_token(self):
+        """Test client properly constructs check token sdk request from
+        CheckTokenApi definition.
+        """
 
-class TestClientGenericResponseHandling(TestClientBase):
+
+class TestClientResponseHandling(TestClientBase):
     """Define test class for grouping client-level generic response handling."""
 
-    def test_client_feature__generic_response_handling__500(self):
-        """Test built-in client ability to handle 500 Internal Server Error."""
+    def test_client_feature__call_api_handling__401_response__200_check_token(
+            self):
+        """Test built-in client ability to handle 401 Unauthorized. This test
+        is specifically when 401 Unauthorized leads to a 200 OK from a
+        check_token call.
 
-    def test_client_feature__generic_response_handling__401(self):
-        """Test built-in client ability to handle 401 Unauthorized.
+        Expected behavior pushes up the original error response along with a
+        message notifying the user the token was invalid even after getting a
+        new one.
+        """
 
-        This test covers:
-            (1) token handling grabs a new token after a 401 Unauthorized.
-            (2) 401 Unauthorized are retried automatically.
-            (3) A subsequent 401 returns a response with an error.
+    def test_client_feature__call_api_handling__401_response__400_check_token(
+            self):
+        """Test built-in client ability to handle 401 Unauthorized. This test
+        specifically covers when 401 Unauthorized leads to a 400 Bad Request
+        from a check_token call.
+
+        Test asserts
+        (1) token handling grabs a new token after a 401 Unauthorized original
+            request and 200 OK check_token.
+        (2) The original request is retried with the new token.
+        (3) A subsequent request returns the result.
+            (subsequent 401s return with error, break into separate test?)
         """
 
 

@@ -6,6 +6,7 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
+from ggcore.sdk_exceptions import SdkUnauthorizedWithValidTokenException
 from ggcore.sdk_messages import SdkServiceRequest, \
     SdkResponseHelper, CheckTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
@@ -144,7 +145,7 @@ class SecurityClientBase(ClientBase):
 
             # token is valid, surface issue
             if check_token_response.status_code == 200:
-                raise RuntimeError(
+                raise SdkUnauthorizedWithValidTokenException(
                     f"Error: Request returned a '401 Unauthorized' but "
                     f"check_token confirmed a valid token is being used. "
                     f"Original response error '"

@@ -3,7 +3,7 @@ import time
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_exceptions import SdkBadOauthCredentials
+from ggcore.sdk_exceptions import SdkBadOauthCredentialsException
 from ggcore.sdk_messages import GetTokenResponse
 
 # Buffer for token expiration timeout
@@ -46,7 +46,7 @@ class TokenFactory:
 
         # 401 Unauthorized
         elif get_token_response.status_code == 401:
-            raise SdkBadOauthCredentials(
+            raise SdkBadOauthCredentialsException(
                 'Security client returned "401 Unauthorized" when trying to '
                 'get a token. Please check oauth credentials used by the SDK '
                 'and retry.')
