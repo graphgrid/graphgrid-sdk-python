@@ -246,3 +246,10 @@ class GetTokenResponse(SdkServiceResponse):
         self.token_type = loaded['token_type']
         self.expires_in = loaded['expires_in']
         self.created_at = loaded['createdAt']
+
+
+class CheckTokenResponse(SdkServiceResponse):
+    """Define class representing a check token call response."""
+
+    def __init__(self, sdk_response: SdkResponseHelper):
+        super().__init__(sdk_response)

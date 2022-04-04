@@ -4,10 +4,11 @@ from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceRequest, \
     GetDataResponse, TestApiResponse, SaveDatasetResponse, GetTokenResponse, \
-    SdkResponseHelper, PromoteModelResponse, SdkServiceResponse
+    SdkResponseHelper, PromoteModelResponse, SdkServiceResponse, \
+    CheckTokenResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
-    CONTENT_TYPE_APP_JSON, USER_AGENT
+    CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
 
 
 # pylint: disable=too-few-public-methods
@@ -124,6 +125,10 @@ class SecurityApi(ApiGroup):
         """Return get token api."""
         return cls.GetTokenApi()
 
+    @classmethod
+    def check_token_api(cls, token: str):
+        return cls.CheckTokenApi()
+
     class GetTokenApi(AbstractApi):
         """Define GetTokenApi api."""
 
@@ -146,6 +151,37 @@ class SecurityApi(ApiGroup):
                     f'Unable to get security token. Response: "{sdk_response.response}"')
 
             return GetTokenResponse(sdk_response)
+
+    class CheckTokenApi(AbstractApi):
+        """Define CheckTokenApi api."""
+
+        _token: str
+
+        def __init__(self, token: str):
+            self._token = token
+
+        def api_base(self):
+            return SECURITY
+
+        def endpoint(self):
+            return "oauth/check_token"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.POST
+
+        def query_params(self) -> dict:
+            return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
+
+        def body(self):
+            return {"token": self._token}
+
+        def headers(self) -> dict:
+            return {
+                CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
+            }
+
+        def handler(self, sdk_response: SdkResponseHelper):
+            return CheckTokenResponse(sdk_response)
 
 
 class NlpApi(ApiGroup):
