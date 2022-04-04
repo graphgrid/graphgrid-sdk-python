@@ -3,6 +3,7 @@ import time
 import typing
 from dataclasses import dataclass
 
+from ggcore.sdk_exceptions import SdkBadOauthCredentials
 from ggcore.sdk_messages import GetTokenResponse
 
 # Buffer for token expiration timeout
@@ -35,13 +36,29 @@ class TokenFactory:
         """Execute call to get a new token and populate the TokenTracker."""
         get_token_response = self._token_supplier()
 
-        self._token_tracker = TokenTracker(
-            get_token_response.access_token,
-            int(get_token_response.expires_in),  # cast expires_in to int
-            get_time_in_ms()
-        )
+        # 200 OK
+        if get_token_response.status_code == 200:
+            self._token_tracker = TokenTracker(
+                get_token_response.access_token,
+                int(get_token_response.expires_in),  # cast expires_in to int
+                get_time_in_ms()
+            )
 
-        return self._token_tracker
+            return self._token_tracker
+
+        # 401 Unauthorized
+        elif get_token_response.status_code == 401:
+            raise SdkBadOauthCredentials(
+                f'Security client returned "401 Unauthorized" when trying to '
+                f'get a token. Please check oauth credentials used by the SDK '
+                f'and retry.')
+
+        else:
+            raise RuntimeError(
+                f'Unable to get security token but was not a 401 Unauthoried. '
+                f'Status code: "{get_token_response.status_code}". Response: '
+                f'"{get_token_response.response}")')
+
 
     def get_token(self) -> str:
         """Get token from the current TokenTracker."""

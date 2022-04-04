@@ -145,11 +145,6 @@ class SecurityApi(ApiGroup):
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
 
         def handler(self, sdk_response: SdkResponseHelper):
-            # todo how does this handler play into the token tracking?
-            if sdk_response.status_code != 200:
-                raise RuntimeError(
-                    f'Unable to get security token. Response: "{sdk_response.response}"')
-
             return GetTokenResponse(sdk_response)
 
     class CheckTokenApi(AbstractApi):

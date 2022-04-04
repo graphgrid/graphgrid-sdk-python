@@ -241,11 +241,12 @@ class GetTokenResponse(SdkServiceResponse):
     def __init__(self, sdk_response: SdkResponseHelper):
         super().__init__(sdk_response)
 
-        loaded = json.loads(sdk_response.response)
-        self.access_token = loaded['access_token']
-        self.token_type = loaded['token_type']
-        self.expires_in = loaded['expires_in']
-        self.created_at = loaded['createdAt']
+        if self.status_code == 200:
+            loaded = json.loads(sdk_response.response)
+            self.access_token = loaded['access_token']
+            self.token_type = loaded['token_type']
+            self.expires_in = loaded['expires_in']
+            self.created_at = loaded['createdAt']
 
 
 class CheckTokenResponse(SdkServiceResponse):

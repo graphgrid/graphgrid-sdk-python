@@ -15,3 +15,10 @@ class SdkAuthTypeException(SdkException):
 
 class SdkInvalidConfigKey(SdkException):
     """Define exception for when invalid config key is referenced."""
+
+
+class SdkBadOauthCredentials(SdkException):
+    """Define exception for when the base client credentials for getting a
+    token are invalid.
+    """
+
