@@ -22,7 +22,7 @@ class TestTokenFactory(TestBootstrapBase):
         """Test new token retrieved if no current token."""
 
         security_client = SecurityClient(self._test_bootstrap_config)
-        token_factory = TokenFactory(security_client.request_and_store_token)
+        token_factory = TokenFactory(security_client.get_token_builtin)
 
         json_body = {"access_token": self.TEST_TOKEN,
                      "token_type": RequestAuthType.BEARER.value,
@@ -55,7 +55,7 @@ class TestTokenFactory(TestBootstrapBase):
         expiration_time_for_test_ms = 1_000  # expiration time in ms
 
         security_client = SecurityClient(self._test_bootstrap_config)
-        token_factory = TokenFactory(security_client.request_and_store_token)
+        token_factory = TokenFactory(security_client.get_token_builtin)
 
         json_body = {"access_token": self.TEST_TOKEN,
                      "token_type": RequestAuthType.BEARER.value,

@@ -8,7 +8,7 @@ from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_exceptions import SdkUnauthorizedWithValidTokenException
 from ggcore.sdk_messages import SdkServiceRequest, \
-    SdkResponseHelper, CheckTokenResponse
+    SdkResponseHelper, CheckTokenResponse, GetTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 from ggcore.utils import DOCKER_NGINX_PORT
@@ -62,30 +62,26 @@ class SecurityClient(ClientBase):
         super().__init__(bootstrap_config)
         self._security_config = SdkSecurityConfig(bootstrap_config)
 
-    def request_and_store_token(self):
+    def get_token_builtin(self) -> GetTokenResponse:
         """Build and execute request to get the security token, store the
         token result.
         """
         sdk_request = self.build_sdk_request(
             SecurityApi.get_token_api())
 
-        auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
-            self._security_config)
-        sdk_request.headers.update(auth_basic_header)
-
-        sdk_response_helper = self.make_request(sdk_request)
-
-        return sdk_request.api_response_handler(sdk_response_helper)
-
-    def is_token_present(self):
-        """Return true if token is present with the security config."""
-        return bool(self._security_config.token)
+        return self._invoke_with_basic_auth(sdk_request)
 
     def check_token_builtin(self) -> CheckTokenResponse:
         """Define method that runs a check token call."""
         sdk_request = self.build_sdk_request(
-            SecurityApi.check_token_api(self.security_config.token))
+            SecurityApi.check_token_api(self._security_config.token))
 
+        return self._invoke_with_basic_auth(sdk_request)
+
+    def _invoke_with_basic_auth(self, sdk_request):
+        """Define method to invoke sdk requests with basic auth headers and
+        return the handled response.
+        """
         auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
             self._security_config)
 
@@ -114,7 +110,7 @@ class SecurityClientBase(ClientBase):
         # Configure security client and token factory
         self._security_client = SecurityClient(self._bootstrap_config)
         self._token_factory = TokenFactory(
-            self._security_client.request_and_store_token)
+            self._security_client.get_token_builtin)
 
     def build_sdk_request(self,
                           api_def: AbstractApi) -> SdkServiceRequest:
