@@ -24,7 +24,7 @@ class TestSdkTestApi(TestSdkBase):
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value="true")
+                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_sdk_call__test_api__200(self, mock_get_auth_value,

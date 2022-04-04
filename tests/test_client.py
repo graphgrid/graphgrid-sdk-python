@@ -24,7 +24,7 @@ class TestClientSdkRequestBuilding(TestClientBase):
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value="true")
+                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_client_feature__build_sdk_request__test_api(self,
@@ -118,7 +118,7 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBase.TEST_TOKEN)
     @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value="true")
+                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 0, 0))
     def test_client_feature__is_docker_context(self, mock_get_auth_value,

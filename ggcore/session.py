@@ -74,7 +74,7 @@ class TokenFactory:
         return self._token_tracker is not None \
                and self._token_tracker.token is not None
 
-    def is_token_ready(self):
+    def is_token_ready(self) -> bool:
         """Return whether the token is ready for use."""
         return self.is_token_present() and not self.is_token_expired()
 
