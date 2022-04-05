@@ -19,10 +19,11 @@ class TestAuth(TestBootstrapBase):
 
         assert actual_headers == expected_headers
 
+    # pylint: disable=no-self-use
     def test_auth_bearer_header(self):
         """Test bearer auth header creation."""
         expected_headers = {
-            AUTH_HEADER_KEY: f'Bearer {TestBootstrapBase.TEST_TOKEN}'}
+            AUTH_HEADER_KEY: f'Bearer {TestBase.TEST_TOKEN}'}
 
         actual_headers = SdkAuthHeaderBuilder.get_bearer_header(
             TestBase.TEST_TOKEN)

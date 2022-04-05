@@ -8,7 +8,7 @@ from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
 from ggcore.sdk_messages import GetTokenResponse, CheckTokenResponse
 
 # Buffer for token expiration timeout
-TIMEOUT_BUFFER_SECONDS = 3
+TIMEOUT_BUFFER_MS = 3000
 
 
 @dataclass
@@ -72,8 +72,8 @@ class TokenFactory:
     def is_token_expired(self) -> bool:
         """Return whether current token has expired."""
         expiration_time = (self._token_tracker.init_time
-                           + (self._token_tracker.expires_in * 1_000))
-        return expiration_time - get_time_in_ms() <= TIMEOUT_BUFFER_SECONDS
+                           + self._token_tracker.expires_in)
+        return expiration_time - get_time_in_ms() <= TIMEOUT_BUFFER_MS
 
     def is_token_present(self) -> bool:
         """Return whether there currently is a token."""
