@@ -7,7 +7,7 @@ import responses
 import ggcore
 import ggsdk.sdk
 from ggcore.api import ConfigApi
-from ggcore.sdk_messages import TestApiResponse, SdkResponseHelper
+from ggcore.sdk_messages import TestApiResponse, GenericResponse
 from ggcore.session import TokenTracker
 from tests.test_base import TestBootstrapBase, TestBase
 
@@ -55,7 +55,7 @@ class TestSdkTestApi(TestSdkBase):
 
         # setup expected TestApiResponse obj
         expected_response = TestApiResponse(
-            SdkResponseHelper(200, "OK", json.dumps(json_body), None))
+            GenericResponse(200, "OK", json.dumps(json_body), None))
 
         # call sdk method for test api
         actual_response: TestApiResponse = sdk.test_api(expected_message)

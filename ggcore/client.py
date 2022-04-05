@@ -9,7 +9,7 @@ from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_exceptions import SdkUnauthorizedValidTokenException, \
     SdkUnauthorizedInvalidTokenException
 from ggcore.sdk_messages import SdkServiceRequest, \
-    SdkResponseHelper, CheckTokenResponse, GetTokenResponse
+    GenericResponse, CheckTokenResponse, GetTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenFactory
 from ggcore.utils import DOCKER_NGINX_PORT
@@ -25,8 +25,10 @@ class ClientBase:
 
     # pylint: disable=no-self-use
     def make_request(self,
-                     sdk_request: SdkServiceRequest) -> SdkResponseHelper:
-        """Define base make_request that all client calls pass through."""
+                     sdk_request: SdkServiceRequest) -> GenericResponse:
+        """Define base make_request that all client calls pass through.
+        Return the resulting generic response.
+        """
         # invoke request
         return SdkHttpClient.execute_request(sdk_request)
 
@@ -96,9 +98,9 @@ class InternalSecurityClient(ClientBase):
             self._bootstrap_config)
         sdk_request.headers.update(auth_basic_header)
 
-        sdk_response = self.make_request(sdk_request)
+        generic_response = self.make_request(sdk_request)
 
-        return api.handler(sdk_response)
+        return api.handler(generic_response)
 
     def prepare_auth(self, force_token_refresh=False):
         """Define method that prepares token factory for use."""
@@ -143,7 +145,7 @@ class SecurityClientBase(ClientBase):
         return sdk_request
 
     def call_api(self, api: AbstractApi,
-                 force_token_refresh=False) -> SdkResponseHelper:
+                 force_token_refresh=False) -> GenericResponse:
         """Define method that composes the steps for a full api call."""
         # prepare auth for call
         self._security_client.prepare_auth(force_token_refresh)
@@ -154,20 +156,20 @@ class SecurityClientBase(ClientBase):
         # make request
         return self.make_request(sdk_request)
 
-    def generic_response_handler(self, sdk_response_helper: SdkResponseHelper):
+    def generic_response_handler(self, generic_response: GenericResponse):
         """Define method for generically processing responses before being
         passed to specific api handlers.
         """
         # if the request returns a 401 Unauthorized then check token
         # and possibly retry
-        if sdk_response_helper.status_code == 401:
+        if generic_response.status_code == 401:
             # request hit a 401, call check token
             check_token_response = self._security_client.check_token()
 
             # token is valid, surface unrecoverable exception
             if check_token_response.status_code == 200:
                 raise SdkUnauthorizedValidTokenException(
-                    sdk_response_helper.response)
+                    generic_response.response)
 
             # token is invalid, surface recoverable exception
             if check_token_response.status_code == 400:
@@ -177,16 +179,16 @@ class SecurityClientBase(ClientBase):
         """Define method that builds and makes SDK requests from an API
         definition.
         """
-        sdk_response_helper = self.call_api(api)
+        generic_response = self.call_api(api)
 
         try:
-            self.generic_response_handler(sdk_response_helper)
+            self.generic_response_handler(generic_response)
         except SdkUnauthorizedInvalidTokenException:
             # single retry for invalid token
-            sdk_response_helper = self.call_api(api, force_token_refresh=True)
+            generic_response = self.call_api(api, force_token_refresh=True)
 
         # custom handler call if response passes generic handler
-        return api.handler(sdk_response_helper)
+        return api.handler(generic_response)
 
 
 class SecurityClient(SecurityClientBase):

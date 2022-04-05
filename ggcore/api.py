@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from ggcore.sdk_messages import SdkServiceRequest, \
     GetDataResponse, TestApiResponse, SaveDatasetResponse, GetTokenResponse, \
-    SdkResponseHelper, PromoteModelResponse, SdkServiceResponse, \
+    GenericResponse, PromoteModelResponse, SdkServiceResponse, \
     CheckTokenResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
@@ -49,10 +49,10 @@ class AbstractApi:
         return {}  # overrides provide api-specific body
 
     # pylint: disable=no-self-use
-    def handler(self, sdk_response: SdkResponseHelper):
+    def handler(self, generic_response: GenericResponse):
         """Handle the sdk response."""
-        # default handler returns entire SdkResponseHelper
-        return SdkServiceResponse(sdk_response)
+        # default handler returns entire GenericResponse
+        return SdkServiceResponse(generic_response)
 
 
 class ConfigApi(ApiGroup):
@@ -86,8 +86,8 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return TestApiResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return TestApiResponse(generic_response)
 
     class GetDataApi(AbstractApi):
         """Define GetDataApi api."""
@@ -113,8 +113,8 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return GetDataResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return GetDataResponse(generic_response)
 
 
 class SecurityApi(ApiGroup):
@@ -145,8 +145,8 @@ class SecurityApi(ApiGroup):
         def query_params(self) -> dict:
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return GetTokenResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return GetTokenResponse(generic_response)
 
     class CheckTokenApi(AbstractApi):
         """Define CheckTokenApi api."""
@@ -176,8 +176,8 @@ class SecurityApi(ApiGroup):
                 CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
             }
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return CheckTokenResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return CheckTokenResponse(generic_response)
 
 
 class NlpApi(ApiGroup):
@@ -223,8 +223,8 @@ class NlpApi(ApiGroup):
         def body(self):
             return self._generator
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return SaveDatasetResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return SaveDatasetResponse(generic_response)
 
     @dataclass
     class PromoteModelApi(AbstractApi):
@@ -247,8 +247,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
 
-        def handler(self, sdk_response: SdkResponseHelper):
-            return PromoteModelResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return PromoteModelResponse(generic_response)
 
 
 class SdkRequestBuilder:

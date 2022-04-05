@@ -9,9 +9,9 @@ from ggcore.utils import HttpMethod
 
 
 # pylint: disable=too-few-public-methods
-class SdkResponseHelper:
-    """Define helper class that serves as an inbetween for HTTP responses and
-    SdkServiceResponses.
+class GenericResponse:
+    """Define class that HTTP responses are mapped into. Serves as an
+    inbetween for HTTP responses and SdkServiceResponse subclasses.
     """
     status_code: int
     status_text: str
@@ -35,12 +35,12 @@ class SdkServiceResponse:
     response: typing.Optional[str] = None
     exception: typing.Optional[requests.RequestException] = None
 
-    def __init__(self, sdk_response_obj: SdkResponseHelper):
-        """Define method to init these base fields from SdkResponseHelper."""
-        self.response = sdk_response_obj.response
-        self.status_text = sdk_response_obj.status_text
-        self.status_code = sdk_response_obj.status_code
-        self.exception = sdk_response_obj.exception
+    def __init__(self, generic_response: GenericResponse):
+        """Define method to init these base fields from GenericResponse."""
+        self.response = generic_response.response
+        self.status_text = generic_response.status_text
+        self.status_code = generic_response.status_code
+        self.exception = generic_response.exception
 
     def __eq__(self, other):
         if isinstance(other, SdkServiceResponse):
@@ -157,10 +157,10 @@ class SaveDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
     save_path: str = None
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-        loaded = json.loads(sdk_response.response)
+        loaded = json.loads(generic_response.response)
         self.save_path = loaded['path']
         self.dataset_id = loaded['datasetId']
 
@@ -171,10 +171,10 @@ class PromoteModelResponse(SdkServiceResponse):
     task: str
     param_key: str
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-        loaded = json.loads(sdk_response.response)
+        loaded = json.loads(generic_response.response)
         self.model_name = loaded['modelName']
         self.task = loaded['task']
         self.param_key = loaded['paramKey']
@@ -192,10 +192,10 @@ class PropertySource:
 class GetDataResponse(SdkServiceResponse):
     """Define class representing the environment response from get data."""
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-        loaded = json.loads(sdk_response.response)
+        loaded = json.loads(generic_response.response)
         self.name = loaded["name"]
         self.profiles = loaded["profiles"]
         self.label = loaded["label"]
@@ -209,10 +209,10 @@ class TestApiResponse(SdkServiceResponse):
     """Define class representing a test api call response."""
     response_str: str = None
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-        loaded = json.loads(sdk_response.response)
+        loaded = json.loads(generic_response.response)
         self.response_str = loaded['content']
 
 
@@ -223,11 +223,11 @@ class GetTokenResponse(SdkServiceResponse):
     expires_in: str
     created_at: str
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
         if self.status_code == 200:
-            loaded = json.loads(sdk_response.response)
+            loaded = json.loads(generic_response.response)
             self.access_token = loaded['access_token']
             self.token_type = loaded['token_type']
             self.expires_in = loaded['expires_in']
@@ -238,5 +238,5 @@ class GetTokenResponse(SdkServiceResponse):
 class CheckTokenResponse(SdkServiceResponse):
     """Define class representing a check token call response."""
 
-    def __init__(self, sdk_response: SdkResponseHelper):
-        super().__init__(sdk_response)
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)

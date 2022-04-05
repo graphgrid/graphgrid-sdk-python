@@ -1,35 +1,36 @@
 """Define classes for building, executing, processing http requests."""
 import requests
 
-from ggcore.sdk_messages import SdkServiceRequest, SdkResponseHelper
+from ggcore.sdk_messages import SdkServiceRequest, GenericResponse
 
 
 class SdkHttpClient:
     """Define class containing all sdk http methods."""
 
     @classmethod
-    def http_response_to_sdk_response(cls, http_response: requests.Response):
-        """Build an SdkServiceResponse from the http response."""
-        sdk_response = SdkResponseHelper()
+    def http_response_to_generic_response(cls,
+                                          http_response: requests.Response):
+        """Build a GenericResponse from the http response."""
+        generic_response = GenericResponse()
 
-        sdk_response.status_code = http_response.status_code
-        sdk_response.status_text = http_response.reason
-        sdk_response.response = http_response.content.decode()
+        generic_response.status_code = http_response.status_code
+        generic_response.status_text = http_response.reason
+        generic_response.response = http_response.content.decode()
 
         try:
             # raise exception if one occurred
             http_response.raise_for_status()
 
             # otherwise, set exception to None
-            sdk_response.exception = None
+            generic_response.exception = None
         except requests.RequestException as request_exception:
-            sdk_response.exception = request_exception
+            generic_response.exception = request_exception
 
-        return sdk_response
+        return generic_response
 
     @classmethod
     def execute_request(cls,
-                       sdk_request: SdkServiceRequest) -> SdkResponseHelper:
+                        sdk_request: SdkServiceRequest) -> GenericResponse:
         """Invoke the SdkServiceRequest by building and executing an http
         request.
         """
@@ -40,6 +41,4 @@ class SdkHttpClient:
             data=sdk_request.body,
             headers=sdk_request.headers)
 
-        sdk_response: SdkResponseHelper = cls.http_response_to_sdk_response(
-            http_response)
-        return sdk_response
+        return cls.http_response_to_generic_response(http_response)
