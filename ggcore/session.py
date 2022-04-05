@@ -11,17 +11,17 @@ from ggcore.sdk_messages import GetTokenResponse, CheckTokenResponse
 TIMEOUT_BUFFER_MS = 3000
 
 
+def get_time_in_ms():
+    """Return current system time in ms"""
+    return time.time_ns() // 1_000_000
+
+
 @dataclass
 class TokenTracker:
     """Define class to keep track of token information."""
     token: str
-    expires_in: int
-    init_time: int
-
-
-def get_time_in_ms():
-    """Return current system time in ms"""
-    return time.time_ns() // 1_000_000
+    expires_in: int  # in milliseconds
+    init_time: int = get_time_in_ms()
 
 
 class TokenFactory:

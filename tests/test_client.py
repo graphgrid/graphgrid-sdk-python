@@ -21,15 +21,9 @@ class TestClientSdkRequestBuilding(TestClientBase):
     """Define test class for grouping client-level sdk request building."""
 
     # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBase.TEST_TOKEN)
-    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
-                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
-    def test_client_feature__build_sdk_request__test_api(self,
-                                                         mock_get_auth_value,
-                                                         mock_is_token_present):
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_client_feature__build_sdk_request__test_api(self):
         """Test that client can properly construct test api sdk request from
         TestApi definition.
         """
@@ -114,14 +108,9 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     """
 
     # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBase.TEST_TOKEN)
-    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
-                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
-    def test_client_feature__is_docker_context(self, mock_get_auth_value,
-                                               mock_is_token_present):
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_client_feature__is_docker_context(self):
         """Test that sdk requests built from the test docker base use the
         correct url base for docker.
         """

@@ -21,14 +21,9 @@ class TestSdkTestApi(TestSdkBase):
 
     # pylint: disable=unused-argument,duplicate-code
     @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBase.TEST_TOKEN)
-    @patch.object(ggcore.session.TokenFactory, "is_token_ready",
-                  return_value=True)
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
-                  TokenTracker(TestBase.TEST_TOKEN, 0, 0))
-    def test_sdk_call__test_api__200(self, mock_get_auth_value,
-                                     mock_is_token_present):
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__test_api__200(self):
         """Test sdk TestApi call when response is 200 OK.
 
         Test that the GraphGridSdk.test_api() call sets up correct sdk
