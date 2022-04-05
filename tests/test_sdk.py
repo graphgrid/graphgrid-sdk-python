@@ -19,7 +19,6 @@ class TestSdkBase(TestBootstrapBase):
 class TestSdkTestApi(TestSdkBase):
     """Define test class for TestApi sdk calls."""
 
-    # pylint: disable=unused-argument,duplicate-code
     @responses.activate  # mock responses
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))

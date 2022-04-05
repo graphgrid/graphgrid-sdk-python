@@ -29,11 +29,11 @@ class SdkInvalidOauthCredentialsException(SdkGetTokenException):
 
 class SdkUnauthorizedValidTokenException(SdkException):
     """Define exception for when a sdk response is 401 Unauthorized
-    and current token is invalid (check_token).
+    and current token is valid (check_token).
     """
 
 
 class SdkUnauthorizedInvalidTokenException(SdkException):
     """Define exception for when a sdk response is 401 Unauthorized
-    and current token is valid (check_token).
+    and current token is invalid (check_token).
     """
