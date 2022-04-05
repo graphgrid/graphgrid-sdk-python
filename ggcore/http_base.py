@@ -13,8 +13,7 @@ class SdkHttpClient:
         sdk_response = SdkResponseHelper()
 
         sdk_response.status_code = http_response.status_code
-
-        # todo will need to map response body to specific response-type objs
+        sdk_response.status_text = http_response.reason
         sdk_response.response = http_response.content.decode()
 
         try:
@@ -26,13 +25,14 @@ class SdkHttpClient:
         except requests.RequestException as request_exception:
             sdk_response.exception = request_exception
 
-        sdk_response.status_text = http_response.reason
         return sdk_response
 
     @classmethod
     def execute_request(cls,
-                        sdk_request: SdkServiceRequest) -> SdkResponseHelper:
-        """Build and execute http request."""
+                       sdk_request: SdkServiceRequest) -> SdkResponseHelper:
+        """Invoke the SdkServiceRequest by building and executing an http
+        request.
+        """
         http_response: requests.Response = requests.request(
             method=sdk_request.http_method.value,
             url=sdk_request.url,
@@ -43,10 +43,3 @@ class SdkHttpClient:
         sdk_response: SdkResponseHelper = cls.http_response_to_sdk_response(
             http_response)
         return sdk_response
-
-    @classmethod
-    def invoke(cls, sdk_request: SdkServiceRequest) -> SdkResponseHelper:
-        """Invoke the sdk request: execute the corresponding http request
-        and return the SdkResponseHelper inbetween.
-        """
-        return cls.execute_request(sdk_request)

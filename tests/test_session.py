@@ -38,7 +38,7 @@ class TestTokenFactory(TestBootstrapBase):
             assert False, "Token should not be present yet."
 
         # run token handling
-        token_factory.token_handling()
+        token_factory.refresh_token()
 
         if token_factory.is_token_ready():
             return
@@ -67,4 +67,4 @@ class TestTokenFactory(TestBootstrapBase):
                       f'{SecurityApi.get_token_api().endpoint()}',
                       json=json_body, status=200)
 
-        token_factory.token_handling()
+        token_factory.refresh_token()

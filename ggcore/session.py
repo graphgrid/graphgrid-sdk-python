@@ -3,7 +3,8 @@ import time
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_exceptions import SdkBadOauthCredentialsException
+from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
+    SdkGetTokenException
 from ggcore.sdk_messages import GetTokenResponse
 
 # Buffer for token expiration timeout
@@ -46,22 +47,21 @@ class TokenFactory:
 
         # 401 Unauthorized
         elif get_token_response.status_code == 401:
-            raise SdkBadOauthCredentialsException(
-                'Security client returned "401 Unauthorized" when trying to '
-                'get a token. Please check oauth credentials used by the SDK '
-                'and retry.')
+            raise SdkInvalidOauthCredentialsException(
+                'Unable to get security token. Get token endpoint returned '
+                '"401 Unauthorized" using provided oauth credentials.')
 
         else:
-            raise RuntimeError(
-                f'Unable to get security token but was not a 401 Unauthorized. '
+            raise SdkGetTokenException(
+                f'Unable to get security token. '
                 f'Status code: "{get_token_response.status_code}". Response: '
                 f'"{get_token_response.response}")')
 
         return self._token_tracker
 
-    def get_token(self) -> str:
+    def get_current_token(self) -> str:
         """Get token from the current TokenTracker."""
-        return self._token_tracker.token
+        return self._token_tracker.token if self.is_token_present() else ""
 
     def is_token_expired(self) -> bool:
         """Return whether current token has expired."""
@@ -78,10 +78,12 @@ class TokenFactory:
         """Return whether the token is ready for use."""
         return self.is_token_present() and not self.is_token_expired()
 
-    def token_handling(self) -> TokenTracker:
-        """Return token"""
-        if not self.is_token_ready():
-            # token is not ready, request new token
+    def refresh_token(self, force_refresh=False) -> str:
+        """Define method that conditionally refreshes the stored token.
+        Returns the current token.
+        """
+        if force_refresh or not self.is_token_ready():
+            # request new token
             self.call_for_token()
 
-        return self._token_tracker
+        return self.get_current_token()

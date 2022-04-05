@@ -3,7 +3,7 @@
 import base64
 from dataclasses import dataclass
 
-from ggcore.config import SdkSecurityConfig
+from ggcore.config import SdkSecurityConfig, SdkBootstrapConfig
 from ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, BEARER_HEADER_KEY
 
 
@@ -65,3 +65,9 @@ class SdkAuthHeaderBuilder:
     def get_bearer_header(cls, sec_conf: SdkSecurityConfig) -> dict:
         """Return the bearer auth for the provided security config."""
         return BearerAuth(sec_conf).get_auth_header()
+
+    @classmethod
+    def get_bearer_header_for_token(cls, token: str) -> dict:
+        """Return the bearer auth for the provided security config."""
+        return BearerAuth(SdkSecurityConfig(SdkBootstrapConfig("", "", ""),
+                                            token)).get_auth_header()

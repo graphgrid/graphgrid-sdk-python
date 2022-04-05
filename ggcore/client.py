@@ -6,7 +6,8 @@ from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
 from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
 from ggcore.http_base import SdkHttpClient
-from ggcore.sdk_exceptions import SdkUnauthorizedWithValidTokenException
+from ggcore.sdk_exceptions import SdkUnauthorizedValidTokenException, \
+    SdkUnauthorizedInvalidTokenException
 from ggcore.sdk_messages import SdkServiceRequest, \
     SdkResponseHelper, CheckTokenResponse, GetTokenResponse
 from ggcore.security_base import SdkAuthHeaderBuilder
@@ -27,7 +28,7 @@ class ClientBase:
                      sdk_request: SdkServiceRequest) -> SdkResponseHelper:
         """Define base make_request that all client calls pass through."""
         # invoke request
-        return SdkHttpClient.invoke(sdk_request)
+        return SdkHttpClient.execute_request(sdk_request)
 
     def build_sdk_request(self,
                           api_def: AbstractApi) -> SdkServiceRequest:
@@ -57,24 +58,26 @@ class SecurityClient(ClientBase):
     includes token).
     """
     _security_config: SdkSecurityConfig
+    _token_factory: TokenFactory
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
         self._security_config = SdkSecurityConfig(bootstrap_config)
+        self._token_factory = TokenFactory(
+            self.get_token_builtin)
 
     def get_token_builtin(self) -> GetTokenResponse:
-        """Build and execute request to get the security token, store the
-        token result.
-        """
+        """Build and execute request to get a new security token."""
         sdk_request = self.build_sdk_request(
             SecurityApi.get_token_api())
 
         return self._invoke_with_basic_auth(sdk_request)
 
     def check_token_builtin(self) -> CheckTokenResponse:
-        """Define method that runs a check token call."""
+        """Build and execute request to check the current security token."""
         sdk_request = self.build_sdk_request(
-            SecurityApi.check_token_api(self._security_config.token))
+            SecurityApi.check_token_api(
+                self._token_factory.get_current_token()))
 
         return self._invoke_with_basic_auth(sdk_request)
 
@@ -91,6 +94,15 @@ class SecurityClient(ClientBase):
 
         return sdk_request.api_response_handler(sdk_response_helper)
 
+    def prepare_auth(self, force_token_refresh=False):
+        self._token_factory.refresh_token(force_token_refresh)
+
+    def authenticate_request(self, sdk_request: SdkServiceRequest):
+        sdk_request.add_headers(
+            SdkAuthHeaderBuilder.get_bearer_header_for_token(
+                self._token_factory.get_current_token()))
+        return sdk_request
+
     # pylint: disable=missing-function-docstring
     @property
     def security_config(self):
@@ -98,66 +110,72 @@ class SecurityClient(ClientBase):
 
 
 class SecurityClientBase(ClientBase):
-    """Define Security client base. Provide authentication headers to client
-    subclasses. Instantiates TokenFactory for get token calls.
+    """Define Security client base. Provide authentication and response
+    handling logic to client subclasses.
     """
     _security_client: SecurityClient
-    _token_factory: TokenFactory
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
 
-        # Configure security client and token factory
+        # Configure security client
         self._security_client = SecurityClient(self._bootstrap_config)
-        self._token_factory = TokenFactory(
-            self._security_client.get_token_builtin)
 
     def build_sdk_request(self,
                           api_def: AbstractApi) -> SdkServiceRequest:
+        # call superclass build_sdk_request
         sdk_request = super().build_sdk_request(api_def)
 
-        # token handling
-        token_tracker = self._token_factory.token_handling()
-
-        self._security_client.security_config.token = token_tracker.token
-
-        sdk_request.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
-            self._security_client.security_config))
+        # authenticate request
+        self._security_client.authenticate_request(sdk_request)
 
         return sdk_request
 
-    def call_api(self, api: AbstractApi):
-        """Define method that builds and makes SDK requests from an API
-        definition.
-        """
-        sdk_request = self.build_sdk_request(api)
-        sdk_response_helper = self.make_request(sdk_request)
+    def call_api(self, api: AbstractApi,
+                 force_token_refresh=False) -> SdkResponseHelper:
+        """Define method that composes the steps for a full api call."""
+        # prepare auth for call
+        self._security_client.prepare_auth(force_token_refresh)
 
+        # build request
+        sdk_request = self.build_sdk_request(api)
+
+        # make request
+        return self.make_request(sdk_request)
+
+    def generic_response_handler(self, sdk_response_helper: SdkResponseHelper):
+        """Define method for generically processing responses before being
+        passed to specific api handlers.
+        """
         # if the request returns a 401 Unauthorized then check token
         # and possibly retry
         if sdk_response_helper.status_code == 401:
             # request hit a 401, call check token
             check_token_response = self._security_client.check_token_builtin()
 
-            # token is valid, surface issue
+            # token is valid, surface unrecoverable exception
             if check_token_response.status_code == 200:
-                raise SdkUnauthorizedWithValidTokenException(
-                    f"Error: Request returned a '401 Unauthorized' but "
-                    f"check_token confirmed a valid token is being used. "
-                    f"Original response error '"
-                    f"{sdk_response_helper.response}'.")
+                raise SdkUnauthorizedValidTokenException(
+                    sdk_response_helper.response)
 
-            # token is invalid, get token again and retry
+            # token is invalid, surface recoverable exception
             if check_token_response.status_code == 400:
-                # call for a new token
-                self._token_factory.call_for_token()
+                raise SdkUnauthorizedInvalidTokenException()
 
-                # build new sdk request and make new request
-                sdk_request = self.build_sdk_request(api)
-                sdk_response_helper = self.make_request(sdk_request)
+    def invoke(self, api: AbstractApi):
+        """Define method that builds and makes SDK requests from an API
+        definition.
+        """
+        sdk_response_helper = self.call_api(api)
 
-        # custom handler call if response passes generic checks
-        return sdk_request.api_response_handler(sdk_response_helper)
+        try:
+            self.generic_response_handler(sdk_response_helper)
+        except SdkUnauthorizedInvalidTokenException:
+            # single retry for invalid token
+            sdk_response_helper = self.call_api(api, force_token_refresh=True)
+
+        # custom handler call if response passes generic handler
+        return api.handler(sdk_response_helper)
 
 
 class ConfigClient(SecurityClientBase):
@@ -166,14 +184,14 @@ class ConfigClient(SecurityClientBase):
     def test_api(self, test_message: str):
         """Return test api sdk call."""
         api_call = ConfigApi.test_api(test_message)
-        return self.call_api(api_call)
+        return self.invoke(api_call)
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],
                  revision: str):
         """Return get data sdk call."""
         api_call = ConfigApi.get_data_api(module, profiles, revision)
-        return self.call_api(api_call)
+        return self.invoke(api_call)
 
 
 class NlpClient(SecurityClientBase):
@@ -183,9 +201,9 @@ class NlpClient(SecurityClientBase):
                      overwrite: bool):
         """Return save dataset sdk call."""
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
-        return self.call_api(api_call)
+        return self.invoke(api_call)
 
     def promote_model(self, model_name: str, nlp_task: str, environment: str):
         """Return promote model sdk call."""
         api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
-        return self.call_api(api_call)
+        return self.invoke(api_call)

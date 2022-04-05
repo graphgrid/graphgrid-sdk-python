@@ -154,7 +154,7 @@ class SecurityApi(ApiGroup):
         _token: str
 
         def __init__(self, token: str):
-            self._token = token
+            self._token = token if token else ""
 
         def api_base(self):
             return SECURITY
