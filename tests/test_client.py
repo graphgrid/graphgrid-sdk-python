@@ -1,14 +1,17 @@
 """Define test classes for testing client-level features."""
-# pylint: disable=duplicate-code
 from unittest.mock import patch
 
+import responses
+
 import ggcore.http_base
-from ggcore.api import ConfigApi, AbstractApi
+from ggcore.api import ConfigApi, AbstractApi, SecurityApi
 from ggcore.client import ConfigClient
+from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
+    SdkUnauthorizedValidTokenException
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.session import TokenTracker
-from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
+from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT, RequestAuthType
 from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase, \
     TestBase
 
@@ -20,7 +23,6 @@ class TestClientBase(TestBootstrapBase):
 class TestClientSdkRequestBuilding(TestClientBase):
     """Define test class for grouping client-level sdk request building."""
 
-    # pylint: disable=unused-argument
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_client_feature__build_sdk_request__test_api(self):
@@ -75,30 +77,65 @@ class TestClientSdkRequestBuilding(TestClientBase):
 class TestClientResponseHandling(TestClientBase):
     """Define test class for grouping client-level generic response handling."""
 
-    def test_client_feature__call_api_handling__401_response__200_check_token(
-            self):
-        """Test built-in client ability to handle 401 Unauthorized. This test
-        is specifically when 401 Unauthorized leads to a 200 OK from a
-        check_token call.
+    @responses.activate
+    def test_client_feature__unauth_response_handling__check_token_200(self):
+        """Test client ability to deal with 401 Unauthorized response.
 
-        Expected behavior pushes up the original error response along with a
-        message notifying the user the token was invalid even after getting a
-        new one.
+        This test asserts an error is raised when the sdk response is
+        401 Unauthorized and that leads to a 200 OK from check_token.
         """
 
-    def test_client_feature__call_api_handling__401_response__400_check_token(
-            self):
-        """Test built-in client ability to handle 401 Unauthorized. This test
-        specifically covers when 401 Unauthorized leads to a 400 Bad Request
-        from a check_token call.
+        json_body = {"access_token": TestBase.TEST_TOKEN,
+                     "token_type": RequestAuthType.BEARER.value,
+                     "expires_in": 10_000,
+                     "createdAt": "2022-04-01T19:48:47.647Z"}
 
-        Test asserts
-        (1) token handling grabs a new token after a 401 Unauthorized original
-            request and 200 OK check_token.
-        (2) The original request is retried with the new token.
-        (3) A subsequent request returns the result.
-            (subsequent 401s return with error, break into separate test?)
+        # mock get token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json=json_body, status=200)
+
+        # mock test_api response 401
+        responses.add(responses.GET,
+                      f'http://localhost/1.0/config/'
+                      f'{ConfigApi.test_api().endpoint()}',
+                      json={}, status=401)
+
+        # mock check token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.check_token_api().endpoint()}',
+                      json={}, status=200)
+
+        # setup config client
+        config_client = ConfigClient(self._test_bootstrap_config)
+
+        self.assertRaises(SdkUnauthorizedValidTokenException,
+                          config_client.test_api, "test-msg")
+
+    @responses.activate
+    def test_client_feature__unauth_response_handling__check_token_400(self):
+        """Test client ability to deal with 401 Unauthorized response.
+
+        This test covers when 401 Unauthorized leads to a 400 Bad Request
+        from a check_token call. It asserts a new token is retrieved and the
+        original request is retried.
         """
+
+    @responses.activate
+    def test_client_feature__unauth_response_handling__get_token_401(self):
+        """Test exception thrown when token response is 401 Unauthorized."""
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json={}, status=401)
+
+        # setup config client
+        config_client = ConfigClient(self._test_bootstrap_config)
+
+        self.assertRaises(SdkInvalidOauthCredentialsException,
+                          config_client.test_api, "test-msg")
 
 
 class TestClientDockerContext(TestBootstrapDockerBase):
@@ -107,7 +144,6 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     Uses the TestBootstrapDockerBase instead of TestClientBase.
     """
 
-    # pylint: disable=unused-argument
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_client_feature__is_docker_context(self):
