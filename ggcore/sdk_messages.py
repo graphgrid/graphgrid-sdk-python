@@ -1,6 +1,5 @@
 """Define classes for sdk service request/response objects."""
 
-import dataclasses
 import json
 import typing
 from dataclasses import dataclass
@@ -9,19 +8,49 @@ import requests
 
 from ggcore.utils import HttpMethod
 
+# todo refactor all loaded["..."] to loaded.get("...") for safety?
 
-@dataclass
+# pylint: disable=too-few-public-methods
+class GenericResponse:
+    """Define class that HTTP responses are mapped into. Serves as an
+    inbetween for HTTP responses and SdkServiceResponse subclasses.
+    """
+    status_code: int
+    status_text: str
+    response: str
+    exception: requests.RequestException
+
+    def __init__(self, status_code=None, status_text=None, response=None,
+                 exception=None):
+        self.status_code = status_code
+        self.status_text = status_text
+        self.response = response
+        self.exception = exception
+
+
+# pylint: disable=too-few-public-methods
 class SdkServiceResponse:
     """Define base class representing sdk service response."""
 
-    status_code: int = typing.Optional[int]
-    status_text: str = typing.Optional[str]
+    status_code: typing.Optional[int] = None
+    status_text: typing.Optional[str] = None
+    response: typing.Optional[str] = None
+    exception: typing.Optional[requests.RequestException] = None
 
-    # is a str response here OK or does this need to be more generic/different?
-    response: str = dataclasses.field(default_factory=str)
+    def __init__(self, generic_response: GenericResponse):
+        """Define method to init these base fields from GenericResponse."""
+        self.response = generic_response.response
+        self.status_text = generic_response.status_text
+        self.status_code = generic_response.status_code
+        self.exception = generic_response.exception
 
-    exception: requests.RequestException = typing.Optional[
-        requests.RequestException]
+    def __eq__(self, other):
+        if isinstance(other, SdkServiceResponse):
+            return self.response == other.response \
+                   and self.status_code == other.status_code \
+                   and self.status_text == other.status_text \
+                   and self.exception == other.exception
+        return False
 
 
 # pylint: disable=too-many-instance-attributes
@@ -48,10 +77,6 @@ class SdkServiceRequest:
     _headers: dict = {}
     _query_params: dict = {}
     _body: dict = {}
-
-    # default handler returns the SdkServiceResponse
-    _api_response_handler: typing.Callable[[SdkServiceResponse], typing.Any] \
-        = lambda x: x
 
     @property
     def url(self):
@@ -109,15 +134,6 @@ class SdkServiceRequest:
     def query_params(self, value):
         self._query_params = value
 
-    @property
-    def api_response_handler(self) -> typing.Callable[[SdkServiceResponse],
-                                                      typing.Any]:
-        return self._api_response_handler
-
-    @api_response_handler.setter
-    def api_response_handler(self, value):
-        self._api_response_handler = value
-
     def add_header(self, header_key, value, overwrite=True):
         if overwrite or (header_key not in self._headers):
             self._headers[header_key] = value
@@ -133,8 +149,7 @@ class SdkServiceRequest:
                    and self._body == other._body \
                    and self._api_endpoint == other._api_endpoint \
                    and self._http_method == other._http_method \
-                   and self._query_params == other._query_params \
-                   and self._api_response_handler == self._api_response_handler
+                   and self._query_params == other._query_params
         return False
 
 
@@ -144,12 +159,27 @@ class SaveDatasetResponse(SdkServiceResponse):
     dataset_id: str = None
     save_path: str = None
 
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        loaded = json.loads(generic_response.response)
+        self.save_path = loaded.get('path')
+        self.dataset_id = loaded.get('datasetId')
+
 
 class PromoteModelResponse(SdkServiceResponse):
     """Define class representing a promote model api call response."""
     model_name: str
     task: str
     param_key: str
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        loaded = json.loads(generic_response.response)
+        self.model_name = loaded.get('modelName')
+        self.task = loaded.get('task')
+        self.param_key = loaded.get('paramKey')
 
 
 class PropertySource:
@@ -163,33 +193,58 @@ class PropertySource:
 # pylint: disable=too-many-arguments
 class GetDataResponse(SdkServiceResponse):
     """Define class representing the environment response from get data."""
-    def __init__(self, name: str, profiles: typing.List[str], label: str,
-                 property_sources: typing.List[PropertySource], version: str,
-                 state: str):
-        self.name = name
-        self.profiles = profiles
-        self.label = label
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        loaded = json.loads(generic_response.response)
+        self.name = loaded.get('name')
+        self.profiles = loaded.get('profiles')
+        self.label = loaded.get('label')
         self.property_sources = [PropertySource(**property_source) for
-                                 property_source in property_sources]
-        self.version = version
-        self.state = state
+                                 property_source in loaded.get('propertySources')]
+        self.version = loaded.get('version')
+        self.state = loaded.get('state')
 
 
 class TestApiResponse(SdkServiceResponse):
     """Define class representing a test api call response."""
     response_str: str = None
 
-    # better way to populate? will all responses have to do this?
-    def __init__(self, sdk_response: SdkServiceResponse):
-        self.response = sdk_response.response
-        self.status_text = sdk_response.status_text
-        self.status_code = sdk_response.status_code
-        self.exception = sdk_response.exception
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-        self.response_str = json.loads(self.response)["content"]
+        if self.status_code == 200:
+            loaded = json.loads(generic_response.response)
+            self.response_str = loaded.get('content')
 
 
-@dataclass
+class GetTokenResponse(SdkServiceResponse):
+    """Define class representing a token call response."""
+    access_token: str
+    token_type: str
+    expires_in: str
+    created_at: str
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded = json.loads(generic_response.response)
+            self.access_token = loaded.get('access_token')
+            self.token_type = loaded.get('token_type')
+            self.expires_in = loaded.get('expires_in')
+            self.created_at = loaded.get('createdAt')
+
+
+# pylint: disable=useless-super-delegation
+class CheckTokenResponse(SdkServiceResponse):
+    """Define class representing a check token call response."""
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+
 class GetJobStatusResponse(SdkServiceResponse):
     """Define class representing the get job status response"""
     dag_id: typing.Optional[str] = None
@@ -197,8 +252,18 @@ class GetJobStatusResponse(SdkServiceResponse):
     start_date: typing.Optional[str] = None
     state: typing.Optional[str] = None
 
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-@dataclass
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dag_id = loaded.get('dagId')
+            self.dag_run_id = loaded.get('dagRunId')
+            self.start_date = loaded.get('startDate')
+            self.state = loaded.get('state')
+
+
+
 class GetJobResultsResponse(SdkServiceResponse):
     """Define class representing the get job status response"""
     dag_id: typing.Optional[str] = None
@@ -208,10 +273,30 @@ class GetJobResultsResponse(SdkServiceResponse):
     state: typing.Optional[str] = None
     save_location: typing.Optional[str] = None
 
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
 
-@dataclass
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dag_id = loaded.get('dagId')
+            self.dag_run_id = loaded.get('dagRunId')
+            self.start_date = loaded.get('startDate')
+            self.start_date = loaded.get('endDate')
+            self.state = loaded.get('state')
+            self.state = loaded.get('saveLocation')
+
+
 class JobTrainResponse(SdkServiceResponse):
     """Define class representing the job train response"""
     dag_run_id: typing.Optional[str] = None
     logical_date: typing.Optional[str] = None
     state: typing.Optional[str] = None
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dag_run_id = loaded.get('dagRunId')
+            self.logical_date = loaded.get('startDate')
+            self.state = loaded.get('state')

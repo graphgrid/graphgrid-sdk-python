@@ -1,13 +1,19 @@
 """Define test classes for testing client-level features."""
 from unittest.mock import patch
 
+import responses
+
 import ggcore.http_base
-from ggcore.api import ConfigApi, AbstractApi
-from ggcore.client import ConfigClient
+from ggcore.api import ConfigApi, AbstractApi, SecurityApi
+from ggcore.client import ConfigClient, SecurityClientBase
+from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
+    SdkUnauthorizedValidTokenException
 from ggcore.sdk_messages import SdkServiceRequest
 from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
-from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase
+from ggcore.session import TokenTracker
+from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT, RequestAuthType
+from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase, \
+    TestBase
 
 
 class TestClientBase(TestBootstrapBase):
@@ -17,14 +23,9 @@ class TestClientBase(TestBootstrapBase):
 class TestClientSdkRequestBuilding(TestClientBase):
     """Define test class for grouping client-level sdk request building."""
 
-    # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_client_feature__build_sdk_request__test_api(self,
-                                                         mock_get_auth_value,
-                                                         mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_client_feature__build_sdk_request__test_api(self):
         """Test that client can properly construct test api sdk request from
         TestApi definition.
         """
@@ -41,10 +42,9 @@ class TestClientSdkRequestBuilding(TestClientBase):
         expected.api_endpoint = "config/this/is/a/test"
         expected.headers = AbstractApi().headers()
         expected.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
-            self._test_credentials))
+            TestBase.TEST_TOKEN))
         expected.query_params = {}
         expected.body = {}
-        expected.api_response_handler = AbstractApi().handler
         expected.url = f'http://localhost/1.0/{expected.api_endpoint}'
 
         # build actual service request from api definition
@@ -68,21 +68,109 @@ class TestClientSdkRequestBuilding(TestClientBase):
         PromoteModelApi definition.
         """
 
+    def test_client_feature__build_sdk_request__check_token(self):
+        """Test client properly constructs check token sdk request from
+        CheckTokenApi definition.
+        """
 
-class TestClientGenericResponseHandling(TestClientBase):
+
+class TestClientResponseHandling(TestClientBase):
     """Define test class for grouping client-level generic response handling."""
 
-    def test_client_feature__generic_response_handling__500(self):
-        """Test built-in client ability to handle 500 Internal Server Error."""
+    @responses.activate
+    def test_client_feature__unauth_response_handling__check_token_200(self):
+        """Test client ability to deal with 401 Unauthorized response.
 
-    def test_client_feature__generic_response_handling__401(self):
-        """Test built-in client ability to handle 401 Unauthorized.
-
-        This test covers:
-            (1) token handling grabs a new token after a 401 Unauthorized.
-            (2) 401 Unauthorized are retried automatically.
-            (3) A subsequent 401 returns a response with an error.
+        This test asserts an error is raised when the sdk response is
+        401 Unauthorized and that leads to a 200 OK from check_token.
         """
+
+        json_body = {"access_token": TestBase.TEST_TOKEN,
+                     "token_type": RequestAuthType.BEARER.value,
+                     "expires_in": 10_000,
+                     "createdAt": "2022-04-01T19:48:47.647Z"}
+
+        # mock get token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json=json_body, status=200)
+
+        # mock test_api response 401
+        responses.add(responses.GET,
+                      f'http://localhost/1.0/config/'
+                      f'{ConfigApi.test_api().endpoint()}',
+                      json={}, status=401)
+
+        # mock check token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.check_token_api().endpoint()}',
+                      json={}, status=200)
+
+        # setup config client
+        config_client = ConfigClient(self._test_bootstrap_config)
+
+        self.assertRaises(SdkUnauthorizedValidTokenException,
+                          config_client.test_api, "test-msg")
+
+    @responses.activate
+    def test_client_feature__unauth_response_handling__check_token_400(self):
+        """Test client ability to deal with 401 Unauthorized response.
+
+        This test covers when 401 Unauthorized leads to a 400 Bad Request
+        from a check_token call. It asserts a new token is retrieved and the
+        original request is retried.
+        """
+
+        json_body = {"access_token": TestBase.TEST_TOKEN,
+                     "token_type": RequestAuthType.BEARER.value,
+                     "expires_in": 10_000,
+                     "createdAt": "2022-04-01T19:48:47.647Z"}
+
+        # mock get token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json=json_body, status=200)
+
+        # mock test_api response 401
+        responses.add(responses.GET,
+                      f'http://localhost/1.0/config/'
+                      f'{ConfigApi.test_api().endpoint()}',
+                      json={}, status=401)
+
+        # mock check token response 400
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.check_token_api().endpoint()}',
+                      json={}, status=400)
+
+        # mock call_api with real fn as side_effect; effectively tracks call
+        # without altering behavior
+        with patch.object(SecurityClientBase, "call_api", autospec=True,
+                          side_effect=SecurityClientBase.call_api) \
+                as mock_call_api:
+            config_client = ConfigClient(self._test_bootstrap_config)
+            config_client.test_api("test")
+
+            # assert `call_api` has been called exactly twice; confirms retry
+            # after call_token 400
+            assert mock_call_api.call_count == 2
+
+    @responses.activate
+    def test_client_feature__unauth_response_handling__get_token_401(self):
+        """Test exception thrown when token response is 401 Unauthorized."""
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json={}, status=401)
+
+        # setup config client
+        config_client = ConfigClient(self._test_bootstrap_config)
+
+        self.assertRaises(SdkInvalidOauthCredentialsException,
+                          config_client.test_api, "test-msg")
 
 
 class TestClientDockerContext(TestBootstrapDockerBase):
@@ -91,13 +179,9 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     Uses the TestBootstrapDockerBase instead of TestClientBase.
     """
 
-    # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_client_feature__is_docker_context(self, mock_get_auth_value,
-                                               mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_client_feature__is_docker_context(self):
         """Test that sdk requests built from the test docker base use the
         correct url base for docker.
         """
@@ -113,11 +197,10 @@ class TestClientDockerContext(TestBootstrapDockerBase):
         expected.docker_base = test_api.api_base()
         expected.api_endpoint = "config/this/is/a/test"
         expected.headers = AbstractApi().headers()
-        expected.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
-            self._test_credentials))
+        expected.add_headers(
+            SdkAuthHeaderBuilder.get_bearer_header(TestBase.TEST_TOKEN))
         expected.query_params = {}
         expected.body = {}
-        expected.api_response_handler = AbstractApi().handler
         expected.url = f'http://{test_api.api_base()}:{DOCKER_NGINX_PORT}' \
                        f'/1.0/{expected.api_endpoint}'
 

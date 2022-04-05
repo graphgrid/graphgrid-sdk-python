@@ -3,12 +3,15 @@ import json
 import typing
 from dataclasses import dataclass
 
-from ggcore.sdk_messages import SdkServiceResponse, SdkServiceRequest, \
-    GetDataResponse, TestApiResponse, SaveDatasetResponse, \
-    GetJobStatusResponse, GetJobResultsResponse, JobTrainResponse
+
+from ggcore.sdk_messages import SdkServiceRequest, \
+    GetDataResponse, TestApiResponse, SaveDatasetResponse, GetTokenResponse, \
+    GenericResponse, PromoteModelResponse, SdkServiceResponse, \
+    CheckTokenResponse, JobTrainResponse, GetJobStatusResponse, \
+    GetJobResultsResponse
 from ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, GRANT_TYPE_KEY, \
     GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
-    CONTENT_TYPE_APP_JSON, USER_AGENT
+    CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
 
 
 # pylint: disable=too-few-public-methods
@@ -49,9 +52,10 @@ class AbstractApi:
         return {}  # overrides provide api-specific body
 
     # pylint: disable=no-self-use
-    def handler(self, sdk_response: SdkServiceResponse):
+    def handler(self, generic_response: GenericResponse):
         """Handle the sdk response."""
-        return sdk_response  # default handler returns entire SdkServiceResponse
+        # default handler returns entire GenericResponse
+        return SdkServiceResponse(generic_response)
 
 
 class ConfigApi(ApiGroup):
@@ -85,8 +89,8 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return TestApiResponse(sdk_response)
+        def handler(self, generic_response: GenericResponse):
+            return TestApiResponse(generic_response)
 
     class GetDataApi(AbstractApi):
         """Define GetDataApi api."""
@@ -112,10 +116,8 @@ class ConfigApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return GetDataResponse(**json.loads(
-                sdk_response.response.replace("propertySources",
-                                              "property_sources")))
+        def handler(self, generic_response: GenericResponse):
+            return GetDataResponse(generic_response)
 
 
 class SecurityApi(ApiGroup):
@@ -125,6 +127,11 @@ class SecurityApi(ApiGroup):
     def get_token_api(cls):
         """Return get token api."""
         return cls.GetTokenApi()
+
+    @classmethod
+    def check_token_api(cls, token: str = ""):
+        """Return check token api."""
+        return cls.CheckTokenApi(token)
 
     class GetTokenApi(AbstractApi):
         """Define GetTokenApi api."""
@@ -141,15 +148,39 @@ class SecurityApi(ApiGroup):
         def query_params(self) -> dict:
             return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            # todo how does this handler play into the token tracking?
-            if sdk_response.status_code != 200:
-                raise RuntimeError(
-                    f'Unable to get security token. Response: "{sdk_response.response}"')
+        def handler(self, generic_response: GenericResponse):
+            return GetTokenResponse(generic_response)
 
-            # parse response
-            json_acceptable_string = sdk_response.response.replace("'", "\"")
-            return json.loads(json_acceptable_string)["access_token"]
+    class CheckTokenApi(AbstractApi):
+        """Define CheckTokenApi api."""
+
+        _token: str
+
+        def __init__(self, token: str):
+            self._token = token if token else ""
+
+        def api_base(self):
+            return SECURITY
+
+        def endpoint(self):
+            return "oauth/check_token"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.POST
+
+        def query_params(self) -> dict:
+            return {GRANT_TYPE_KEY: GRANT_TYPE_CLIENT_CREDENTIALS}
+
+        def body(self):
+            return {"token": self._token}
+
+        def headers(self) -> dict:
+            return {
+                CONTENT_TYPE_HEADER_KEY: CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
+            }
+
+        def handler(self, generic_response: GenericResponse):
+            return CheckTokenResponse(generic_response)
 
 
 class NlpApi(ApiGroup):
@@ -210,13 +241,8 @@ class NlpApi(ApiGroup):
         def body(self):
             return self._generator
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            loaded = json.loads(sdk_response.response)
-
-            sdr = SaveDatasetResponse()
-            sdr.save_path = loaded['path']
-            sdr.dataset_id = loaded['datasetId']
-            return sdr
+        def handler(self, generic_response: GenericResponse):
+            return SaveDatasetResponse(generic_response)
 
     @dataclass
     class PromoteModelApi(AbstractApi):
@@ -239,8 +265,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return sdk_response
+        def handler(self, generic_response: GenericResponse):
+            return PromoteModelResponse(generic_response)
 
     @dataclass
     class GetJobResultsApi(AbstractApi):
@@ -267,14 +293,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return GetJobResultsResponse(**json.loads(
-                sdk_response.response.replace("dagId", "dag_id").replace(
-                    "dagRunId", "dag_run_id").replace("startDate",
-                                                      "start_date").replace(
-                    "endDate", "end_date").replace("statusText",
-                                                   "status_text").replace(
-                    "statusCode", "status_code")))
+        def handler(self, generic_response: GenericResponse):
+            return GetJobResultsResponse(generic_response)
 
     @dataclass
     class GetJobStatusApi(AbstractApi):
@@ -301,13 +321,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return GetJobStatusResponse(**json.loads(
-                sdk_response.response.replace("dagId", "dag_id").replace(
-                    "dagRunId", "dag_run_id").replace("startDate",
-                                                      "start_date").replace(
-                    "statusText", "status_text").replace("statusCode",
-                                                         "status_code")))
+        def handler(self, generic_response: GenericResponse):
+            return GetJobStatusResponse(generic_response)
 
     @dataclass
     class JobTrainApi(AbstractApi):
@@ -331,11 +346,8 @@ class NlpApi(ApiGroup):
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
 
-        def handler(self, sdk_response: SdkServiceResponse):
-            return JobTrainResponse(**json.loads(
-                sdk_response.response.replace("dagId", "dag_id").replace(
-                    "statusText", "status_text").replace("statusCode",
-                                                         "status_code")))
+        def handler(self, generic_response: GenericResponse):
+            return JobTrainResponse(generic_response)
 
 
 class SdkRequestBuilder:
@@ -353,8 +365,5 @@ class SdkRequestBuilder:
         sdk_req.http_method = api_def.http_method()
         sdk_req.query_params = api_def.query_params()
         sdk_req.body = api_def.body()
-
-        # handler function reference
-        sdk_req.api_response_handler = api_def.handler
 
         return sdk_req

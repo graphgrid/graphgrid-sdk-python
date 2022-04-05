@@ -6,10 +6,13 @@ import responses
 
 import ggcore
 import ggsdk.sdk
-from ggcore.api import ConfigApi, NlpApi
-from ggcore.sdk_messages import TestApiResponse, SdkServiceResponse, \
-    GetJobStatusResponse, GetJobResultsResponse, JobTrainResponse
-from tests.test_base import TestBootstrapBase
+from ggcore.api import ConfigApi
+from ggcore.api import NlpApi
+from ggcore.sdk_messages import GetJobStatusResponse, GetJobResultsResponse, \
+    JobTrainResponse
+from ggcore.sdk_messages import TestApiResponse, GenericResponse
+from ggcore.session import TokenTracker
+from tests.test_base import TestBootstrapBase, TestBase
 
 
 class TestSdkBase(TestBootstrapBase):
@@ -19,14 +22,10 @@ class TestSdkBase(TestBootstrapBase):
 class TestSdkTestApi(TestSdkBase):
     """Define test class for TestApi sdk calls."""
 
-    # pylint: disable=unused-argument
     @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_sdk_call__test_api__200(self, mock_get_auth_value,
-                                     mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__test_api__200(self):
         """Test sdk TestApi call when response is 200 OK.
 
         Test that the GraphGridSdk.test_api() call sets up correct sdk
@@ -53,7 +52,7 @@ class TestSdkTestApi(TestSdkBase):
 
         # setup expected TestApiResponse obj
         expected_response = TestApiResponse(
-            SdkServiceResponse(200, "OK", json.dumps(json_body), None))
+            GenericResponse(200, "OK", json.dumps(json_body), None))
 
         # call sdk method for test api
         actual_response: TestApiResponse = sdk.test_api(expected_message)
@@ -92,12 +91,9 @@ class TestSdkGetJobStatus(TestSdkBase):
 
     # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_sdk_call__get_job_status__200(self, mock_get_auth_value,
-                                           mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__get_job_status__200(self):
         """Test sdk GetJobStatusApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -122,7 +118,7 @@ class TestSdkGetJobStatus(TestSdkBase):
                           f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobStatusResponse(**expected_response_dict)
+        expected_response = GetJobStatusResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
         actual_response: GetJobStatusResponse = sdk.get_job_status(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
@@ -134,12 +130,9 @@ class TestSdkGetJobResults(TestSdkBase):
 
     # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_sdk_call__get_job_results__200(self, mock_get_auth_value,
-                                            mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__get_job_results__200(self):
         """Test sdk GetJobResultsApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -164,7 +157,7 @@ class TestSdkGetJobResults(TestSdkBase):
                           f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobResultsResponse(**expected_response_dict)
+        expected_response = GetJobResultsResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
         actual_response: GetJobResultsResponse = sdk.get_job_results(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
@@ -176,12 +169,9 @@ class TestSdkJobTrain(TestSdkBase):
 
     # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
-                  return_value="true")
-    def test_sdk_call__job_train__200(self, mock_get_auth_value,
-                                      mock_is_token_present):
+    @patch.object(ggcore.session.TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__job_train__200(self):
         """Test sdk GetJobResultsApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -214,7 +204,7 @@ class TestSdkJobTrain(TestSdkBase):
                           f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = JobTrainResponse(**expected_response_dict)
+        expected_response = JobTrainResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
         actual_response: JobTrainResponse = sdk.job_train(
             request_body=request_body, dag_id=dag_id)
 
