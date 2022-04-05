@@ -52,62 +52,68 @@ class ClientBase:
         return sdk_request
 
 
-class SecurityClient(ClientBase):
-    """Define Security client for bootstrapping the sdk. Makes http requests
-    to the SecurityModule. Stores state of the current SdkSecurityConfig (
-    includes token).
+class InternalSecurityClient(ClientBase):
+    """Define internal security client for bootstrapping the sdk. Special
+    client that supports token operations and provides auth to sdk requests.
+
+    Defines protected methods for get token and check token, which are used
+    by the TokenFactory.
+
+    Meant for internal sdk core use only. User-facing security SDK calls
+    should go in SecurityClient instead.
     """
     _token_factory: TokenFactory
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
         self._token_factory = TokenFactory(
-            self.get_token_builtin)
+            self._get_token_builtin, self._check_token_builtin)
 
-    def get_token_builtin(self) -> GetTokenResponse:
-        """Build and execute request to get a new security token."""
-        # get api
+    def _get_token_builtin(self) -> GetTokenResponse:
+        """Define protected method to get a new security token."""
         api = SecurityApi.get_token_api()
 
-        # build request
-        sdk_request = self.build_sdk_request(api)
-
         # invoke request
-        sdk_response_helper = self._invoke_with_basic_auth(sdk_request)
+        return self._invoke_with_basic_auth(api)
 
-        # handle and return
-        return api.handler(sdk_response_helper)
-
-    def check_token_builtin(self) -> CheckTokenResponse:
-        """Build and execute request to check the current security token."""
-        # get api
+    def _check_token_builtin(self) -> CheckTokenResponse:
+        """Define protected method to check the current security token."""
         api = \
             SecurityApi.check_token_api(self._token_factory.get_current_token())
 
+        # invoke request
+        return self._invoke_with_basic_auth(api)
+
+    def _invoke_with_basic_auth(self, api: AbstractApi):
+        """Define protected method to invoke sdk requests with basic auth
+        headers and return the handled response.
+        """
         # build request
         sdk_request = self.build_sdk_request(api)
 
-        # invoke request
-        sdk_response_helper = self._invoke_with_basic_auth(sdk_request)
-
-        # handle and return
-        return api.handler(sdk_response_helper)
-
-    def _invoke_with_basic_auth(self, sdk_request):
-        """Define method to invoke sdk requests with basic auth headers and
-        return the handled response.
-        """
+        # apply basic auth header
         auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
             self._bootstrap_config)
-
         sdk_request.headers.update(auth_basic_header)
 
-        return self.make_request(sdk_request)
+        sdk_response = self.make_request(sdk_request)
+
+        return api.handler(sdk_response)
 
     def prepare_auth(self, force_token_refresh=False):
+        """Define method that prepares token factory for use."""
         self._token_factory.refresh_token(force_token_refresh)
 
+    def check_token(self) -> CheckTokenResponse:
+        """Define method that checks the current token and returns the
+        response.
+        """
+        return self._token_factory.call_check_token()
+
     def authenticate_request(self, sdk_request: SdkServiceRequest):
+        """Define method that adds the current token as a bearer header to
+        the sdk request.
+        """
         sdk_request.add_headers(
             SdkAuthHeaderBuilder.get_bearer_header(
                 self._token_factory.get_current_token()))
@@ -118,13 +124,13 @@ class SecurityClientBase(ClientBase):
     """Define Security client base. Provide authentication and response
     handling logic to client subclasses.
     """
-    _security_client: SecurityClient
+    _security_client: InternalSecurityClient
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
 
         # Configure security client
-        self._security_client = SecurityClient(self._bootstrap_config)
+        self._security_client = InternalSecurityClient(self._bootstrap_config)
 
     def build_sdk_request(self,
                           api_def: AbstractApi) -> SdkServiceRequest:
@@ -156,7 +162,7 @@ class SecurityClientBase(ClientBase):
         # and possibly retry
         if sdk_response_helper.status_code == 401:
             # request hit a 401, call check token
-            check_token_response = self._security_client.check_token_builtin()
+            check_token_response = self._security_client.check_token()
 
             # token is valid, surface unrecoverable exception
             if check_token_response.status_code == 200:
@@ -181,6 +187,10 @@ class SecurityClientBase(ClientBase):
 
         # custom handler call if response passes generic handler
         return api.handler(sdk_response_helper)
+
+
+class SecurityClient(SecurityClientBase):
+    """Define SecurityClient to hold the security sdk calls."""
 
 
 class ConfigClient(SecurityClientBase):

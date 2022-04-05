@@ -5,7 +5,7 @@ import responses
 
 import ggcore
 from ggcore.api import SecurityApi
-from ggcore.client import SecurityClient
+from ggcore.client import InternalSecurityClient
 from ggcore.session import TokenFactory
 from ggcore.utils import RequestAuthType
 from tests.test_base import TestBootstrapBase
@@ -21,8 +21,9 @@ class TestTokenFactory(TestBootstrapBase):
     def test_token_factory__get_token_if_missing(self, mock_get_auth_value):
         """Test new token retrieved if no current token."""
 
-        security_client = SecurityClient(self._test_bootstrap_config)
-        token_factory = TokenFactory(security_client.get_token_builtin)
+        security_client = InternalSecurityClient(self._test_bootstrap_config)
+        token_factory = TokenFactory(security_client._get_token_builtin,
+                                     security_client._check_token_builtin)
 
         json_body = {"access_token": self.TEST_TOKEN,
                      "token_type": RequestAuthType.BEARER.value,
@@ -54,8 +55,9 @@ class TestTokenFactory(TestBootstrapBase):
 
         expiration_time_for_test_ms = 1_000  # expiration time in ms
 
-        security_client = SecurityClient(self._test_bootstrap_config)
-        token_factory = TokenFactory(security_client.get_token_builtin)
+        security_client = InternalSecurityClient(self._test_bootstrap_config)
+        token_factory = TokenFactory(security_client._get_token_builtin,
+                                     security_client._check_token_builtin)
 
         json_body = {"access_token": self.TEST_TOKEN,
                      "token_type": RequestAuthType.BEARER.value,

@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
     SdkGetTokenException
-from ggcore.sdk_messages import GetTokenResponse
+from ggcore.sdk_messages import GetTokenResponse, CheckTokenResponse
 
 # Buffer for token expiration timeout
 TIMEOUT_BUFFER_SECONDS = 3
@@ -27,13 +27,15 @@ def get_time_in_ms():
 class TokenFactory:
     """Define class to dynamically call for a token."""
     _token_supplier: typing.Callable[[], GetTokenResponse]
+    _token_checker: typing.Callable[[], CheckTokenResponse]
 
     _token_tracker: TokenTracker = None
 
-    def __init__(self, token_supp):
+    def __init__(self, token_supp, token_checker):
         self._token_supplier = token_supp
+        self._token_checker = token_checker
 
-    def call_for_token(self):
+    def call_get_token(self):
         """Execute call to get a new token and populate the TokenTracker."""
         get_token_response = self._token_supplier()
 
@@ -58,6 +60,10 @@ class TokenFactory:
                 f'"{get_token_response.response}")')
 
         return self._token_tracker
+
+    def call_check_token(self) -> CheckTokenResponse:
+        """Execute call to check token and return response."""
+        return self._token_checker()
 
     def get_current_token(self) -> str:
         """Get token from the current TokenTracker."""
@@ -84,6 +90,6 @@ class TokenFactory:
         """
         if force_refresh or not self.is_token_ready():
             # request new token
-            self.call_for_token()
+            self.call_get_token()
 
         return self.get_current_token()
