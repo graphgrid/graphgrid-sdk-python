@@ -76,11 +76,6 @@ class SdkServiceRequest:
     _query_params: dict = {}
     _body: dict = {}
 
-    # default handler returns the SdkServiceResponse
-    _api_response_handler: typing.Callable[
-        [SdkResponseHelper], SdkServiceResponse] \
-        = lambda x: x
-
     @property
     def url(self):
         return self._url
@@ -137,15 +132,6 @@ class SdkServiceRequest:
     def query_params(self, value):
         self._query_params = value
 
-    @property
-    def api_response_handler(self) -> typing.Callable[[SdkResponseHelper],
-                                                      SdkServiceResponse]:
-        return self._api_response_handler
-
-    @api_response_handler.setter
-    def api_response_handler(self, value):
-        self._api_response_handler = value
-
     def add_header(self, header_key, value, overwrite=True):
         if overwrite or (header_key not in self._headers):
             self._headers[header_key] = value
@@ -161,8 +147,7 @@ class SdkServiceRequest:
                    and self._body == other._body \
                    and self._api_endpoint == other._api_endpoint \
                    and self._http_method == other._http_method \
-                   and self._query_params == other._query_params \
-                   and self._api_response_handler == self._api_response_handler
+                   and self._query_params == other._query_params
         return False
 
 

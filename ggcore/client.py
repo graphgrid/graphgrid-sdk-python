@@ -68,18 +68,32 @@ class SecurityClient(ClientBase):
 
     def get_token_builtin(self) -> GetTokenResponse:
         """Build and execute request to get a new security token."""
-        sdk_request = self.build_sdk_request(
-            SecurityApi.get_token_api())
+        # get api
+        api = SecurityApi.get_token_api()
 
-        return self._invoke_with_basic_auth(sdk_request)
+        # build request
+        sdk_request = self.build_sdk_request(api)
+
+        # invoke request
+        sdk_response_helper = self._invoke_with_basic_auth(sdk_request)
+
+        # handle and return
+        return api.handler(sdk_response_helper)
 
     def check_token_builtin(self) -> CheckTokenResponse:
         """Build and execute request to check the current security token."""
-        sdk_request = self.build_sdk_request(
-            SecurityApi.check_token_api(
-                self._token_factory.get_current_token()))
+        # get api
+        api = \
+            SecurityApi.check_token_api(self._token_factory.get_current_token())
 
-        return self._invoke_with_basic_auth(sdk_request)
+        # build request
+        sdk_request = self.build_sdk_request(api)
+
+        # invoke request
+        sdk_response_helper = self._invoke_with_basic_auth(sdk_request)
+
+        # handle and return
+        return api.handler(sdk_response_helper)
 
     def _invoke_with_basic_auth(self, sdk_request):
         """Define method to invoke sdk requests with basic auth headers and
@@ -90,9 +104,7 @@ class SecurityClient(ClientBase):
 
         sdk_request.headers.update(auth_basic_header)
 
-        sdk_response_helper = self.make_request(sdk_request)
-
-        return sdk_request.api_response_handler(sdk_response_helper)
+        return self.make_request(sdk_request)
 
     def prepare_auth(self, force_token_refresh=False):
         self._token_factory.refresh_token(force_token_refresh)
@@ -102,11 +114,6 @@ class SecurityClient(ClientBase):
             SdkAuthHeaderBuilder.get_bearer_header_for_token(
                 self._token_factory.get_current_token()))
         return sdk_request
-
-    # pylint: disable=missing-function-docstring
-    @property
-    def security_config(self):
-        return self._security_config
 
 
 class SecurityClientBase(ClientBase):

@@ -49,7 +49,6 @@ class TestClientSdkRequestBuilding(TestClientBase):
             self._test_credentials))
         expected.query_params = {}
         expected.body = {}
-        expected.api_response_handler = AbstractApi().handler
         expected.url = f'http://localhost/1.0/{expected.api_endpoint}'
 
         # build actual service request from api definition
@@ -142,7 +141,6 @@ class TestClientDockerContext(TestBootstrapDockerBase):
             self._test_credentials))
         expected.query_params = {}
         expected.body = {}
-        expected.api_response_handler = AbstractApi().handler
         expected.url = f'http://{test_api.api_base()}:{DOCKER_NGINX_PORT}' \
                        f'/1.0/{expected.api_endpoint}'
 

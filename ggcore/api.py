@@ -267,7 +267,4 @@ class SdkRequestBuilder:
         sdk_req.query_params = api_def.query_params()
         sdk_req.body = api_def.body()
 
-        # handler function reference
-        sdk_req.api_response_handler = api_def.handler
-
         return sdk_req
