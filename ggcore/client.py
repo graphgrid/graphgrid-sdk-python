@@ -151,3 +151,21 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
         sdk_request = self.build_sdk_request(api_call)
         return self.make_request(sdk_request)
+
+    def get_job_results(self, dag_id: str, dag_run_id: str):
+        """Return get job results sdk call."""
+        api_call = NlpApi.get_job_results_api(dag_id, dag_run_id)
+        sdk_request = self.build_sdk_request(api_call)
+        return self.make_request(sdk_request)
+
+    def get_job_status(self, dag_id: str, dag_run_id: str):
+        """Return get job status sdk call."""
+        api_call = NlpApi.get_job_status_api(dag_id, dag_run_id)
+        sdk_request = self.build_sdk_request(api_call)
+        return self.make_request(sdk_request)
+
+    def job_train(self, request_body: dict, dag_id: str):
+        """Return job train sdk call."""
+        api_call = NlpApi.job_train_api(request_body, dag_id)
+        sdk_request = self.build_sdk_request(api_call)
+        return self.make_request(sdk_request)

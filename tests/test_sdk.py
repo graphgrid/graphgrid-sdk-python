@@ -6,8 +6,9 @@ import responses
 
 import ggcore
 import ggsdk.sdk
-from ggcore.api import ConfigApi
-from ggcore.sdk_messages import TestApiResponse, SdkServiceResponse
+from ggcore.api import ConfigApi, NlpApi
+from ggcore.sdk_messages import TestApiResponse, SdkServiceResponse, \
+    GetJobStatusResponse, GetJobResultsResponse, JobTrainResponse
 from tests.test_base import TestBootstrapBase
 
 
@@ -84,3 +85,137 @@ class TestSdkPromoteModel(TestSdkBase):
 
     def test_sdk_call__promote_model__200(self):
         """Test sdk PromoteModelApi call when response is 200 OK."""
+
+
+class TestSdkGetJobStatus(TestSdkBase):
+    """Define test class for GetJobStatusApi sdk calls."""
+
+    # pylint: disable=unused-argument,line-too-long
+    @responses.activate  # mock responses
+    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
+                  return_value=TestBootstrapBase.TEST_TOKEN)
+    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+                  return_value="true")
+    def test_sdk_call__get_job_status__200(self, mock_get_auth_value,
+                                           mock_is_token_present):
+        """Test sdk GetJobStatusApi call when response is 200 OK."""
+        dag_id = "any_dag"
+        start_date = "2022-03-28T16:02:45.526226+00:00"
+        state = "running"
+        dag_run_id = f"manual__{start_date}"
+        expected_response_dict = {
+            "status_code": 200,
+            "status_text": "OK",
+            "dag_run_id": dag_run_id,
+            "dag_id": dag_id,
+            "start_date": start_date,
+            "state": state,
+            "response": None,
+            "exception": None
+        }
+
+        sdk = ggsdk.sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                     self._test_bootstrap_config.secret_key,
+                                     self._test_bootstrap_config.url_base)
+        responses.add(method=responses.GET,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = GetJobStatusResponse(**expected_response_dict)
+        actual_response: GetJobStatusResponse = sdk.get_job_status(
+            dag_id=dag_id, dag_run_id=dag_run_id)
+
+        assert actual_response == expected_response
+
+
+class TestSdkGetJobResults(TestSdkBase):
+    """Define test class for GetJobResultsApi sdk calls."""
+
+    # pylint: disable=unused-argument,line-too-long
+    @responses.activate  # mock responses
+    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
+                  return_value=TestBootstrapBase.TEST_TOKEN)
+    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+                  return_value="true")
+    def test_sdk_call__get_job_results__200(self, mock_get_auth_value,
+                                            mock_is_token_present):
+        """Test sdk GetJobResultsApi call when response is 200 OK."""
+        dag_id = "any_dag"
+        start_date = "2022-03-28T16:02:45.526226+00:00"
+        state = "success"
+        dag_run_id = f"manual__{start_date}"
+        expected_response_dict = {
+            "status_code": 200,
+            "status_text": "OK",
+            "dag_run_id": dag_run_id,
+            "dag_id": dag_id,
+            "start_date": start_date,
+            "state": state,
+            "response": None,
+            "exception": None
+        }
+
+        sdk = ggsdk.sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                     self._test_bootstrap_config.secret_key,
+                                     self._test_bootstrap_config.url_base)
+        responses.add(method=responses.GET,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = GetJobResultsResponse(**expected_response_dict)
+        actual_response: GetJobResultsResponse = sdk.get_job_results(
+            dag_id=dag_id, dag_run_id=dag_run_id)
+
+        assert actual_response == expected_response
+
+
+class TestSdkJobTrain(TestSdkBase):
+    """Define test class for JobTrainApi sdk calls."""
+
+    # pylint: disable=unused-argument,line-too-long
+    @responses.activate  # mock responses
+    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
+                  return_value=TestBootstrapBase.TEST_TOKEN)
+    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+                  return_value="true")
+    def test_sdk_call__job_train__200(self, mock_get_auth_value,
+                                      mock_is_token_present):
+        """Test sdk GetJobResultsApi call when response is 200 OK."""
+        dag_id = "any_dag"
+        start_date = "2022-03-28T16:02:45.526226+00:00"
+        logical_date = "2022-03-28T16:02:45.526226+00:00"
+        state = "queued"
+        dag_run_id = f"manual__{start_date}"
+        expected_response_dict = {
+            "status_code": 200,
+            "status_text": "OK",
+            "dag_run_id": dag_run_id,
+            "logical_date": logical_date,
+            "state": state,
+            "response": None,
+            "exception": None
+        }
+        request_body = {"model": "some-model",
+                        "datasets": {
+                            "some-dataset": {"train": "path/to/dataset",
+                                             "eval": "path/to/dataset"},
+                            "another_dataset": {"train": "path/to/dataset",
+                                                "eval": "path/to/dataset"}},
+                        "no_cache": False,
+                        "GPU": False}
+
+        sdk = ggsdk.sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                     self._test_bootstrap_config.secret_key,
+                                     self._test_bootstrap_config.url_base)
+        responses.add(method=responses.POST,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = JobTrainResponse(**expected_response_dict)
+        actual_response: JobTrainResponse = sdk.job_train(
+            request_body=request_body, dag_id=dag_id)
+
+        assert actual_response == expected_response

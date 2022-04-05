@@ -162,8 +162,7 @@ class PropertySource:
 
 # pylint: disable=too-many-arguments
 class GetDataResponse(SdkServiceResponse):
-    """Define class representing the enviornment response from get data."""
-
+    """Define class representing the environment response from get data."""
     def __init__(self, name: str, profiles: typing.List[str], label: str,
                  property_sources: typing.List[PropertySource], version: str,
                  state: str):
@@ -188,3 +187,31 @@ class TestApiResponse(SdkServiceResponse):
         self.exception = sdk_response.exception
 
         self.response_str = json.loads(self.response)["content"]
+
+
+@dataclass
+class GetJobStatusResponse(SdkServiceResponse):
+    """Define class representing the get job status response"""
+    dag_id: typing.Optional[str] = None
+    dag_run_id: typing.Optional[str] = None
+    start_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+
+
+@dataclass
+class GetJobResultsResponse(SdkServiceResponse):
+    """Define class representing the get job status response"""
+    dag_id: typing.Optional[str] = None
+    dag_run_id: typing.Optional[str] = None
+    start_date: typing.Optional[str] = None
+    end_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None
+    save_location: typing.Optional[str] = None
+
+
+@dataclass
+class JobTrainResponse(SdkServiceResponse):
+    """Define class representing the job train response"""
+    dag_run_id: typing.Optional[str] = None
+    logical_date: typing.Optional[str] = None
+    state: typing.Optional[str] = None
