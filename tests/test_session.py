@@ -1,10 +1,8 @@
 """Define test classes for session features and TokenFactory."""
 import time
-from unittest.mock import patch
 
 import responses
 
-import ggcore
 from ggcore.api import SecurityApi
 from ggcore.client import InternalSecurityClient
 from ggcore.session import TokenFactory
@@ -15,11 +13,9 @@ from tests.test_base import TestBootstrapBase, TestBase
 class TestTokenFactory(TestBootstrapBase):
     """Define test class for grouping TokenFactory feature tests."""
 
-    # pylint: disable=unused-argument,protected-access
-    @responses.activate  # mock responses
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
-                  return_value=TestBootstrapBase.TEST_TOKEN)
-    def test_token_factory__get_token_if_missing(self, mock_get_auth_value):
+    # pylint: disable=protected-access
+    @responses.activate
+    def test_token_factory__get_token_if_missing(self):
         """Test new token retrieved if no current token."""
 
         security_client = InternalSecurityClient(self._test_bootstrap_config)
@@ -47,13 +43,12 @@ class TestTokenFactory(TestBootstrapBase):
 
         assert False, "Token should be present after token_handling call."
 
-    def test_token_factory__expired_token__expiration_logic(self):
-        """Test expiration logic functions properly."""
-
     # pylint: disable=protected-access
     @responses.activate
-    def test_token_factory__expired_token__get_new_token_after_expiry(self):
-        """Test new token retrieved after current token expires."""
+    def test_token_factory__expired_token(self):
+        """Test token expires properly and new token retrieved after
+        expiration.
+        """
 
         test_expiration_time_ms = 5_000  # expiration time in ms
         test_token_after_expiry = "token-after-expiry"
@@ -75,6 +70,9 @@ class TestTokenFactory(TestBootstrapBase):
         # populate token tracker with current mock response
         token_factory.call_get_token()
 
+        # assert token has not yet expired
+        assert token_factory.is_token_expired() is False
+
         # sleep until expiry
         time.sleep(test_expiration_time_ms // 1000)
 
@@ -83,16 +81,15 @@ class TestTokenFactory(TestBootstrapBase):
 
         # update new token after timeout
         json_body["access_token"] = test_token_after_expiry
-        # modify get token response to return new token
+        # modify mock get token response to use updated json body
         responses.add(responses.POST,
                       f'http://localhost/1.0/security/'
                       f'{SecurityApi.get_token_api().endpoint()}',
                       json=json_body, status=200)
 
-        # refresh token (always requests new token since current
-        # token is expired)
+        # refresh token
         token_factory.refresh_token()
 
-        # assert the new token (now current token) has changed to the new
-        # mock response.
+        # assert the current token is updated and matches the mock response
+        # token value.
         assert token_factory.get_current_token() == test_token_after_expiry
