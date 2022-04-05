@@ -311,6 +311,7 @@ class NlpApi(ApiGroup):
 
     @dataclass
     class JobTrainApi(AbstractApi):
+        """Define JobTrainApi api."""
         _request_body: dict
         _dag_id: str
 

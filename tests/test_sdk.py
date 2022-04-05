@@ -90,7 +90,7 @@ class TestSdkPromoteModel(TestSdkBase):
 class TestSdkGetJobStatus(TestSdkBase):
     """Define test class for GetJobStatusApi sdk calls."""
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
@@ -132,7 +132,7 @@ class TestSdkGetJobStatus(TestSdkBase):
 class TestSdkGetJobResults(TestSdkBase):
     """Define test class for GetJobResultsApi sdk calls."""
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
@@ -174,7 +174,7 @@ class TestSdkGetJobResults(TestSdkBase):
 class TestSdkJobTrain(TestSdkBase):
     """Define test class for JobTrainApi sdk calls."""
 
-    # pylint: disable=unused-argument
+    # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
     @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
@@ -198,8 +198,11 @@ class TestSdkJobTrain(TestSdkBase):
             "exception": None
         }
         request_body = {"model": "some-model",
-                        "datasets": {"some-dataset": {"train": "path/to/dataset", "eval": "path/to/dataset"},
-                                     "another_dataset": {"train": "path/to/dataset", "eval": "path/to/dataset"}},
+                        "datasets": {
+                            "some-dataset": {"train": "path/to/dataset",
+                                             "eval": "path/to/dataset"},
+                            "another_dataset": {"train": "path/to/dataset",
+                                                "eval": "path/to/dataset"}},
                         "no_cache": False,
                         "GPU": False}
 
