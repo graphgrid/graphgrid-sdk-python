@@ -1,7 +1,7 @@
 """Define test base classes used throughout the tests."""
 from unittest import TestCase
 
-from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
+from ggcore.config import SdkBootstrapConfig
 
 
 class TestBase(TestCase):
@@ -22,9 +22,6 @@ class TestBootstrapBase(TestBase):
         url_base='localhost',
         is_docker_context=False)
 
-    _test_credentials = SdkSecurityConfig(_test_bootstrap_config,
-                                          TestBase.TEST_TOKEN)
-
 
 class TestBootstrapDockerBase(TestBase):
     """Define base for tests that mimic running in a docker context.
@@ -37,6 +34,3 @@ class TestBootstrapDockerBase(TestBase):
         secret_key='81a62cea53883f4a163a96355d47656e',
         url_base="localhost",
         is_docker_context=True)
-
-    _test_credentials = SdkSecurityConfig(_test_bootstrap_docker_config,
-                                          TestBase.TEST_TOKEN)

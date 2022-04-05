@@ -2,7 +2,7 @@
 
 from ggcore.security_base import SdkAuthHeaderBuilder
 from ggcore.utils import AUTH_HEADER_KEY
-from tests.test_base import TestBootstrapBase
+from tests.test_base import TestBootstrapBase, TestBase
 
 
 class TestAuth(TestBootstrapBase):
@@ -15,7 +15,7 @@ class TestAuth(TestBootstrapBase):
             AUTH_HEADER_KEY: 'Basic YTM4NDc3NTBmNDg2YmQ5MzFkZTI2YzZlNjgzYjFkYzQ6ODFhNjJjZWE1Mzg4M2Y0YTE2M2E5NjM1NWQ0NzY1NmU='}
 
         actual_headers = SdkAuthHeaderBuilder.get_basic_header(
-            self._test_credentials)
+            self._test_bootstrap_config)
 
         assert actual_headers == expected_headers
 
@@ -25,6 +25,6 @@ class TestAuth(TestBootstrapBase):
             AUTH_HEADER_KEY: f'Bearer {TestBootstrapBase.TEST_TOKEN}'}
 
         actual_headers = SdkAuthHeaderBuilder.get_bearer_header(
-            self._test_credentials)
+            TestBase.TEST_TOKEN)
 
         assert actual_headers == expected_headers

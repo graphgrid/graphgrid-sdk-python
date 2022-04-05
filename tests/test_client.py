@@ -46,7 +46,7 @@ class TestClientSdkRequestBuilding(TestClientBase):
         expected.api_endpoint = "config/this/is/a/test"
         expected.headers = AbstractApi().headers()
         expected.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
-            self._test_credentials))
+            TestBase.TEST_TOKEN))
         expected.query_params = {}
         expected.body = {}
         expected.url = f'http://localhost/1.0/{expected.api_endpoint}'
@@ -137,8 +137,8 @@ class TestClientDockerContext(TestBootstrapDockerBase):
         expected.docker_base = test_api.api_base()
         expected.api_endpoint = "config/this/is/a/test"
         expected.headers = AbstractApi().headers()
-        expected.add_headers(SdkAuthHeaderBuilder.get_bearer_header(
-            self._test_credentials))
+        expected.add_headers(
+            SdkAuthHeaderBuilder.get_bearer_header(TestBase.TEST_TOKEN))
         expected.query_params = {}
         expected.body = {}
         expected.url = f'http://{test_api.api_base()}:{DOCKER_NGINX_PORT}' \

@@ -4,7 +4,7 @@ import typing
 
 from ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, ConfigApi, \
     AbstractApi
-from ggcore.config import SdkBootstrapConfig, SdkSecurityConfig
+from ggcore.config import SdkBootstrapConfig
 from ggcore.http_base import SdkHttpClient
 from ggcore.sdk_exceptions import SdkUnauthorizedValidTokenException, \
     SdkUnauthorizedInvalidTokenException
@@ -57,12 +57,10 @@ class SecurityClient(ClientBase):
     to the SecurityModule. Stores state of the current SdkSecurityConfig (
     includes token).
     """
-    _security_config: SdkSecurityConfig
     _token_factory: TokenFactory
 
     def __init__(self, bootstrap_config):
         super().__init__(bootstrap_config)
-        self._security_config = SdkSecurityConfig(bootstrap_config)
         self._token_factory = TokenFactory(
             self.get_token_builtin)
 
@@ -100,7 +98,7 @@ class SecurityClient(ClientBase):
         return the handled response.
         """
         auth_basic_header = SdkAuthHeaderBuilder.get_basic_header(
-            self._security_config)
+            self._bootstrap_config)
 
         sdk_request.headers.update(auth_basic_header)
 
@@ -111,7 +109,7 @@ class SecurityClient(ClientBase):
 
     def authenticate_request(self, sdk_request: SdkServiceRequest):
         sdk_request.add_headers(
-            SdkAuthHeaderBuilder.get_bearer_header_for_token(
+            SdkAuthHeaderBuilder.get_bearer_header(
                 self._token_factory.get_current_token()))
         return sdk_request
 
