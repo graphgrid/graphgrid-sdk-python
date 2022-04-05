@@ -118,7 +118,9 @@ class TestSdkGetJobStatus(TestSdkBase):
                           f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobStatusResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        expected_response = GetJobStatusResponse(
+            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+                            None))
         actual_response: GetJobStatusResponse = sdk.get_job_status(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
@@ -157,7 +159,9 @@ class TestSdkGetJobResults(TestSdkBase):
                           f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobResultsResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        expected_response = GetJobResultsResponse(
+            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+                            None))
         actual_response: GetJobResultsResponse = sdk.get_job_results(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
@@ -204,7 +208,9 @@ class TestSdkJobTrain(TestSdkBase):
                           f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = JobTrainResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        expected_response = JobTrainResponse(
+            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+                            None))
         actual_response: JobTrainResponse = sdk.job_train(
             request_body=request_body, dag_id=dag_id)
 

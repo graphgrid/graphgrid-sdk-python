@@ -2,13 +2,11 @@
 
 import json
 import typing
-from dataclasses import dataclass
 
 import requests
 
 from ggcore.utils import HttpMethod
 
-# todo refactor all loaded["..."] to loaded.get("...") for safety?
 
 # pylint: disable=too-few-public-methods
 class GenericResponse:
@@ -202,7 +200,8 @@ class GetDataResponse(SdkServiceResponse):
         self.profiles = loaded.get('profiles')
         self.label = loaded.get('label')
         self.property_sources = [PropertySource(**property_source) for
-                                 property_source in loaded.get('propertySources')]
+                                 property_source in
+                                 loaded.get('propertySources')]
         self.version = loaded.get('version')
         self.state = loaded.get('state')
 
@@ -261,7 +260,6 @@ class GetJobStatusResponse(SdkServiceResponse):
             self.dag_run_id = loaded.get('dagRunId')
             self.start_date = loaded.get('startDate')
             self.state = loaded.get('state')
-
 
 
 class GetJobResultsResponse(SdkServiceResponse):

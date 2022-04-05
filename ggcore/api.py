@@ -3,7 +3,6 @@ import json
 import typing
 from dataclasses import dataclass
 
-
 from ggcore.sdk_messages import SdkServiceRequest, \
     GetDataResponse, TestApiResponse, SaveDatasetResponse, GetTokenResponse, \
     GenericResponse, PromoteModelResponse, SdkServiceResponse, \
