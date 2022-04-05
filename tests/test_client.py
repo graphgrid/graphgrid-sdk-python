@@ -5,7 +5,7 @@ import responses
 
 import ggcore.http_base
 from ggcore.api import ConfigApi, AbstractApi, SecurityApi
-from ggcore.client import ConfigClient
+from ggcore.client import ConfigClient, SecurityClientBase
 from ggcore.sdk_exceptions import SdkInvalidOauthCredentialsException, \
     SdkUnauthorizedValidTokenException
 from ggcore.sdk_messages import SdkServiceRequest
@@ -122,6 +122,41 @@ class TestClientResponseHandling(TestClientBase):
         from a check_token call. It asserts a new token is retrieved and the
         original request is retried.
         """
+
+        json_body = {"access_token": TestBase.TEST_TOKEN,
+                     "token_type": RequestAuthType.BEARER.value,
+                     "expires_in": 10_000,
+                     "createdAt": "2022-04-01T19:48:47.647Z"}
+
+        # mock get token response 200
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.get_token_api().endpoint()}',
+                      json=json_body, status=200)
+
+        # mock test_api response 401
+        responses.add(responses.GET,
+                      f'http://localhost/1.0/config/'
+                      f'{ConfigApi.test_api().endpoint()}',
+                      json={}, status=401)
+
+        # mock check token response 400
+        responses.add(responses.POST,
+                      f'http://localhost/1.0/security/'
+                      f'{SecurityApi.check_token_api().endpoint()}',
+                      json={}, status=400)
+
+        # mock call_api with real fn as side_effect; effectively tracks call
+        # without altering behavior
+        with patch.object(SecurityClientBase, "call_api", autospec=True,
+                          side_effect=SecurityClientBase.call_api) \
+                as mock_call_api:
+            config_client = ConfigClient(self._test_bootstrap_config)
+            config_client.test_api("test")
+
+            # assert `call_api` has been called exactly twice; confirms retry
+            # after call_token 400
+            assert mock_call_api.call_count == 2
 
     @responses.activate
     def test_client_feature__unauth_response_handling__get_token_401(self):

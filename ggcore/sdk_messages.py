@@ -212,8 +212,9 @@ class TestApiResponse(SdkServiceResponse):
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
-        loaded = json.loads(generic_response.response)
-        self.response_str = loaded['content']
+        if self.status_code == 200:
+            loaded = json.loads(generic_response.response)
+            self.response_str = loaded['content']
 
 
 class GetTokenResponse(SdkServiceResponse):
