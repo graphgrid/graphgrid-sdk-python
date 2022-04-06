@@ -47,3 +47,15 @@ class SdkCore:
                  revision: str):
         """Execute get data call."""
         return self._config_client.get_data(module, profiles, revision)
+
+    def get_job_results(self, dag_id: str, dag_run_id: str):
+        """Execute get job results call."""
+        return self._nlp_client.get_job_results(dag_id, dag_run_id)
+
+    def get_job_status(self, dag_id: str, dag_run_id: str):
+        """Execute get job status call."""
+        return self._nlp_client.get_job_status(dag_id, dag_run_id)
+
+    def job_train(self, request_body: dict, dag_id: str):
+        """Execute get job train call."""
+        return self._nlp_client.job_train(request_body, dag_id)

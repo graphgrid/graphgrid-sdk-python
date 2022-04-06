@@ -48,6 +48,7 @@ USERNAME_KEY = "username"
 USER_AGENT = "User-Agent"
 CONTENT_TYPE_HEADER_KEY = "Content-type"
 CONTENT_TYPE_APP_JSON = "application/json"
+CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded"
 
 
 class RequestAuthType(enum.Enum):
