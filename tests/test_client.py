@@ -1,12 +1,13 @@
 """Define test classes for testing client-level features."""
 from unittest.mock import patch
 
-import ggcore.http_base
-from ggcore.api import ConfigApi, AbstractApi
-from ggcore.client import ConfigClient
-from ggcore.sdk_messages import SdkServiceRequest
-from ggcore.security_base import SdkAuthHeaderBuilder
-from ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
+from graphgrid_sdk.ggcore.security_base import BearerAuth
+from graphgrid_sdk.ggcore.client import SecurityClient
+from graphgrid_sdk.ggcore.api import ConfigApi, AbstractApi
+from graphgrid_sdk.ggcore.client import ConfigClient
+from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest
+from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
+from graphgrid_sdk.ggcore.utils import HttpMethod, DOCKER_NGINX_PORT
 from tests.test_base import TestBootstrapBase, TestBootstrapDockerBase
 
 
@@ -18,9 +19,9 @@ class TestClientSdkRequestBuilding(TestClientBase):
     """Define test class for grouping client-level sdk request building."""
 
     # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
+    @patch.object(BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+    @patch.object(SecurityClient, "is_token_present",
                   return_value="true")
     def test_client_feature__build_sdk_request__test_api(self,
                                                          mock_get_auth_value,
@@ -92,9 +93,9 @@ class TestClientDockerContext(TestBootstrapDockerBase):
     """
 
     # pylint: disable=unused-argument
-    @patch.object(ggcore.security_base.BearerAuth, "get_auth_value",
+    @patch.object(BearerAuth, "get_auth_value",
                   return_value=TestBootstrapBase.TEST_TOKEN)
-    @patch.object(ggcore.client.SecurityClient, "is_token_present",
+    @patch.object(SecurityClient, "is_token_present",
                   return_value="true")
     def test_client_feature__is_docker_context(self, mock_get_auth_value,
                                                mock_is_token_present):

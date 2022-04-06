@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+docker run --name pypiserver --rm --net=host --entrypoint bash python:3.8.10-slim -c "pip install pypiserver==1.4.2; mkdir ~/packages; pypi-server -p 8080 -P . -a . ~/packages"

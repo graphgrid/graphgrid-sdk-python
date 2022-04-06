@@ -3,8 +3,9 @@
 import base64
 from dataclasses import dataclass
 
-from ggcore.config import SdkSecurityConfig
-from ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, BEARER_HEADER_KEY
+from graphgrid_sdk.ggcore.config import SdkSecurityConfig
+from graphgrid_sdk.ggcore.utils import AUTH_HEADER_KEY, BASIC_HEADER_KEY, \
+    BEARER_HEADER_KEY
 
 
 @dataclass

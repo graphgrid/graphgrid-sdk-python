@@ -20,7 +20,7 @@ docker cp python-sdk-container:/opt/graphgrid-sdk-python/tests/pytest.xml $2
 docker container rm python-sdk-container
 
 # lint project
-docker run --rm python-sdk-tests -m pylint ggcore ggsdk
+docker run --rm python-sdk-tests -m pylint graphgrid_sdk
 PYLINT_EXIT_CODE=$?
 
 # cleanup image

@@ -1,8 +1,8 @@
 """Define the SDK core entrypoint for sdk calls."""
 import typing
 
-from ggcore.client import ConfigClient, NlpClient
-from ggcore.config import SdkBootstrapConfig
+from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
+from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 
 
 class SdkCore:

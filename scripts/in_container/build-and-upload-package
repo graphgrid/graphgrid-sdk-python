@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# usage:
+# build-and-upload-package $repo $local-dry-run $pypirc-path
+# e.g. build-and-upload-package testpypi or build-and-upload-package pypi
+repo=$1
+pypirc_path=$3
+
+if [ "$2" = true ]; then
+  repo=local
+  repo_url=http://localhost:8080
+  pypirc_path=~/.pypirc
+  echo "[distutils]" >> "${pypirc_path}"
+  echo "index-servers =" >> "${pypirc_path}"
+  echo "    local" >> "${pypirc_path}"
+  echo "" >> "${pypirc_path}"
+  echo "[$repo]" >> "${pypirc_path}"
+  echo "repository = $repo_url" >> "${pypirc_path}"
+  echo "username = local" >> "${pypirc_path}"
+  echo "password = local" >> "${pypirc_path}"
+fi
+
+config_flag="--config-file $pypirc_path"
+
+python3 -m build
+python3 -m twine upload --verbose --non-interactive --repository $repo --disable-progress-bar $config_flag dist/*
+exit_code=$?
+
+if [ "$2" = true ]; then
+  rm ~/.pypirc
+fi
+
+exit $exit_code

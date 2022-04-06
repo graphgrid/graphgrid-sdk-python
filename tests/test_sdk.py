@@ -4,10 +4,10 @@ from unittest.mock import patch
 
 import responses
 
-import ggcore
-import ggsdk.sdk
-from ggcore.api import ConfigApi
-from ggcore.sdk_messages import TestApiResponse, SdkServiceResponse
+from graphgrid_sdk import ggcore
+from graphgrid_sdk.ggsdk import sdk
+from graphgrid_sdk.ggcore.api import ConfigApi
+from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, SdkServiceResponse
 from tests.test_base import TestBootstrapBase
 
 
@@ -40,9 +40,9 @@ class TestSdkTestApi(TestSdkBase):
         json_body = {"content": expected_message}
 
         # setup sdk
-        sdk = ggsdk.sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                     self._test_bootstrap_config.secret_key,
-                                     self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                  self._test_bootstrap_config.secret_key,
+                                  self._test_bootstrap_config.url_base)
 
         # setup responses mock
         responses.add(responses.GET,
@@ -55,7 +55,7 @@ class TestSdkTestApi(TestSdkBase):
             SdkServiceResponse(200, "OK", json.dumps(json_body), None))
 
         # call sdk method for test api
-        actual_response: TestApiResponse = sdk.test_api(expected_message)
+        actual_response: TestApiResponse = gg_sdk.test_api(expected_message)
 
         # assert that the TestApiResponse returned is the same as the
         # expected response

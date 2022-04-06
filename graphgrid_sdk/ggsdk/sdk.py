@@ -1,10 +1,10 @@
 """Define user-facing GraphGrid SDK."""
 import typing
 
-from ggcore.config import SdkBootstrapConfig
-from ggcore.core import SdkCore
-from ggcore.sdk_messages import TestApiResponse, SaveDatasetResponse, \
-    GetDataResponse
+from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
+from graphgrid_sdk.ggcore.core import SdkCore
+from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
+    SaveDatasetResponse, GetDataResponse
 
 
 class GraphGridSdk:

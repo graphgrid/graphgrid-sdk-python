@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# usage:
+# setup-package $sdk-repo-dir $pypirc-path $pypi-repo $local-dry-run
+cd $1
+
+pypi_repo=$3
+local_dry_run=$4
+
+if [ "$local_dry_run" = true ]; then
+  bash $1/scripts/local/run-pypiserver &
+  pypi_repo=local
+else
+  local_dry_run=false
+fi
+
+docker build -t sdk-package-image -f package.dockerfile .
+
+in_container_pypirc_path=/opt/graphgrid-sdk-python/.pypirc
+id=$(docker create --net=host --name python-sdk-container sdk-package-image $pypi_repo $local_dry_run $in_container_pypirc_path)
+if [ -f $2 ]; then
+  echo "Copying $2 into the package container"
+  docker cp $2 $id:/opt/graphgrid-sdk-python/.pypirc
+fi
+
+docker start --attach $id
+exit_code=$(docker inspect $id --format='{{.State.ExitCode}}')
+docker rm $id
+
+if [ "$local_dry_run" = true ]; then
+  docker rm -f pypiserver
+fi
+
+exit $exit_code

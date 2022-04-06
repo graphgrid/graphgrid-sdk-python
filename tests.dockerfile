@@ -1,9 +1,8 @@
-FROM python:3.9-slim
+FROM python:3.8.10-slim
 
 WORKDIR /opt/graphgrid-sdk-python
 
-COPY ggcore ggcore
-COPY ggsdk ggsdk
+COPY graphgrid_sdk graphgrid_sdk
 COPY tests tests
 COPY .coveragerc .coveragerc
 COPY .pylintrc .pylintrc
