@@ -110,7 +110,7 @@ class TestSdkGetJobStatus(TestSdkBase):
             "exception": None
         }
 
-        sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
                            self._test_bootstrap_config.secret_key,
                            self._test_bootstrap_config.url_base)
         responses.add(method=responses.GET,
@@ -121,7 +121,7 @@ class TestSdkGetJobStatus(TestSdkBase):
         expected_response = GetJobStatusResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: GetJobStatusResponse = sdk.get_job_status(
+        actual_response: GetJobStatusResponse = gg_sdk.get_job_status(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
         assert actual_response == expected_response
@@ -151,7 +151,7 @@ class TestSdkGetJobResults(TestSdkBase):
             "exception": None
         }
 
-        sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
                            self._test_bootstrap_config.secret_key,
                            self._test_bootstrap_config.url_base)
         responses.add(method=responses.GET,
@@ -162,7 +162,7 @@ class TestSdkGetJobResults(TestSdkBase):
         expected_response = GetJobResultsResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: GetJobResultsResponse = sdk.get_job_results(
+        actual_response: GetJobResultsResponse = gg_sdk.get_job_results(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
         assert actual_response == expected_response
@@ -200,7 +200,7 @@ class TestSdkJobTrain(TestSdkBase):
                         "no_cache": False,
                         "GPU": False}
 
-        sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
                            self._test_bootstrap_config.secret_key,
                            self._test_bootstrap_config.url_base)
         responses.add(method=responses.POST,
@@ -211,7 +211,7 @@ class TestSdkJobTrain(TestSdkBase):
         expected_response = JobTrainResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: JobTrainResponse = sdk.job_train(
+        actual_response: JobTrainResponse = gg_sdk.job_train(
             request_body=request_body, dag_id=dag_id)
 
         assert actual_response == expected_response

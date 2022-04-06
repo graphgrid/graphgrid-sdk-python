@@ -283,12 +283,6 @@ class NlpApi(ApiGroup):
         def endpoint(self):
             return f"status/{self._dag_id}/{self._dag_run_id}"
 
-        def body(self):
-            return {
-                "dag_id": self._dag_id,
-                "dag_run_id": self._dag_run_id
-            }
-
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
 
@@ -310,12 +304,6 @@ class NlpApi(ApiGroup):
 
         def endpoint(self):
             return f"status/{self._dag_id}/{self._dag_run_id}"
-
-        def body(self):
-            return {
-                "dag_id": self._dag_id,
-                "dag_run_id": self._dag_run_id
-            }
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
