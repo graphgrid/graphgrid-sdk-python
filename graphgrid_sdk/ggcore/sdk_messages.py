@@ -256,9 +256,9 @@ class GetJobStatusResponse(SdkServiceResponse):
 
         if self.status_code == 200:
             loaded: dict = json.loads(generic_response.response)
-            self.dag_id = loaded.get('dagId')
-            self.dag_run_id = loaded.get('dagRunId')
-            self.start_date = loaded.get('startDate')
+            self.dag_id = loaded.get('dag_id')
+            self.dag_run_id = loaded.get('dag_run_id')
+            self.start_date = loaded.get('start_date')
             self.state = loaded.get('state')
 
 
@@ -276,12 +276,12 @@ class GetJobResultsResponse(SdkServiceResponse):
 
         if self.status_code == 200:
             loaded: dict = json.loads(generic_response.response)
-            self.dag_id = loaded.get('dagId')
-            self.dag_run_id = loaded.get('dagRunId')
-            self.start_date = loaded.get('startDate')
-            self.start_date = loaded.get('endDate')
+            self.dag_id = loaded.get('dag_id')
+            self.dag_run_id = loaded.get('dag_run_id')
+            self.start_date = loaded.get('start_date')
+            self.start_date = loaded.get('end_date')
             self.state = loaded.get('state')
-            self.state = loaded.get('saveLocation')
+            self.state = loaded.get('save_location')
 
 
 class JobTrainResponse(SdkServiceResponse):
@@ -295,6 +295,6 @@ class JobTrainResponse(SdkServiceResponse):
 
         if self.status_code == 200:
             loaded: dict = json.loads(generic_response.response)
-            self.dag_run_id = loaded.get('dagRunId')
-            self.logical_date = loaded.get('startDate')
+            self.dag_run_id = loaded.get('dag_run_id')
+            self.logical_date = loaded.get('logical_date')
             self.state = loaded.get('state')
