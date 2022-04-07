@@ -279,9 +279,9 @@ class GetJobResultsResponse(SdkServiceResponse):
             self.dag_id = loaded.get('dag_id')
             self.dag_run_id = loaded.get('dag_run_id')
             self.start_date = loaded.get('start_date')
-            self.start_date = loaded.get('end_date')
+            self.end_date = loaded.get('end_date')
             self.state = loaded.get('state')
-            self.state = loaded.get('save_location')
+            self.save_location = loaded.get('save_location')
 
 
 class JobTrainResponse(SdkServiceResponse):
