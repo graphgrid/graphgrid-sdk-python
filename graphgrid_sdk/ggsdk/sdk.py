@@ -54,7 +54,7 @@ class GraphGridSdk:
         :param nlp_task: The associated NLP task for the given model
         :param environment: The config environment of the param to persist
         """
-        self._core.promote_model(model_name, nlp_task, environment)
+        return self._core.promote_model(model_name, nlp_task, environment)
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],

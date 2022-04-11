@@ -1,14 +1,16 @@
 """Define test classes for testing user-facing sdk calls."""
 import json
+from unittest import mock
 from unittest.mock import patch
 
+import requests
 import responses
 
 from graphgrid_sdk import ggcore
 from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
-    GenericResponse, GetJobStatusResponse, \
-    GetJobResultsResponse, JobTrainResponse
+    GenericResponse, GetJobStatusResponse, GetJobResultsResponse, \
+    JobTrainResponse, SaveDatasetResponse, PromoteModelResponse, GetDataResponse
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
 from graphgrid_sdk.ggsdk import sdk
 from graphgrid_sdk.ggsdk.sdk import GraphGridSdk
@@ -65,25 +67,127 @@ class TestSdkTestApi(TestSdkBase):
 class TestSdkSaveDataset(TestSdkBase):
     """Define test class for SaveDatasetApi sdk calls."""
 
+    @responses.activate  # mock responses
+    @patch.object(TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_sdk_call__save_dataset__200(self):
         """Test sdk SaveDataset call when response is 200 OK."""
 
+        generator = mock.MagicMock()
+        dataset_id = "any_dataset"
+        overwrite = False
+        expected_response_dict = {
+            "datasetId": dataset_id,
+            "path": "any/save/location"
+        }
+
+        # setup sdk
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                  self._test_bootstrap_config.secret_key,
+                                  self._test_bootstrap_config.url_base)
+        responses.add(method=responses.POST,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.save_dataset_api(generator=generator, dataset_id=dataset_id, overwrite=overwrite).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = SaveDatasetResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        actual_response: SaveDatasetResponse = gg_sdk.save_dataset(data_generator=generator, dataset_id=dataset_id,
+                                                                   overwrite=overwrite)
+
+        assert actual_response == expected_response
+
+    @responses.activate  # mock responses
+    @patch.object(TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_sdk_call__save_dataset__409(self):
         """Test sdk SaveDatasetApi call when response is 409 Conflict."""
+
+        generator = mock.MagicMock()
+        dataset_id = "existing_dataset_name"
+        overwrite = False
+
+        endpoint = NlpApi.save_dataset_api(generator=generator, dataset_id=dataset_id, overwrite=overwrite).endpoint()
+        exception = requests.HTTPError(409, f'Client Error: Conflict for url: http://localhost/1.0/nlp/{endpoint}')
+
+        # setup sdk
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                  self._test_bootstrap_config.secret_key,
+                                  self._test_bootstrap_config.url_base)
+        responses.add(method=responses.POST,
+                      url=f'http://localhost/1.0/nlp/{endpoint}',
+                      body=exception, status=409)
+
+        with self.assertRaises(requests.HTTPError) as e:
+            gg_sdk.save_dataset(data_generator=generator, dataset_id=dataset_id, overwrite=overwrite)
+
+        self.assertEqual(exception, e.exception)
 
 
 class TestSdkGetData(TestSdkBase):
     """Define test class for GetDataApi sdk calls."""
 
+    @responses.activate  # mock responses
+    @patch.object(TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_sdk_call__get_data__200(self):
         """Test sdk GetDataApi call when response is 200 OK."""
+
+        module = "nlp"
+        profiles = ["test"]
+        revision = "2.0"
+        expected_response_dict = {
+            "name": "returned_name",
+            "profiles": profiles,
+            "label": "returned_label",
+            "propertySources": {},
+            "version": "retunred_version",
+            "state": "returned_state"
+        }
+
+        # setup sdk
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                  self._test_bootstrap_config.secret_key,
+                                  self._test_bootstrap_config.url_base)
+        responses.add(method=responses.GET,
+                      url=f'http://localhost/1.0/config/'
+                          f'{ConfigApi.get_data_api(module=module, profiles=profiles, revision=revision).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = GetDataResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        actual_response: GetDataResponse = gg_sdk.get_data(module=module, profiles=profiles, revision=revision)
+
+        assert actual_response == expected_response
 
 
 class TestSdkPromoteModel(TestSdkBase):
     """Define test class for PromoteModelApi sdk calls."""
 
+    @responses.activate  # mock responses
+    @patch.object(TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_sdk_call__promote_model__200(self):
         """Test sdk PromoteModelApi call when response is 200 OK."""
+        model_name = "any_model"
+        nlp_task = "some_task"
+        environment = "default"
+        expected_response_dict = {
+            "modelName": model_name,
+            "task": nlp_task,
+            "paramKey": "param_key"
+        }
+
+        # setup sdk
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
+                                  self._test_bootstrap_config.secret_key,
+                                  self._test_bootstrap_config.url_base)
+        responses.add(method=responses.POST,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.promote_model_api(model_name=model_name, nlp_task=nlp_task, environment=environment).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = PromoteModelResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        actual_response: PromoteModelResponse = gg_sdk.promote_model(model_name=model_name, nlp_task=nlp_task,
+                                                                     environment=environment)
 
 
 class TestSdkGetJobStatus(TestSdkBase):
@@ -111,8 +215,8 @@ class TestSdkGetJobStatus(TestSdkBase):
         }
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+                              self._test_bootstrap_config.secret_key,
+                              self._test_bootstrap_config.url_base)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
@@ -152,8 +256,8 @@ class TestSdkGetJobResults(TestSdkBase):
         }
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+                              self._test_bootstrap_config.secret_key,
+                              self._test_bootstrap_config.url_base)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
@@ -201,8 +305,8 @@ class TestSdkJobTrain(TestSdkBase):
                         "GPU": False}
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+                              self._test_bootstrap_config.secret_key,
+                              self._test_bootstrap_config.url_base)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
