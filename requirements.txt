@@ -5,3 +5,4 @@ coverage2clover==3.3.0
 requests~=2.27.1
 responses==0.20.0
 setuptools~=57.0.0
+javaproperties~=0.8.1

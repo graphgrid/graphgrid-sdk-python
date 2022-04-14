@@ -5,6 +5,7 @@ from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse
+from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
 class GraphGridSdk:
@@ -14,15 +15,11 @@ class GraphGridSdk:
     _core: SdkCore
     _config: SdkBootstrapConfig
 
-    # todo init so they can just pass in a config map instead of individual
-    #  params like above?
-    def __init__(self, access_key, secret_access_key, url_base="localhost",
-                 is_docker_context=False):
-        self._config = SdkBootstrapConfig(url_base, access_key,
-                                          secret_access_key, is_docker_context)
-        self._setup_core()
+    def __init__(self, bootstrap_config: SdkBootstrapConfig = None):
+        if bootstrap_config is None:
+            bootstrap_config: SdkBootstrapConfig = bootstrap_config_from_file()
 
-    def _setup_core(self):
+        self._config = bootstrap_config
         self._core = SdkCore(self._config)
 
     def test_api(self,
