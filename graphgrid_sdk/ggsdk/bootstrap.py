@@ -1,7 +1,8 @@
+"""Define methods for bootstrapping SDK config credentials."""
 import os
 import time
 
-import javaproperties as javaproperties
+import javaproperties
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.utils import SPRING_OAUTH_CLIENT_ID, \
@@ -24,7 +25,7 @@ def bootstrap_config_from_file():
         except KeyError as error:
             raise RuntimeError(
                 f"{credentials_full_path} did not contain the required key, "
-                f"\"{error}\", to boostrap the SDK config.")
+                f"\"{error}\", to boostrap the SDK config.") from error
 
     # if autoconfig bootstrap running, it's in a docker context
     return SdkBootstrapConfig("localhost", oauth_id, oauth_secret, True)
