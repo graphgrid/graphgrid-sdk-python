@@ -55,3 +55,8 @@ class RequestAuthType(enum.Enum):
     """Define auth type keys."""
     BASIC = BASIC_HEADER_KEY
     BEARER = BEARER_HEADER_KEY
+
+
+# CONFIG CONSTANTS
+SPRING_OAUTH_CLIENT_ID = "spring.oauth.client.id"
+SPRING_OAUTH_CLIENT_SECRET = "spring.oauth.client.secret"

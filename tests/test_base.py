@@ -1,4 +1,5 @@
 """Define test base classes used throughout the tests."""
+import os
 from unittest import TestCase
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
@@ -9,6 +10,9 @@ class TestBase(TestCase):
     go in here.
     """
     TEST_TOKEN: str = "test-token"
+
+    TEST_DIR_LOCATION = os.path.realpath(
+        os.path.join(os.getcwd(), os.path.dirname(__file__)))
 
 
 class TestBootstrapBase(TestBase):

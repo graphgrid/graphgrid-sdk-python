@@ -40,9 +40,7 @@ class TestSdkTestApi(TestSdkBase):
         json_body = {"content": expected_message}
 
         # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                  self._test_bootstrap_config.secret_key,
-                                  self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
 
         # setup responses mock
         responses.add(responses.GET,
@@ -110,9 +108,7 @@ class TestSdkGetJobStatus(TestSdkBase):
             "exception": None
         }
 
-        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
@@ -151,9 +147,7 @@ class TestSdkGetJobResults(TestSdkBase):
             "exception": None
         }
 
-        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
@@ -200,9 +194,7 @@ class TestSdkJobTrain(TestSdkBase):
                         "no_cache": False,
                         "GPU": False}
 
-        gg_sdk = GraphGridSdk(self._test_bootstrap_config.access_key,
-                           self._test_bootstrap_config.secret_key,
-                           self._test_bootstrap_config.url_base)
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
