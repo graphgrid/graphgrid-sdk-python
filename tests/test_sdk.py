@@ -80,9 +80,7 @@ class TestSdkSaveDataset(TestSdkBase):
         }
 
         # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                  self._test_bootstrap_config.secret_key,
-                                  self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.save_dataset_api(generator=generator, dataset_id=dataset_id, overwrite=overwrite).endpoint()}',
@@ -108,9 +106,7 @@ class TestSdkSaveDataset(TestSdkBase):
         exception = requests.HTTPError(409, f'Client Error: Conflict for url: http://localhost/1.0/nlp/{endpoint}')
 
         # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                  self._test_bootstrap_config.secret_key,
-                                  self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/{endpoint}',
                       body=exception, status=409)
@@ -143,9 +139,7 @@ class TestSdkGetData(TestSdkBase):
         }
 
         # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                  self._test_bootstrap_config.secret_key,
-                                  self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/config/'
                           f'{ConfigApi.get_data_api(module=module, profiles=profiles, revision=revision).endpoint()}',
@@ -175,9 +169,7 @@ class TestSdkPromoteModel(TestSdkBase):
         }
 
         # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config.access_key,
-                                  self._test_bootstrap_config.secret_key,
-                                  self._test_bootstrap_config.url_base)
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
                           f'{NlpApi.promote_model_api(model_name=model_name, nlp_task=nlp_task, environment=environment).endpoint()}',
