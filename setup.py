@@ -27,6 +27,7 @@ setup(
     ],
     install_requires=[
         "requests~=2.27.1",
+        "javaproperties~=0.8.1",
     ],
     python_requires="!=3.9.*, >=3.6",
 )
