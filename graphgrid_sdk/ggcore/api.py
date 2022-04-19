@@ -281,7 +281,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"result/{self._dag_id}/{self._dag_run_id}"
+            return f"results/{self._dag_id}/{self._dag_run_id}"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
