@@ -4,6 +4,9 @@ import typing
 from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
+from graphgrid_sdk.ggcore.sdk_messages import GetJobStatusResponse, \
+    SaveDatasetResponse, PromoteModelResponse, GetDataResponse, \
+    GetJobResultsResponse, JobTrainResponse
 
 
 class SdkCore:
@@ -31,13 +34,14 @@ class SdkCore:
         return self._config_client.test_api(test_message)
 
     def save_dataset(self, generator: typing.Generator, dataset_id: str,
-                     overwrite: bool):
+                     overwrite: bool) -> SaveDatasetResponse:
         """Execute save dataset call."""
         return self._nlp_client.save_dataset(generator=generator,
                                              dataset_id=dataset_id,
                                              overwrite=overwrite)
 
-    def promote_model(self, model_name: str, nlp_task: str, environment: str):
+    def promote_model(self, model_name: str, nlp_task: str,
+                      environment: str) -> PromoteModelResponse:
         """Execute promote model call."""
         return self._nlp_client.promote_model(model_name=model_name,
                                               nlp_task=nlp_task,
@@ -45,15 +49,17 @@ class SdkCore:
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],
-                 revision: str):
+                 revision: str) -> GetDataResponse:
         """Execute get data call."""
         return self._config_client.get_data(module, profiles, revision)
 
-    def get_job_results(self, dag_id: str, dag_run_id: str):
+    def get_job_results(self, dag_id: str,
+                        dag_run_id: str) -> GetJobResultsResponse:
         """Execute get job results call."""
         return self._nlp_client.get_job_results(dag_id, dag_run_id)
 
-    def get_job_status(self, dag_id: str, dag_run_id: str):
+    def get_job_status(self, dag_id: str,
+                       dag_run_id: str) -> GetJobStatusResponse:
         """Execute get job status call."""
         return self._nlp_client.get_job_status(dag_id, dag_run_id)
 
