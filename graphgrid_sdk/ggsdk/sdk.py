@@ -4,7 +4,8 @@ import typing
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
-    SaveDatasetResponse, GetDataResponse
+    SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
+    GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
@@ -44,7 +45,7 @@ class GraphGridSdk:
         return self._core.save_dataset(data_generator, dataset_id, overwrite)
 
     def promote_model(self, model_name: str, nlp_task: str,
-                      environment: str = "default"):
+                      environment: str = "default") -> PromoteModelResponse:
         """Call promote model api.
 
         :param model_name: Name of the model to promote within cloud storage
@@ -64,7 +65,8 @@ class GraphGridSdk:
         """
         return self._core.get_data(module, profiles, revision)
 
-    def get_job_results(self, dag_id: str, dag_run_id: str):
+    def get_job_results(self, dag_id: str,
+                        dag_run_id: str) -> GetJobResultsResponse:
         """Call get job results api
 
         :param dag_id: The name or id of the dag
@@ -72,7 +74,8 @@ class GraphGridSdk:
         """
         return self._core.get_job_results(dag_id, dag_run_id)
 
-    def get_job_status(self, dag_id: str, dag_run_id: str):
+    def get_job_status(self, dag_id: str,
+                       dag_run_id: str) -> GetJobStatusResponse:
         """Call get job status api
 
         :param dag_id: The name or id of the dag
@@ -80,7 +83,7 @@ class GraphGridSdk:
         """
         return self._core.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: dict, dag_id: str):
+    def job_train(self, request_body: dict, dag_id: str) -> JobTrainResponse:
         """Call job train api
 
         :param request_body: Config values to be used in DAG run.
