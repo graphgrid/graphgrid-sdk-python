@@ -50,7 +50,8 @@ class GraphGridSdk:
 
         :param model_name: Name of the model to promote within cloud storage
         :param nlp_task: The associated NLP task for the given model
-        :param environment: The config environment of the param to persist
+        :param environment: The config environment of the param to
+            persist (default=default)
         """
         return self._core.promote_model(model_name, nlp_task, environment)
 
@@ -79,7 +80,7 @@ class GraphGridSdk:
         """Call get job status api
 
         :param dag_id: The name or id of the dag
-        :param dag_run_id: The unique id for the finished DAG run.
+        :param dag_run_id: The unique id for the DAG run.
         """
         return self._core.get_job_status(dag_id, dag_run_id)
 
