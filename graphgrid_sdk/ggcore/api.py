@@ -329,7 +329,7 @@ class NlpApi(ApiGroup):
             return f"train/{self._dag_id}"
 
         def body(self):
-            return json.dumps(self._request_body)
+            return self._request_body.to_json()
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
