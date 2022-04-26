@@ -232,6 +232,7 @@ class TestSdkGetJobResults(TestSdkBase):
         start_date = "2022-03-28T16:02:45.526226+00:00"
         state = "success"
         dag_run_id = f"manual__{start_date}"
+        model_name = "20220328T160245-nerModel"
         expected_response_dict = {
             "status_code": 200,
             "status_text": "OK",
@@ -239,6 +240,9 @@ class TestSdkGetJobResults(TestSdkBase):
             "dag_id": dag_id,
             "start_date": start_date,
             "state": state,
+            "saved_model_name": model_name,
+            "saved_model_filename": f"{model_name}.tar.gz",
+            "saved_model_url": f"http://minio:9000/com-graphgrid-nlp/2.0.0/{model_name}/{model_name}.tar.gz",
             "response": None,
             "exception": None
         }

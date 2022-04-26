@@ -269,7 +269,9 @@ class GetJobResultsResponse(SdkServiceResponse):
     start_date: typing.Optional[str] = None
     end_date: typing.Optional[str] = None
     state: typing.Optional[str] = None
-    save_location: typing.Optional[str] = None
+    saved_model_name: typing.Optional[str] = None
+    saved_model_filename: typing.Optional[str] = None
+    saved_model_url: typing.Optional[str] = None
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
@@ -281,7 +283,9 @@ class GetJobResultsResponse(SdkServiceResponse):
             self.start_date = loaded.get('start_date')
             self.end_date = loaded.get('end_date')
             self.state = loaded.get('state')
-            self.save_location = loaded.get('save_location')
+            self.saved_model_name = loaded.get('saved_model_name')
+            self.saved_model_filename = loaded.get('saved_model_filename')
+            self.saved_model_url = loaded.get('saved_model_url')
 
 
 class JobTrainResponse(SdkServiceResponse):
