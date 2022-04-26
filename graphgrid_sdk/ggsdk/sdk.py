@@ -3,6 +3,7 @@ import typing
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
+from graphgrid_sdk.ggcore.request_body import RequestBody
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
@@ -80,7 +81,7 @@ class GraphGridSdk:
         """
         return self._core.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: dict, dag_id: str):
+    def job_train(self, request_body: RequestBody, dag_id: str):
         """Call job train api
 
         :param request_body: Config values to be used in DAG run.
