@@ -272,6 +272,11 @@ class GetJobResultsResponse(SdkServiceResponse):
     saved_model_name: typing.Optional[str] = None
     saved_model_filename: typing.Optional[str] = None
     saved_model_url: typing.Optional[str] = None
+    training_accuracy: float = None
+    training_loss: float = None
+    eval_accuracy: float = None
+    eval_loss: float = None
+    properties: typing.Dict[str, typing.List[str]] = None
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
@@ -286,6 +291,11 @@ class GetJobResultsResponse(SdkServiceResponse):
             self.saved_model_name = loaded.get('saved_model_name')
             self.saved_model_filename = loaded.get('saved_model_filename')
             self.saved_model_url = loaded.get('saved_model_url')
+            self.training_accuracy = loaded.get('trainingAccuracy')
+            self.training_loss = loaded.get('trainingLoss')
+            self.eval_accuracy = loaded.get('evalAccuracy')
+            self.eval_loss = loaded.get('evalLoss')
+            self.properties = loaded.get('properties')
 
 
 class JobTrainResponse(SdkServiceResponse):
