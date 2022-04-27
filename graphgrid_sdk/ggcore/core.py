@@ -39,11 +39,10 @@ class SdkCore:
                                              dataset_id=dataset_id,
                                              overwrite=overwrite)
 
-    def promote_model(self, model_name: str, nlp_task: str,
+    def promote_model(self, model_name: str,
                       environment: str) -> PromoteModelResponse:
         """Execute promote model call."""
         return self._nlp_client.promote_model(model_name=model_name,
-                                              nlp_task=nlp_task,
                                               environment=environment)
 
     def get_data(self, module: str,
