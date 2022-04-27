@@ -6,7 +6,7 @@ from graphgrid_sdk.ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, \
     ConfigApi, AbstractApi
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.http_base import SdkHttpClient
-from graphgrid_sdk.ggcore.request_body import RequestBody
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_exceptions import \
     SdkUnauthorizedValidTokenException, SdkUnauthorizedInvalidTokenException
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest, \
@@ -236,7 +236,7 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.get_job_status_api(dag_id, dag_run_id)
         return self.invoke(api_call)
 
-    def job_train(self, request_body: RequestBody, dag_id: str):
+    def job_train(self, request_body: TrainRequestBody, dag_id: str):
         """Return job train sdk call."""
         api_call = NlpApi.job_train_api(request_body, dag_id)
         return self.invoke(api_call)

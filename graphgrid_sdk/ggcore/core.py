@@ -3,7 +3,7 @@ import typing
 
 from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
-from graphgrid_sdk.ggcore.request_body import RequestBody
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 
 
 class SdkCore:
@@ -57,6 +57,6 @@ class SdkCore:
         """Execute get job status call."""
         return self._nlp_client.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: RequestBody, dag_id: str):
+    def job_train(self, request_body: TrainRequestBody, dag_id: str):
         """Execute get job train call."""
         return self._nlp_client.job_train(request_body, dag_id)

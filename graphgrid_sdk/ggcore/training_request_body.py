@@ -7,7 +7,7 @@ import typing
 
 
 @dataclass
-class RequestBody:
+class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
     model: str
     datasets: typing.Union[dict, str]
@@ -15,5 +15,5 @@ class RequestBody:
     GPU: bool = False
 
     def to_json(self):
-        """Encode RequestBody to a json object"""
+        """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
