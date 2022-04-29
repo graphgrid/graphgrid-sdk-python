@@ -235,9 +235,9 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.get_dag_run_status_api(dag_id, dag_run_id)
         return self.invoke(api_call)
 
-    def trigger_dag(self, request_body: dict, dag_id: str) -> DagRunResponse:
+    def trigger_dag(self, dag_id: str, request_body: dict) -> DagRunResponse:
         """Return trigger dag sdk call."""
-        api_call = NlpApi.trigger_dag_api(request_body, dag_id)
+        api_call = NlpApi.trigger_dag_api(dag_id, request_body)
         return self.invoke(api_call)
 
     def get_nmt_status(self, dag_run_id: str) -> NMTStatusResponse:

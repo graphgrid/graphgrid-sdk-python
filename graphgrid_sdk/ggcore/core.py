@@ -61,7 +61,7 @@ class SdkCore:
 
     def trigger_dag(self, dag_id: str, request_body: dict) -> DagRunResponse:
         """Execute get job train call."""
-        return self._nlp_client.trigger_dag(request_body, dag_id)
+        return self._nlp_client.trigger_dag(dag_id, request_body)
 
     # NMT DAG SDK methods
     def get_nmt_status(self, dag_run_id: str) -> NMTStatusResponse:

@@ -204,9 +204,9 @@ class NlpApi(ApiGroup):
         return cls.GetDagRunStatusApi(dag_id, dag_run_id)
 
     @classmethod
-    def trigger_dag_api(cls, request_body: dict, dag_id: str):
+    def trigger_dag_api(cls, dag_id: str, request_body: dict):
         """Return trigger dag api."""
-        return cls.TriggerDagApi(request_body, dag_id)
+        return cls.TriggerDagApi(dag_id, request_body)
 
     @classmethod
     def nmt_status_api(cls, dag_run_id: str):
@@ -298,12 +298,12 @@ class NlpApi(ApiGroup):
     @dataclass
     class TriggerDagApi(AbstractApi):
         """Define TriggerDagApi api."""
-        _request_body: dict
         _dag_id: str
+        _request_body: dict
 
-        def __init__(self, request_body: dict, dag_id: str):
-            self._request_body = request_body
+        def __init__(self, dag_id: str, request_body: dict):
             self._dag_id = dag_id
+            self._request_body = request_body
 
         def api_base(self) -> str:
             return NLP
