@@ -1,9 +1,8 @@
 """Define class for training request body."""
 
 import json
-from dataclasses import dataclass
-
 import typing
+from dataclasses import dataclass
 
 
 @dataclass
