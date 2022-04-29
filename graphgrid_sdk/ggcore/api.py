@@ -3,6 +3,7 @@ import json
 import typing
 from dataclasses import dataclass
 
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
@@ -208,7 +209,7 @@ class NlpApi(ApiGroup):
         return cls.GetJobStatusApi(dag_id, dag_run_id)
 
     @classmethod
-    def job_train_api(cls, request_body: dict, dag_id: str):
+    def job_train_api(cls, request_body: TrainRequestBody, dag_id: str):
         """Return job train sdk call."""
         return cls.JobTrainApi(request_body, dag_id)
 
@@ -314,10 +315,10 @@ class NlpApi(ApiGroup):
     @dataclass
     class JobTrainApi(AbstractApi):
         """Define JobTrainApi api."""
-        _request_body: dict
+        _request_body: TrainRequestBody
         _dag_id: str
 
-        def __init__(self, request_body: dict, dag_id: str):
+        def __init__(self, request_body: TrainRequestBody, dag_id: str):
             self._request_body = request_body
             self._dag_id = dag_id
 
@@ -328,7 +329,7 @@ class NlpApi(ApiGroup):
             return f"train/{self._dag_id}"
 
         def body(self):
-            return json.dumps(self._request_body)
+            return self._request_body.to_json()
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST

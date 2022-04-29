@@ -8,6 +8,7 @@ import responses
 
 from graphgrid_sdk import ggcore
 from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     GenericResponse, GetJobStatusResponse, GetJobResultsResponse, \
     JobTrainResponse, SaveDatasetResponse, PromoteModelResponse, GetDataResponse
@@ -290,14 +291,14 @@ class TestSdkJobTrain(TestSdkBase):
             "response": None,
             "exception": None
         }
-        request_body = {"model": "some-model",
-                        "datasets": {
-                            "some-dataset": {"train": "path/to/dataset",
-                                             "eval": "path/to/dataset"},
-                            "another_dataset": {"train": "path/to/dataset",
-                                                "eval": "path/to/dataset"}},
-                        "no_cache": False,
-                        "GPU": False}
+        request_body = TrainRequestBody(model="some-model",
+                                   datasets={
+                                       "some-dataset": {"train": "path/to/dataset",
+                                                        "eval": "path/to/dataset"},
+                                       "another_dataset": {"train": "path/to/dataset",
+                                                           "eval": "path/to/dataset"}},
+                                   no_cache=False,
+                                   GPU=False)
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
