@@ -244,7 +244,12 @@ class TestSdkGetJobResults(TestSdkBase):
             "saved_model_filename": f"{model_name}.tar.gz",
             "saved_model_url": f"http://minio:9000/com-graphgrid-nlp/2.0.0/{model_name}/{model_name}.tar.gz",
             "response": None,
-            "exception": None
+            "exception": None,
+            "trainingAccuracy": .999,
+            "trainingLoss": .001,
+            "evalAccuracy": .845,
+            "evalLoss": .125,
+            "properties": {"languages": ["en"]},
         }
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
