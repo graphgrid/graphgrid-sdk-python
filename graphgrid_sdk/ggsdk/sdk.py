@@ -3,11 +3,10 @@ import typing
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse, \
-    DagRunResponse
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
@@ -69,18 +68,32 @@ class GraphGridSdk:
         return self._core.get_data(module, profiles, revision)
 
     def job_status(self, dag_id: str,
-                       dag_run_id: str) -> GetJobStatusResponse:
-        """Call job status for the DAGRun status
+                   dag_run_id: str) -> DagRunResponse:
+        """Call for the job (DAGRun) status
 
-        :param dag_id: The name or id of the dag
+        :param dag_id: The name or id of the DAG
         :param dag_run_id: The unique id for the DAG run.
         """
-        return self._core.get_job_status(dag_id, dag_run_id)
+        return self._core.get_dag_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: TrainRequestBody, dag_id: str) -> DagRunResponse:
-        """Call job train api
+    def job_run(self, dag_id: str, request_body: dict) -> DagRunResponse:
+        """Call DAG to start the DAGRun
 
+        :param dag_id: The name or id of the DAG
         :param request_body: Config values to be used in DAG run.
-        :param dag_id: The name or id of the dag.
         """
-        return self._core.job_train(request_body, dag_id)
+        return self._core.trigger_dag(dag_id, request_body)
+
+    def nmt_status(self, dag_run_id: str) -> NMTStatusResponse:
+        """Call to get NMT DAG run status/results
+
+        :param dag_run_id: The unique id for the DAG run.
+        """
+        return self._core.get_nmt_status(dag_run_id)
+
+    def nmt_train(self, request_body: TrainRequestBody) -> NMTTrainResponse:
+        """Call to start trigger NMT DAG
+
+        :param request_body: Training config.
+        """
+        return self._core.nmt_train(request_body)

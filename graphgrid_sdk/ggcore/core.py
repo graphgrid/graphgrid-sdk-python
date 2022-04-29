@@ -5,7 +5,7 @@ from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.sdk_messages import SaveDatasetResponse, \
     PromoteModelResponse, GetDataResponse, \
-    DagRunResponse
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse
 from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 
 
@@ -47,21 +47,27 @@ class SdkCore:
                                               nlp_task=nlp_task,
                                               environment=environment)
 
+    def get_data(self, module: str,
+                 profiles: typing.Union[str, typing.List[str]],
+                 revision: str) -> GetDataResponse:
+        """Execute get data call."""
+        return self._config_client.get_data(module, profiles, revision)
+
     # Generic DAG SDK methods
     def get_dag_status(self, dag_id: str,
                        dag_run_id: str) -> DagRunResponse:
         """Execute get job status call."""
         return self._nlp_client.get_dag_run_status(dag_id, dag_run_id)
 
-    def trigger_dag(self, request_body: dict, dag_id: str) -> DagRunResponse:
+    def trigger_dag(self, dag_id: str, request_body: dict) -> DagRunResponse:
         """Execute get job train call."""
         return self._nlp_client.trigger_dag(request_body, dag_id)
 
     # NMT DAG SDK methods
-    def nmt_status(self, dag_run_id: str):
+    def get_nmt_status(self, dag_run_id: str) -> NMTStatusResponse:
         """Execute nmt status call."""
         return self._nlp_client.get_nmt_status(dag_run_id)
 
-    def nmt_train(self, request_body: TrainRequestBody):
+    def nmt_train(self, request_body: TrainRequestBody) -> NMTTrainResponse:
         """Execute nmt train call."""
         return self._nlp_client.trigger_nmt(request_body)
