@@ -176,6 +176,36 @@ class DagRunResponse(SdkServiceResponse):
             self.conf = loaded.get('conf')
 
 
+class NMTStatusResponse(DagRunResponse):
+    savedModelName: str
+    savedModelFilename: str
+    savedModelUrl: str
+    trainingAccuracy: float
+    trainingLoss: float
+    evalAccuracy: float
+    evalLoss: float
+    properties: dict
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.savedModelName = loaded.get("savedModelName")
+            self.savedModelFilename = loaded.get("savedModelFilename")
+            self.savedModelUrl = loaded.get("savedModelUrl")
+            self.trainingAccuracy = loaded.get("trainingAccuracy")
+            self.trainingLoss = loaded.get("trainingLoss")
+            self.evalAccuracy = loaded.get("evalAccuracy")
+            self.evalLoss = loaded.get("evalLoss")
+            self.properties = loaded.get("properties")
+
+
+class NMTTrainResponse(DagRunResponse):
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+
 # pylint: disable=too-few-public-methods
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""

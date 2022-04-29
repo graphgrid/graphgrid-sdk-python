@@ -182,14 +182,14 @@ class TestSdkPromoteModel(TestSdkBase):
 
 
 class TestSdkGetJobStatus(TestSdkBase):
-    """Define test class for GetJobStatusApi sdk calls."""
+    """Define test class for GetDagRunStatusApi sdk calls."""
 
     # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
     def test_sdk_call__get_job_status__200(self):
-        """Test sdk GetJobStatusApi call when response is 200 OK."""
+        """Test sdk GetDagRunStatusApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
         state = "running"
@@ -208,7 +208,7 @@ class TestSdkGetJobStatus(TestSdkBase):
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.get_job_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
+                          f'{NlpApi.get_dag_run_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
         expected_response = GetJobStatusResponse(
@@ -227,6 +227,7 @@ class TestSdkGetJobResults(TestSdkBase):
     @responses.activate  # mock responses
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    # todo get_nmt_status
     def test_sdk_call__get_job_results__200(self):
         """Test sdk GetJobResultsApi call when response is 200 OK."""
         dag_id = "any_dag"
@@ -269,7 +270,7 @@ class TestSdkGetJobResults(TestSdkBase):
 
 
 class TestSdkJobTrain(TestSdkBase):
-    """Define test class for JobTrainApi sdk calls."""
+    """Define test class for TriggerDagApi sdk calls."""
 
     # pylint: disable=unused-argument,line-too-long
     @responses.activate  # mock responses
@@ -303,7 +304,7 @@ class TestSdkJobTrain(TestSdkBase):
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.job_train_api(request_body=request_body, dag_id=dag_id).endpoint()}',
+                          f'{NlpApi.trigger_dag_api(request_body=request_body, dag_id=dag_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
         expected_response = JobTrainResponse(

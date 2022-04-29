@@ -60,3 +60,6 @@ class RequestAuthType(enum.Enum):
 # CONFIG CONSTANTS
 SPRING_OAUTH_CLIENT_ID = "spring.oauth.client.id"
 SPRING_OAUTH_CLIENT_SECRET = "spring.oauth.client.secret"
+
+# NLP / NMT Constants
+NMT_DAG_ID = "nlp_model_training"

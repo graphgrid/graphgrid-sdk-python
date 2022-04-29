@@ -7,8 +7,8 @@ from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
-    GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse, \
-    PromoteModelResponse, DagRunResponse
+    PromoteModelResponse, DagRunResponse, NMTStatusResponse, \
+    NMTTrainResponse
 from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
     GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
@@ -199,19 +199,24 @@ class NlpApi(ApiGroup):
         return cls.PromoteModelApi(model_name, nlp_task, environment)
 
     @classmethod
-    def get_job_results_api(cls, dag_id: str, dag_run_id: str):
-        """Return get job results sdk call."""
-        return cls.GetJobResultsApi(dag_id, dag_run_id)
+    def get_dag_run_status_api(cls, dag_id: str, dag_run_id: str):
+        """Return get dag run status api."""
+        return cls.GetDagRunStatusApi(dag_id, dag_run_id)
 
     @classmethod
-    def get_job_status_api(cls, dag_id: str, dag_run_id: str):
-        """Return get job results sdk call."""
-        return cls.GetJobStatusApi(dag_id, dag_run_id)
+    def trigger_dag_api(cls, request_body: dict, dag_id: str):
+        """Return trigger dag api."""
+        return cls.TriggerDagApi(request_body, dag_id)
 
     @classmethod
-    def job_train_api(cls, request_body: TrainRequestBody, dag_id: str):
-        """Return job train sdk call."""
-        return cls.JobTrainApi(request_body, dag_id)
+    def nmt_status_api(cls, dag_run_id: str):
+        """Return nmt status api."""
+        return cls.NmtStatusApi(dag_run_id)
+
+    @classmethod
+    def nmt_train_api(cls, request_body: TrainRequestBody):
+        """Return nmt train api."""
+        return cls.NmtTrainApi(request_body)
 
     @dataclass
     class SaveDatasetApi(AbstractApi):
@@ -269,30 +274,8 @@ class NlpApi(ApiGroup):
             return PromoteModelResponse(generic_response)
 
     @dataclass
-    class GetJobResultsApi(AbstractApi):
-        """Define GetJobResultsApi api."""
-        _dag_id: str
-        _dag_run_id: str
-
-        def __init__(self, dag_id: str, dag_run_id: str):
-            self._dag_id = dag_id
-            self._dag_run_id = dag_run_id
-
-        def api_base(self) -> str:
-            return NLP
-
-        def endpoint(self):
-            return f"results/{self._dag_id}/{self._dag_run_id}"
-
-        def http_method(self) -> HttpMethod:
-            return HttpMethod.GET
-
-        def handler(self, generic_response: GenericResponse):
-            return GetJobResultsResponse(generic_response)
-
-    @dataclass
-    class GetJobStatusApi(AbstractApi):
-        """Define GetJobStatusApi api."""
+    class GetDagRunStatusApi(AbstractApi):
+        """Define GetDagRunStatusApi api."""
         _dag_id: str
         _dag_run_id: str
 
@@ -310,15 +293,15 @@ class NlpApi(ApiGroup):
             return HttpMethod.GET
 
         def handler(self, generic_response: GenericResponse):
-            return GetJobStatusResponse(generic_response)
+            return DagRunResponse(generic_response)
 
     @dataclass
-    class JobTrainApi(AbstractApi):
-        """Define JobTrainApi api."""
-        _request_body: TrainRequestBody
+    class TriggerDagApi(AbstractApi):
+        """Define TriggerDagApi api."""
+        _request_body: dict
         _dag_id: str
 
-        def __init__(self, request_body: TrainRequestBody, dag_id: str):
+        def __init__(self, request_body: dict, dag_id: str):
             self._request_body = request_body
             self._dag_id = dag_id
 
@@ -329,13 +312,56 @@ class NlpApi(ApiGroup):
             return f"dag/trigger/{self._dag_id}"
 
         def body(self):
-            return self._request_body.to_json()
+            return json.dumps(self._request_body)
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
 
         def handler(self, generic_response: GenericResponse):
             return DagRunResponse(generic_response)
+
+    @dataclass
+    class NmtStatusApi(AbstractApi):
+        """Define NmtStatusApi api."""
+        _dag_run_id: str
+
+        def __init__(self, dag_run_id: str):
+            self._dag_run_id = dag_run_id
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            return f"nmt/status/{self._dag_run_id}"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.GET
+
+        def handler(self, generic_response: GenericResponse):
+            return NMTStatusResponse(generic_response)
+
+    @dataclass
+    class NmtTrainApi(AbstractApi):
+        """Define NmtTrainApi api."""
+        _request_body: TrainRequestBody
+
+        def __init__(self, request_body: TrainRequestBody):
+            self._request_body = request_body
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            return f"nmt/train"
+
+        def body(self):
+            return self._request_body.to_json()
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.POST
+
+        def handler(self, generic_response: GenericResponse):
+            return NMTTrainResponse(generic_response)
 
 
 class SdkRequestBuilder:
