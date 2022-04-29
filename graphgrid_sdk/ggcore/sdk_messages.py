@@ -151,7 +151,9 @@ class SdkServiceRequest:
         return False
 
 
+# pylint: disable=invalid-name
 class DagRunResponse(SdkServiceResponse):
+    """Define dag run response structure."""
     dagId: str
     dagRunId: str
     state: str
@@ -177,6 +179,7 @@ class DagRunResponse(SdkServiceResponse):
 
 
 class NMTStatusResponse(DagRunResponse):
+    """Define nlp model training status response."""
     savedModelName: str
     savedModelFilename: str
     savedModelUrl: str
@@ -202,8 +205,7 @@ class NMTStatusResponse(DagRunResponse):
 
 
 class NMTTrainResponse(DagRunResponse):
-    def __init__(self, generic_response: GenericResponse):
-        super().__init__(generic_response)
+    """Define nlp model training train response."""
 
 
 # pylint: disable=too-few-public-methods

@@ -352,7 +352,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"nmt/train"
+            return "nmt/train"
 
         def body(self):
             return self._request_body.to_json()

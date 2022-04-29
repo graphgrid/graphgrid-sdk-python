@@ -4,7 +4,7 @@ import json
 import typing
 from dataclasses import dataclass
 
-
+# pylint: disable=invalid-name
 @dataclass
 class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
