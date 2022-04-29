@@ -8,11 +8,11 @@ import responses
 
 from graphgrid_sdk import ggcore
 from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
-    GenericResponse, GetJobStatusResponse, GetJobResultsResponse, \
-    JobTrainResponse, SaveDatasetResponse, PromoteModelResponse, GetDataResponse
+    GenericResponse, SaveDatasetResponse, PromoteModelResponse, \
+    GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
+from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggsdk import sdk
 from graphgrid_sdk.ggsdk.sdk import GraphGridSdk
 from tests.test_base import TestBootstrapBase, TestBase
@@ -135,7 +135,7 @@ class TestSdkGetData(TestSdkBase):
             "profiles": profiles,
             "label": "returned_label",
             "propertySources": {},
-            "version": "retunred_version",
+            "version": "returned_version",
             "state": "returned_state"
         }
 
@@ -188,7 +188,7 @@ class TestSdkGetJobStatus(TestSdkBase):
     @responses.activate  # mock responses
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
-    def test_sdk_call__get_job_status__200(self):
+    def test_sdk_call__job_status__200(self):
         """Test sdk GetDagRunStatusApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -197,9 +197,9 @@ class TestSdkGetJobStatus(TestSdkBase):
         expected_response_dict = {
             "status_code": 200,
             "status_text": "OK",
-            "dag_run_id": dag_run_id,
-            "dag_id": dag_id,
-            "start_date": start_date,
+            "dagRunId": dag_run_id,
+            "dagId": dag_id,
+            "startDate": start_date,
             "state": state,
             "response": None,
             "exception": None
@@ -211,10 +211,10 @@ class TestSdkGetJobStatus(TestSdkBase):
                           f'{NlpApi.get_dag_run_status_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobStatusResponse(
+        expected_response = DagRunResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: GetJobStatusResponse = gg_sdk.get_job_status(
+        actual_response: DagRunResponse = gg_sdk.job_status(
             dag_id=dag_id, dag_run_id=dag_run_id)
 
         assert actual_response == expected_response
@@ -228,7 +228,7 @@ class TestSdkGetJobResults(TestSdkBase):
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
     # todo get_nmt_status
-    def test_sdk_call__get_job_results__200(self):
+    def test_sdk_call__nmt_status__200(self):
         """Test sdk GetJobResultsApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -238,13 +238,13 @@ class TestSdkGetJobResults(TestSdkBase):
         expected_response_dict = {
             "status_code": 200,
             "status_text": "OK",
-            "dag_run_id": dag_run_id,
-            "dag_id": dag_id,
-            "start_date": start_date,
+            "dagRunId": dag_run_id,
+            "dagId": dag_id,
+            "startDate": start_date,
             "state": state,
-            "saved_model_name": model_name,
-            "saved_model_filename": f"{model_name}.tar.gz",
-            "saved_model_url": f"http://minio:9000/com-graphgrid-nlp/2.0.0/{model_name}/{model_name}.tar.gz",
+            "savedModelName": model_name,
+            "savedModelFilename": f"{model_name}.tar.gz",
+            "savedModelUrl": f"http://minio:9000/com-graphgrid-nlp/2.0.0/{model_name}/{model_name}.tar.gz",
             "response": None,
             "exception": None,
             "trainingAccuracy": .999,
@@ -257,14 +257,13 @@ class TestSdkGetJobResults(TestSdkBase):
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.GET,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.get_job_results_api(dag_id=dag_id, dag_run_id=dag_run_id).endpoint()}',
+                          f'{NlpApi.nmt_status_api(dag_run_id=dag_run_id).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetJobResultsResponse(
+        expected_response = NMTStatusResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: GetJobResultsResponse = gg_sdk.get_job_results(
-            dag_id=dag_id, dag_run_id=dag_run_id)
+        actual_response: NMTStatusResponse = gg_sdk.nmt_status(dag_run_id=dag_run_id)
 
         assert actual_response == expected_response
 
@@ -276,7 +275,7 @@ class TestSdkJobTrain(TestSdkBase):
     @responses.activate  # mock responses
     @patch.object(ggcore.session.TokenFactory, "_token_tracker",
                   TokenTracker(TestBase.TEST_TOKEN, 10_000))
-    def test_sdk_call__job_train__200(self):
+    def test_sdk_call__nmt_train__200(self):
         """Test sdk GetJobResultsApi call when response is 200 OK."""
         dag_id = "any_dag"
         start_date = "2022-03-28T16:02:45.526226+00:00"
@@ -286,8 +285,8 @@ class TestSdkJobTrain(TestSdkBase):
         expected_response_dict = {
             "status_code": 200,
             "status_text": "OK",
-            "dag_run_id": dag_run_id,
-            "logical_date": logical_date,
+            "dagRunId": dag_run_id,
+            "logicalDate": logical_date,
             "state": state,
             "response": None,
             "exception": None
@@ -304,13 +303,13 @@ class TestSdkJobTrain(TestSdkBase):
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.trigger_dag_api(request_body=request_body, dag_id=dag_id).endpoint()}',
+                          f'{NlpApi.nmt_train_api(request_body=request_body).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = JobTrainResponse(
+        expected_response = NMTTrainResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
-        actual_response: JobTrainResponse = gg_sdk.job_train(
-            request_body=request_body, dag_id=dag_id)
+        actual_response: NMTTrainResponse = gg_sdk.nmt_train(
+            request_body=request_body)
 
         assert actual_response == expected_response

@@ -241,10 +241,11 @@ class NlpClient(SecurityClientBase):
         return self.invoke(api_call)
 
     def get_nmt_status(self, dag_run_id: str) -> NMTStatusResponse:
+        """Return nmt train status call."""
         api_call = NlpApi.nmt_status_api(dag_run_id)
         return self.invoke(api_call)
 
     def trigger_nmt(self, request_body: TrainRequestBody) -> NMTTrainResponse:
         """Return job train sdk call."""
-        api_call = NlpApi.trigger_dag_api(request_body, )
+        api_call = NlpApi.nmt_train_api(request_body)
         return self.invoke(api_call)
