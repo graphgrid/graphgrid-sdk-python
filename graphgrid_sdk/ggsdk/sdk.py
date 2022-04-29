@@ -6,7 +6,8 @@ from graphgrid_sdk.ggcore.core import SdkCore
 from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse
+    GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse, \
+    DagRunResponse
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
@@ -85,7 +86,7 @@ class GraphGridSdk:
         """
         return self._core.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: TrainRequestBody, dag_id: str):
+    def job_train(self, request_body: TrainRequestBody, dag_id: str) -> DagRunResponse:
         """Call job train api
 
         :param request_body: Config values to be used in DAG run.

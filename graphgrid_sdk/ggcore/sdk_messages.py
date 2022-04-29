@@ -151,6 +151,31 @@ class SdkServiceRequest:
         return False
 
 
+class DagRunResponse(SdkServiceResponse):
+    dagId: str
+    dagRunId: str
+    state: str
+    startDate: str
+    endDate: str
+    logicalDate: str
+    externalTrigger: str
+    conf: str
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dagId = loaded.get('dagId')
+            self.dagRunId = loaded.get('dagRunId')
+            self.state = loaded.get('state')
+            self.startDate = loaded.get('startDate')
+            self.endDate = loaded.get('endDate')
+            self.logicalDate = loaded.get('logicalDate')
+            self.externalTrigger = loaded.get('externalTrigger')
+            self.conf = loaded.get('conf')
+
+
 # pylint: disable=too-few-public-methods
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""

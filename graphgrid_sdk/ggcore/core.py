@@ -6,7 +6,7 @@ from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_messages import GetJobStatusResponse, \
     SaveDatasetResponse, PromoteModelResponse, GetDataResponse, \
-    GetJobResultsResponse, JobTrainResponse
+    GetJobResultsResponse, JobTrainResponse, DagRunResponse
 
 
 class SdkCore:
@@ -63,6 +63,6 @@ class SdkCore:
         """Execute get job status call."""
         return self._nlp_client.get_job_status(dag_id, dag_run_id)
 
-    def job_train(self, request_body: TrainRequestBody, dag_id: str):
+    def job_train(self, request_body: TrainRequestBody, dag_id: str) -> DagRunResponse:
         """Execute get job train call."""
         return self._nlp_client.job_train(request_body, dag_id)

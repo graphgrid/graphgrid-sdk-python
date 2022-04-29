@@ -8,7 +8,7 @@ from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
     GetJobResultsResponse, GetJobStatusResponse, JobTrainResponse, \
-    PromoteModelResponse
+    PromoteModelResponse, DagRunResponse
 from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
     GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
@@ -304,7 +304,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"status/{self._dag_id}/{self._dag_run_id}"
+            return f"dag/status/{self._dag_id}/{self._dag_run_id}"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.GET
@@ -326,7 +326,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"train/{self._dag_id}"
+            return f"dag/trigger/{self._dag_id}"
 
         def body(self):
             return self._request_body.to_json()
@@ -335,7 +335,7 @@ class NlpApi(ApiGroup):
             return HttpMethod.POST
 
         def handler(self, generic_response: GenericResponse):
-            return JobTrainResponse(generic_response)
+            return DagRunResponse(generic_response)
 
 
 class SdkRequestBuilder:

@@ -12,7 +12,7 @@ from graphgrid_sdk.ggcore.sdk_exceptions import \
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest, \
     GetTokenResponse, CheckTokenResponse, GenericResponse, GetJobStatusResponse, \
     JobTrainResponse, GetJobResultsResponse, PromoteModelResponse, \
-    SaveDatasetResponse, GetDataResponse
+    SaveDatasetResponse, GetDataResponse, DagRunResponse
 from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
 from graphgrid_sdk.ggcore.session import TokenFactory
 from graphgrid_sdk.ggcore.utils import DOCKER_NGINX_PORT
@@ -241,7 +241,7 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.get_job_status_api(dag_id, dag_run_id)
         return self.invoke(api_call)
 
-    def job_train(self, request_body: TrainRequestBody, dag_id: str):
+    def job_train(self, request_body: TrainRequestBody, dag_id: str) -> DagRunResponse:
         """Return job train sdk call."""
         api_call = NlpApi.job_train_api(request_body, dag_id)
         return self.invoke(api_call)
