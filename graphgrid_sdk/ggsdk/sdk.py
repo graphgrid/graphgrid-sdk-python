@@ -96,3 +96,10 @@ class GraphGridSdk:
         :param request_body: Training config.
         """
         return self._core.nmt_train(request_body)
+
+    def get_active_model(self, nlp_task: str):
+        """Call get active model api.
+
+        :param nlp_task: The associated NLP task for the desired model
+        """
+        return self._core.get_active_model(nlp_task)

@@ -314,3 +314,13 @@ class TrainRequestBody:
     def to_json(self):
         """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
+
+
+class GetActiveModelResponse(SdkServiceResponse):
+    """Define class representing a get active model api call response."""
+    task: str
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        self.task = generic_response.response
