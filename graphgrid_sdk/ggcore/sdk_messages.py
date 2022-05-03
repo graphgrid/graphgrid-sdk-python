@@ -160,8 +160,8 @@ class DagRunResponse(SdkServiceResponse):
     startDate: str
     endDate: str
     logicalDate: str
-    externalTrigger: str
-    conf: str
+    externalTrigger: bool
+    conf: dict
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
