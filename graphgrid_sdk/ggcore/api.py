@@ -269,7 +269,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"promoteModel/{self._environment}/{self._model_name}"
+            return f"promoteModel/{self._environment}/{self._nlp_task}/{self._model_name}"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
