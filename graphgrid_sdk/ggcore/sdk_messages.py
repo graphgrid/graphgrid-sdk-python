@@ -211,15 +211,15 @@ class NMTTrainResponse(DagRunResponse):
 # pylint: disable=too-few-public-methods
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
-    dataset_id: str = None
-    save_path: str = None
+    datasetId: str = None
+    path: str = None
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
-        self.save_path = loaded.get('path')
-        self.dataset_id = loaded.get('datasetId')
+        self.path = loaded.get('path')
+        self.datasetId = loaded.get('datasetId')
 
 
 class PromoteModelResponse(SdkServiceResponse):
