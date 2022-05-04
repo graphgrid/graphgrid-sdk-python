@@ -5,8 +5,7 @@ from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.sdk_messages import SaveDatasetResponse, \
     PromoteModelResponse, GetDataResponse, \
-    DagRunResponse, NMTTrainResponse, NMTStatusResponse
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody
 
 
 class SdkCore:

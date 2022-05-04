@@ -7,8 +7,7 @@ from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
     PromoteModelResponse, DagRunResponse, NMTStatusResponse, \
-    NMTTrainResponse
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
+    NMTTrainResponse, TrainRequestBody
 from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
     GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED

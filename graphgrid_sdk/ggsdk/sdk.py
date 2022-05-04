@@ -5,8 +5,7 @@ from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    DagRunResponse, NMTTrainResponse, NMTStatusResponse
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 

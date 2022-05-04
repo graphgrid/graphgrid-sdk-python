@@ -11,10 +11,9 @@ from graphgrid_sdk.ggcore.sdk_exceptions import \
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest, \
     GetTokenResponse, CheckTokenResponse, GenericResponse, PromoteModelResponse, \
     SaveDatasetResponse, GetDataResponse, DagRunResponse, \
-    NMTStatusResponse, NMTTrainResponse
+    NMTStatusResponse, NMTTrainResponse, TrainRequestBody
 from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
 from graphgrid_sdk.ggcore.session import TokenFactory
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.utils import DOCKER_NGINX_PORT
 
 

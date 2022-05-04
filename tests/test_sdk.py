@@ -10,9 +10,9 @@ from graphgrid_sdk import ggcore
 from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     GenericResponse, SaveDatasetResponse, PromoteModelResponse, \
-    GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse
+    GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse, \
+    TrainRequestBody
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggsdk import sdk
 from graphgrid_sdk.ggsdk.sdk import GraphGridSdk
 from tests.test_base import TestBootstrapBase, TestBase
