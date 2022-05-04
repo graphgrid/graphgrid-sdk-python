@@ -177,7 +177,7 @@ class TestSdkPromoteModel(TestSdkBase):
         expected_response_dict = {
             "modelName": model_name,
             "task": nlp_task,
-            "paramKey": "param_key"
+            "paramKey": "paramKey"
         }
 
         # setup sdk

@@ -224,17 +224,17 @@ class SaveDatasetResponse(SdkServiceResponse):
 
 class PromoteModelResponse(SdkServiceResponse):
     """Define class representing a promote model api call response."""
-    model_name: str
+    modelName: str
     task: str
-    param_key: str
+    paramKey: str
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
-        self.model_name = loaded.get('modelName')
+        self.modelName = loaded.get('modelName')
         self.task = loaded.get('task')
-        self.param_key = loaded.get('paramKey')
+        self.paramKey = loaded.get('paramKey')
 
 
 class PropertySource:
