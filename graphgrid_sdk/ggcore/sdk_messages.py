@@ -2,6 +2,7 @@
 
 import json
 import typing
+from dataclasses import dataclass
 
 import requests
 
@@ -151,33 +152,90 @@ class SdkServiceRequest:
         return False
 
 
+# pylint: disable=invalid-name
+class DagRunResponse(SdkServiceResponse):
+    """Define dag run response structure."""
+    dagId: str
+    dagRunId: str
+    state: str
+    startDate: str
+    endDate: str
+    logicalDate: str
+    externalTrigger: bool
+    conf: dict
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dagId = loaded.get('dagId')
+            self.dagRunId = loaded.get('dagRunId')
+            self.state = loaded.get('state')
+            self.startDate = loaded.get('startDate')
+            self.endDate = loaded.get('endDate')
+            self.logicalDate = loaded.get('logicalDate')
+            self.externalTrigger = loaded.get('externalTrigger')
+            self.conf = loaded.get('conf')
+
+
+class NMTStatusResponse(DagRunResponse):
+    """Define nlp model training status response."""
+    savedModelName: str
+    savedModelFilename: str
+    savedModelUrl: str
+    trainingAccuracy: float
+    trainingLoss: float
+    evalAccuracy: float
+    evalLoss: float
+    properties: dict
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.savedModelName = loaded.get("savedModelName")
+            self.savedModelFilename = loaded.get("savedModelFilename")
+            self.savedModelUrl = loaded.get("savedModelUrl")
+            self.trainingAccuracy = loaded.get("trainingAccuracy")
+            self.trainingLoss = loaded.get("trainingLoss")
+            self.evalAccuracy = loaded.get("evalAccuracy")
+            self.evalLoss = loaded.get("evalLoss")
+            self.properties = loaded.get("properties")
+
+
+class NMTTrainResponse(DagRunResponse):
+    """Define nlp model training train response."""
+
+
 # pylint: disable=too-few-public-methods
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
-    dataset_id: str = None
-    save_path: str = None
+    datasetId: str = None
+    path: str = None
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
-        self.save_path = loaded.get('path')
-        self.dataset_id = loaded.get('datasetId')
+        self.path = loaded.get('path')
+        self.datasetId = loaded.get('datasetId')
 
 
 class PromoteModelResponse(SdkServiceResponse):
     """Define class representing a promote model api call response."""
-    model_name: str
+    modelName: str
     task: str
-    param_key: str
+    paramKey: str
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
-        self.model_name = loaded.get('modelName')
+        self.modelName = loaded.get('modelName')
         self.task = loaded.get('task')
-        self.param_key = loaded.get('paramKey')
+        self.paramKey = loaded.get('paramKey')
 
 
 class PropertySource:
@@ -244,71 +302,15 @@ class CheckTokenResponse(SdkServiceResponse):
         super().__init__(generic_response)
 
 
-class GetJobStatusResponse(SdkServiceResponse):
-    """Define class representing the get job status response"""
-    dag_id: typing.Optional[str] = None
-    dag_run_id: typing.Optional[str] = None
-    start_date: typing.Optional[str] = None
-    state: typing.Optional[str] = None
+# pylint: disable=invalid-name
+@dataclass
+class TrainRequestBody:
+    """Store Airflow configuration json/request bodies"""
+    model: str
+    datasets: typing.Union[dict, str]
+    no_cache: bool = False
+    GPU: bool = False
 
-    def __init__(self, generic_response: GenericResponse):
-        super().__init__(generic_response)
-
-        if self.status_code == 200:
-            loaded: dict = json.loads(generic_response.response)
-            self.dag_id = loaded.get('dag_id')
-            self.dag_run_id = loaded.get('dag_run_id')
-            self.start_date = loaded.get('start_date')
-            self.state = loaded.get('state')
-
-
-class GetJobResultsResponse(SdkServiceResponse):
-    """Define class representing the get job status response"""
-    dag_id: typing.Optional[str] = None
-    dag_run_id: typing.Optional[str] = None
-    start_date: typing.Optional[str] = None
-    end_date: typing.Optional[str] = None
-    state: typing.Optional[str] = None
-    saved_model_name: typing.Optional[str] = None
-    saved_model_filename: typing.Optional[str] = None
-    saved_model_url: typing.Optional[str] = None
-    training_accuracy: float = None
-    training_loss: float = None
-    eval_accuracy: float = None
-    eval_loss: float = None
-    properties: typing.Dict[str, typing.List[str]] = None
-
-    def __init__(self, generic_response: GenericResponse):
-        super().__init__(generic_response)
-
-        if self.status_code == 200:
-            loaded: dict = json.loads(generic_response.response)
-            self.dag_id = loaded.get('dag_id')
-            self.dag_run_id = loaded.get('dag_run_id')
-            self.start_date = loaded.get('start_date')
-            self.end_date = loaded.get('end_date')
-            self.state = loaded.get('state')
-            self.saved_model_name = loaded.get('saved_model_name')
-            self.saved_model_filename = loaded.get('saved_model_filename')
-            self.saved_model_url = loaded.get('saved_model_url')
-            self.training_accuracy = loaded.get('trainingAccuracy')
-            self.training_loss = loaded.get('trainingLoss')
-            self.eval_accuracy = loaded.get('evalAccuracy')
-            self.eval_loss = loaded.get('evalLoss')
-            self.properties = loaded.get('properties')
-
-
-class JobTrainResponse(SdkServiceResponse):
-    """Define class representing the job train response"""
-    dag_run_id: typing.Optional[str] = None
-    logical_date: typing.Optional[str] = None
-    state: typing.Optional[str] = None
-
-    def __init__(self, generic_response: GenericResponse):
-        super().__init__(generic_response)
-
-        if self.status_code == 200:
-            loaded: dict = json.loads(generic_response.response)
-            self.dag_run_id = loaded.get('dag_run_id')
-            self.logical_date = loaded.get('logical_date')
-            self.state = loaded.get('state')
+    def to_json(self):
+        """Encode TrainRequestBody to a json object"""
+        return json.dumps(self.__dict__, indent=4)

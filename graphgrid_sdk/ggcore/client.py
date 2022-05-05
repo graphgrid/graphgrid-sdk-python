@@ -6,11 +6,12 @@ from graphgrid_sdk.ggcore.api import SecurityApi, SdkRequestBuilder, NlpApi, \
     ConfigApi, AbstractApi
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.http_base import SdkHttpClient
-from graphgrid_sdk.ggcore.training_request_body import TrainRequestBody
 from graphgrid_sdk.ggcore.sdk_exceptions import \
     SdkUnauthorizedValidTokenException, SdkUnauthorizedInvalidTokenException
 from graphgrid_sdk.ggcore.sdk_messages import SdkServiceRequest, \
-    GetTokenResponse, CheckTokenResponse, GenericResponse
+    GetTokenResponse, CheckTokenResponse, GenericResponse, PromoteModelResponse, \
+    SaveDatasetResponse, GetDataResponse, DagRunResponse, \
+    NMTStatusResponse, NMTTrainResponse, TrainRequestBody
 from graphgrid_sdk.ggcore.security_base import SdkAuthHeaderBuilder
 from graphgrid_sdk.ggcore.session import TokenFactory
 from graphgrid_sdk.ggcore.utils import DOCKER_NGINX_PORT
@@ -206,7 +207,7 @@ class ConfigClient(SecurityClientBase):
 
     def get_data(self, module: str,
                  profiles: typing.Union[str, typing.List[str]],
-                 revision: str):
+                 revision: str) -> GetDataResponse:
         """Return get data sdk call."""
         api_call = ConfigApi.get_data_api(module, profiles, revision)
         return self.invoke(api_call)
@@ -216,27 +217,34 @@ class NlpClient(SecurityClientBase):
     """Define NlpClient to hold the nlp sdk calls."""
 
     def save_dataset(self, generator: typing.Generator, dataset_id: str,
-                     overwrite: bool):
+                     overwrite: bool) -> SaveDatasetResponse:
         """Return save dataset sdk call."""
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         return self.invoke(api_call)
 
-    def promote_model(self, model_name: str, nlp_task: str, environment: str):
+    def promote_model(self, model_name: str, nlp_task: str,
+                      environment: str) -> PromoteModelResponse:
         """Return promote model sdk call."""
         api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
         return self.invoke(api_call)
 
-    def get_job_results(self, dag_id: str, dag_run_id: str):
-        """Return get job results sdk call."""
-        api_call = NlpApi.get_job_results_api(dag_id, dag_run_id)
+    def get_dag_run_status(self, dag_id: str,
+                           dag_run_id: str) -> DagRunResponse:
+        """Return get dag run status sdk call."""
+        api_call = NlpApi.get_dag_run_status_api(dag_id, dag_run_id)
         return self.invoke(api_call)
 
-    def get_job_status(self, dag_id: str, dag_run_id: str):
-        """Return get job status sdk call."""
-        api_call = NlpApi.get_job_status_api(dag_id, dag_run_id)
+    def trigger_dag(self, dag_id: str, request_body: dict) -> DagRunResponse:
+        """Return trigger dag sdk call."""
+        api_call = NlpApi.trigger_dag_api(dag_id, request_body)
         return self.invoke(api_call)
 
-    def job_train(self, request_body: TrainRequestBody, dag_id: str):
+    def get_nmt_status(self, dag_run_id: str) -> NMTStatusResponse:
+        """Return nmt train status call."""
+        api_call = NlpApi.nmt_status_api(dag_run_id)
+        return self.invoke(api_call)
+
+    def trigger_nmt(self, request_body: TrainRequestBody) -> NMTTrainResponse:
         """Return job train sdk call."""
-        api_call = NlpApi.job_train_api(request_body, dag_id)
+        api_call = NlpApi.nmt_train_api(request_body)
         return self.invoke(api_call)
