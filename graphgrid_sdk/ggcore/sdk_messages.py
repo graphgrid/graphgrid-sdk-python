@@ -323,4 +323,7 @@ class GetActiveModelResponse(SdkServiceResponse):
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
-        self.task = generic_response.response
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.dag_run_id = loaded.get('modelName')
+            self.logical_date = loaded.get('trainedModelData')
