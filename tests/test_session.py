@@ -50,7 +50,7 @@ class TestTokenFactory(TestBootstrapBase):
         expiration.
         """
 
-        test_expiration_time_ms = 5_000  # expiration time in ms
+        test_expiration_time_s = 5  # expiration time in seconds
         test_token_after_expiry = "token-after-expiry"
 
         security_client = InternalSecurityClient(self._test_bootstrap_config)
@@ -59,7 +59,7 @@ class TestTokenFactory(TestBootstrapBase):
 
         json_body = {"access_token": TestBase.TEST_TOKEN,
                      "token_type": RequestAuthType.BEARER.value,
-                     "expires_in": str(test_expiration_time_ms),
+                     "expires_in": str(test_expiration_time_s),
                      "createdAt": "2022-04-01T19:48:47.647Z"}
 
         responses.add(responses.POST,
@@ -74,7 +74,7 @@ class TestTokenFactory(TestBootstrapBase):
         assert token_factory.is_token_expired() is False
 
         # sleep until expiry
-        time.sleep(test_expiration_time_ms // 1000)
+        time.sleep(test_expiration_time_s)
 
         # assert token has expired
         assert token_factory.is_token_expired() is True
