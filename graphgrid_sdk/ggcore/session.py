@@ -44,7 +44,8 @@ class TokenFactory:
         if get_token_response.status_code == 200:
             self._token_tracker = TokenTracker(
                 get_token_response.access_token,
-                int(get_token_response.expires_in),  # cast expires_in to int
+                # cast expires_in to int
+                int(get_token_response.expires_in) * 1000,
                 get_time_in_ms()
             )
 
