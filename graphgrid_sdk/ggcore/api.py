@@ -7,7 +7,7 @@ from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
     PromoteModelResponse, DagRunResponse, NMTStatusResponse, \
-    NMTTrainResponse, TrainRequestBody
+    NMTTrainResponse, TrainRequestBody, LoadModelResponse
 from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
     GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
@@ -192,6 +192,10 @@ class NlpApi(ApiGroup):
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @classmethod
+    def load_model_api(cls, model_name: str):
+        return cls.LoadModelApi(model_name)
+
+    @classmethod
     def promote_model_api(cls, model_name: str, environment: str):
         """Return promote model api."""
         return cls.PromoteModelApi(model_name, environment)
@@ -246,6 +250,26 @@ class NlpApi(ApiGroup):
 
         def handler(self, generic_response: GenericResponse):
             return SaveDatasetResponse(generic_response)
+
+    @dataclass
+    class LoadModelApi(AbstractApi):
+        """Define LoadModelApi api."""
+        _model_name: str
+
+        def __init__(self, model_name: str):
+            self._model_name = model_name
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            return f"loadModel/{self._model_name}"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.GET
+
+        def handler(self, generic_response: GenericResponse):
+            return LoadModelResponse(generic_response)
 
     @dataclass
     class PromoteModelApi(AbstractApi):

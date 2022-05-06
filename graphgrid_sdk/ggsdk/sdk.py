@@ -5,7 +5,8 @@ from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody, \
+    LoadModelResponse
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
@@ -43,6 +44,13 @@ class GraphGridSdk:
             exists (default=False)
         """
         return self._core.save_dataset(data_generator, dataset_id, overwrite)
+
+    def load_model(self, model_name: str) -> LoadModelResponse:
+        """Call load model api.
+
+        :param model_name: Name of the model to promote within cloud storage
+        """
+        return self._core.load_model(model_name)
 
     def promote_model(self, model_name: str,
                       environment: str = "default") -> PromoteModelResponse:

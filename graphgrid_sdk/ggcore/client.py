@@ -222,6 +222,11 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         return self.invoke(api_call)
 
+    def load_model(self, model_name: str):
+        """Return load model sdk call."""
+        api_call = NlpApi.load_model_api(model_name)
+        return self.invoke(api_call)
+
     def promote_model(self, model_name: str,
                       environment: str) -> PromoteModelResponse:
         """Return promote model sdk call."""

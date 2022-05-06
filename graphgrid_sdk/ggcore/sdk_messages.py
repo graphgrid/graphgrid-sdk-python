@@ -223,6 +223,17 @@ class SaveDatasetResponse(SdkServiceResponse):
         self.datasetId = loaded.get('datasetId')
 
 
+class LoadModelResponse(SdkServiceResponse):
+    """Define class representing a load model api call response."""
+    modelName: str
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        loaded = json.loads(generic_response.response)
+        self.modelName = loaded.get('modelName')
+
+
 class PromoteModelResponse(SdkServiceResponse):
     """Define class representing a promote model api call response."""
     modelName: str

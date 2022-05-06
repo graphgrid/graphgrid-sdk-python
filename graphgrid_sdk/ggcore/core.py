@@ -39,6 +39,10 @@ class SdkCore:
                                              dataset_id=dataset_id,
                                              overwrite=overwrite)
 
+    def load_model(self, model_name):
+        """Execute load model call."""
+        return self._nlp_client.load_model(model_name=model_name)
+
     def promote_model(self, model_name: str,
                       environment: str) -> PromoteModelResponse:
         """Execute promote model call."""
