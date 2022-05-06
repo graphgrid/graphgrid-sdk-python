@@ -172,11 +172,10 @@ class TestSdkPromoteModel(TestSdkBase):
     def test_sdk_call__promote_model__200(self):
         """Test sdk PromoteModelApi call when response is 200 OK."""
         model_name = "any_model"
-        nlp_task = "some_task"
         environment = "default"
         expected_response_dict = {
             "modelName": model_name,
-            "task": nlp_task,
+            "task": "some_task",
             "paramKey": "paramKey"
         }
 
@@ -184,15 +183,14 @@ class TestSdkPromoteModel(TestSdkBase):
         gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.promote_model_api(model_name=model_name, nlp_task=nlp_task, environment=environment).endpoint()}',
+                          f'{NlpApi.promote_model_api(model_name=model_name, environment=environment).endpoint()}',
                       json=expected_response_dict, status=200)
 
         expected_response = PromoteModelResponse(
             GenericResponse(200, "OK", json.dumps(expected_response_dict),
                             None))
         actual_response: PromoteModelResponse = gg_sdk.promote_model(
-            model_name=model_name, nlp_task=nlp_task,
-            environment=environment)
+            model_name=model_name, environment=environment)
 
         assert actual_response == expected_response
 

@@ -192,10 +192,9 @@ class NlpApi(ApiGroup):
         return cls.SaveDatasetApi(generator, dataset_id, overwrite)
 
     @classmethod
-    def promote_model_api(cls, model_name: str, nlp_task: str,
-                          environment: str):
+    def promote_model_api(cls, model_name: str, environment: str):
         """Return promote model api."""
-        return cls.PromoteModelApi(model_name, nlp_task, environment)
+        return cls.PromoteModelApi(model_name, environment)
 
     @classmethod
     def get_dag_run_status_api(cls, dag_id: str, dag_run_id: str):
@@ -252,19 +251,17 @@ class NlpApi(ApiGroup):
     class PromoteModelApi(AbstractApi):
         """Define PromoteModelApi api."""
         _model_name: str
-        _nlp_task: str
         _environment: str
 
-        def __init__(self, model_name: str, nlp_task: str, environment: str):
+        def __init__(self, model_name: str, environment: str):
             self._model_name = model_name
-            self._nlp_task = nlp_task
             self._environment = environment
 
         def api_base(self) -> str:
             return NLP
 
         def endpoint(self):
-            return f"promoteModel/{self._environment}/{self._nlp_task}/{self._model_name}"
+            return f"promoteModel/{self._environment}/{self._model_name}"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST

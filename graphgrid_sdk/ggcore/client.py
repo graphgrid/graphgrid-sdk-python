@@ -222,10 +222,10 @@ class NlpClient(SecurityClientBase):
         api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
         return self.invoke(api_call)
 
-    def promote_model(self, model_name: str, nlp_task: str,
+    def promote_model(self, model_name: str,
                       environment: str) -> PromoteModelResponse:
         """Return promote model sdk call."""
-        api_call = NlpApi.promote_model_api(model_name, nlp_task, environment)
+        api_call = NlpApi.promote_model_api(model_name, environment)
         return self.invoke(api_call)
 
     def get_dag_run_status(self, dag_id: str,
