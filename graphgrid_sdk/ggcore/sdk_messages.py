@@ -325,5 +325,5 @@ class GetActiveModelResponse(SdkServiceResponse):
 
         if self.status_code == 200:
             loaded: dict = json.loads(generic_response.response)
-            self.dag_run_id = loaded.get('modelName')
-            self.logical_date = loaded.get('trainedModelData')
+            self.model_name = loaded.get('modelName')
+            self.trained_model_data = loaded.get('trainedModelData')
