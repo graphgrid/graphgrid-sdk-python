@@ -318,12 +318,13 @@ class TrainRequestBody:
 
 class GetActiveModelResponse(SdkServiceResponse):
     """Define class representing a get active model api call response."""
-    task: str
+    modelName: str
+    trainedModelData: dict
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         if self.status_code == 200:
             loaded: dict = json.loads(generic_response.response)
-            self.model_name = loaded.get('modelName')
-            self.trained_model_data = loaded.get('trainedModelData')
+            self.modelName = loaded.get('modelName')
+            self.trainedModelData = loaded.get('trainedModelData')
