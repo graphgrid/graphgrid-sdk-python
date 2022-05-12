@@ -12,15 +12,15 @@ SUPPORTED_CLIENTS = [CONFIG, SECURITY, NLP, ]
 DOCKER_NGINX_PORT = 8080
 
 # HTTP METHODS
-POST = "post"
-GET = "get"
-PUT = "put"
-DELETE = "delete"
-PATCH = "patch"
-OPTIONS = "options"
-CONNECT = "connect"
-HEAD = "head"
-TRACE = "trace"
+POST = "POST"
+GET = "GET"
+PUT = "PUT"
+DELETE = "DELETE"
+PATCH = "PATCH"
+OPTIONS = "OPTIONS"
+CONNECT = "CONNECT"
+HEAD = "HEAD"
+TRACE = "TRACE"
 
 
 class HttpMethod(enum.Enum):
