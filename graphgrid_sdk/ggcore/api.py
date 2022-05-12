@@ -7,7 +7,7 @@ from graphgrid_sdk.ggcore.sdk_messages import SdkServiceResponse, \
     SdkServiceRequest, GetDataResponse, TestApiResponse, SaveDatasetResponse, \
     GenericResponse, GetTokenResponse, CheckTokenResponse, \
     PromoteModelResponse, DagRunResponse, NMTStatusResponse, \
-    NMTTrainResponse, TrainRequestBody
+    NMTTrainResponse, TrainRequestBody, GetActiveModelResponse
 from graphgrid_sdk.ggcore.utils import CONFIG, SECURITY, NLP, HttpMethod, \
     GRANT_TYPE_KEY, GRANT_TYPE_CLIENT_CREDENTIALS, CONTENT_TYPE_HEADER_KEY, \
     CONTENT_TYPE_APP_JSON, USER_AGENT, CONTENT_TYPE_APP_X_WWW_FORM_URLENCODED
@@ -216,6 +216,11 @@ class NlpApi(ApiGroup):
         """Return nmt train api."""
         return cls.NmtTrainApi(request_body)
 
+    @classmethod
+    def get_active_model_api(cls, nlp_task: str):
+        """Return get active model api."""
+        return cls.GetActiveModelApi(nlp_task)
+
     @dataclass
     class SaveDatasetApi(AbstractApi):
         """Define SaveDatasetApi api."""
@@ -358,6 +363,26 @@ class NlpApi(ApiGroup):
 
         def handler(self, generic_response: GenericResponse):
             return NMTTrainResponse(generic_response)
+
+    @dataclass
+    class GetActiveModelApi(AbstractApi):
+        """Define GetActiveModelApi api."""
+        _nlp_task: str
+
+        def __init__(self, nlp_task: str):
+            self._nlp_task = nlp_task
+
+        def api_base(self) -> str:
+            return NLP
+
+        def endpoint(self):
+            return f"getActiveModel/{self._nlp_task}"
+
+        def http_method(self) -> HttpMethod:
+            return HttpMethod.GET
+
+        def handler(self, generic_response: GenericResponse):
+            return GetActiveModelResponse(generic_response)
 
 
 class SdkRequestBuilder:

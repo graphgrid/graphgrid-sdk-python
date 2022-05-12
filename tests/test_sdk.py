@@ -11,7 +11,7 @@ from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     GenericResponse, SaveDatasetResponse, PromoteModelResponse, \
     GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse, \
-    TrainRequestBody
+    TrainRequestBody, GetActiveModelResponse
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
 from graphgrid_sdk.ggsdk import sdk
 from graphgrid_sdk.ggsdk.sdk import GraphGridSdk
@@ -191,6 +191,46 @@ class TestSdkPromoteModel(TestSdkBase):
                             None))
         actual_response: PromoteModelResponse = gg_sdk.promote_model(
             model_name=model_name, environment=environment)
+
+        assert actual_response == expected_response
+
+
+class TestSdkGetActiveModel(TestSdkBase):
+    """Define test class for PromoteModelApi sdk calls."""
+
+    @responses.activate  # mock responses
+    @patch.object(TokenFactory, "_token_tracker",
+                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
+    def test_sdk_call__get_active_model__200(self):
+        """Test sdk GetActiveModelApi call when response is 200 OK."""
+        model_name = "any_model"
+        nlp_task = "some_task"
+        expected_trained_model_data_dict = {
+            "modelType": nlp_task,
+            "trainingDataset": ["sdk"],
+            "trainingAccuracy": 0.842,
+            "trainingLoss": 0.145,
+            "evalAccuracy": None,
+            "evalLoss": None,
+            "properties": {"languages": ["en"]},
+            "location": "someSavedModelLocationUrl",
+            "timestamp": "2022-04-20T20:31:33",
+            "platformVersion": "2.0.0"
+        }
+        expected_response_dict = {
+            "modelName": model_name,
+            "trainedModelData": expected_trained_model_data_dict
+        }
+
+        # setup sdk
+        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
+        responses.add(method=responses.GET,
+                      url=f'http://localhost/1.0/nlp/'
+                          f'{NlpApi.get_active_model_api(nlp_task=nlp_task).endpoint()}',
+                      json=expected_response_dict, status=200)
+
+        expected_response = GetActiveModelResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
+        actual_response: GetActiveModelResponse = gg_sdk.get_active_model(nlp_task=nlp_task)
 
         assert actual_response == expected_response
 

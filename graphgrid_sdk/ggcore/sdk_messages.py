@@ -314,3 +314,17 @@ class TrainRequestBody:
     def to_json(self):
         """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
+
+
+class GetActiveModelResponse(SdkServiceResponse):
+    """Define class representing a get active model api call response."""
+    modelName: str
+    trainedModelData: dict
+
+    def __init__(self, generic_response: GenericResponse):
+        super().__init__(generic_response)
+
+        if self.status_code == 200:
+            loaded: dict = json.loads(generic_response.response)
+            self.modelName = loaded.get('modelName')
+            self.trainedModelData = loaded.get('trainedModelData')

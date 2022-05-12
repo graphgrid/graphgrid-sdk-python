@@ -248,3 +248,8 @@ class NlpClient(SecurityClientBase):
         """Return job train sdk call."""
         api_call = NlpApi.nmt_train_api(request_body)
         return self.invoke(api_call)
+
+    def get_active_model(self, nlp_task: str):
+        """Return get active model sdk call."""
+        api_call = NlpApi.get_active_model_api(nlp_task)
+        return self.invoke(api_call)

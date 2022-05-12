@@ -69,3 +69,7 @@ class SdkCore:
     def nmt_train(self, request_body: TrainRequestBody) -> NMTTrainResponse:
         """Execute nmt train call."""
         return self._nlp_client.trigger_nmt(request_body)
+
+    def get_active_model(self, nlp_task: str):
+        """Execute get active model call."""
+        return self._nlp_client.get_active_model(nlp_task=nlp_task)
