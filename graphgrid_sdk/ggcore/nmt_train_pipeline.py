@@ -133,12 +133,10 @@ class NmtTrainPipeline:
             for i in range(num_models):
                 status = nmt_status_responses[i]
                 if status.state == "success":
-                    selected_model = evaluate_models(self._nlp_client.get_active_model(models_to_train[i]),
-                                                     status)  # should be task name, is model type as written (i.e. promote_model takes "task name" (e.g. named_entity_recognition), but we are giving it "model type" (e.g. "named-entity-recognition")
+                    selected_model = evaluate_models(self._nlp_client.get_active_model(models_to_train[i]), status)
                     if selected_model == status:
                         promote_model_response: PromoteModelResponse = \
-                            self._nlp_client.promote_model(status.savedModelName,
-                                                           "default")  # should be task name, is model type as written (i.e. promote_model takes "task name" (e.g. named_entity_recognition), but we are giving it "model type" (e.g. "named-entity-recognition")
+                            self._nlp_client.promote_model(status.savedModelName, "default")
                         if promote_model_response.status_code == 200:
                             print("Model has been promoted.")
                             promoted_models.append(promote_model_response.modelName)
