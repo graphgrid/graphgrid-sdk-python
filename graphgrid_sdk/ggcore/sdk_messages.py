@@ -316,15 +316,29 @@ class TrainRequestBody:
         return json.dumps(self.__dict__, indent=4)
 
 
+@dataclass
+class TrainedModelData:
+    modelType: str
+    trainingDataset: list
+    trainingAccuracy: float
+    trainingLoss: float
+    evalAccuracy: float
+    evalLoss: float
+    properties: dict
+    location: str
+    timestamp: str
+    platformVersion: str
+
+
 class GetActiveModelResponse(SdkServiceResponse):
     """Define class representing a get active model api call response."""
     modelName: str
-    trainedModelData: dict
+    trainedModelData: TrainedModelData
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         if self.status_code == 200:
-            loaded: dict = json.loads(generic_response.response)
+            loaded = json.loads(generic_response.response)
             self.modelName = loaded.get('modelName')
-            self.trainedModelData = loaded.get('trainedModelData')
+            self.trainedModelData = TrainedModelData(**loaded.get('trainedModelData'))
