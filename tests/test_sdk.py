@@ -386,7 +386,7 @@ class TestSdkNMT(TestSdkBase):
                                                 "train": "path/to/dataset",
                                                 "eval": "path/to/dataset"}},
                                         no_cache=False,
-                                        GPU=False)
+                                        gpu=False)
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,

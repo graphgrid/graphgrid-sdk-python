@@ -309,7 +309,7 @@ class TrainRequestBody:
     model: str
     datasets: typing.Union[dict, str]
     no_cache: bool = False
-    GPU: bool = False
+    gpu: bool = False
 
     def to_json(self):
         """Encode TrainRequestBody to a json object"""
