@@ -11,7 +11,7 @@ from graphgrid_sdk.ggcore.api import ConfigApi, NlpApi
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     GenericResponse, SaveDatasetResponse, PromoteModelResponse, \
     GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse, \
-    TrainRequestBody, GetActiveModelResponse, TrainedModelData
+    TrainRequestBody, GetActiveModelResponse
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
 from graphgrid_sdk.ggcore.utils import NlpModel
 from graphgrid_sdk.ggsdk import sdk
