@@ -53,7 +53,7 @@ class TestSdkTestApi(TestSdkBase):
 
         # setup expected TestApiResponse obj
         expected_response = TestApiResponse(
-            GenericResponse(200, "OK", json.dumps(json_body), None))
+            GenericResponse(200, json.dumps(json_body), None))
 
         # call sdk method for test api
         actual_response: TestApiResponse = gg_sdk.test_api(expected_message)
@@ -88,7 +88,7 @@ class TestSdkSaveDataset(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = SaveDatasetResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: SaveDatasetResponse = gg_sdk.save_dataset(
             data_generator=generator, dataset_id=dataset_id,
@@ -154,7 +154,7 @@ class TestSdkGetData(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = GetDataResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: GetDataResponse = gg_sdk.get_data(module=module,
                                                            profiles=profiles,
@@ -187,7 +187,7 @@ class TestSdkPromoteModel(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = PromoteModelResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: PromoteModelResponse = gg_sdk.promote_model(
             model_name=model_name, environment=environment)
@@ -229,8 +229,10 @@ class TestSdkGetActiveModel(TestSdkBase):
                           f'{NlpApi.get_active_model_api(nlp_task=nlp_task).endpoint()}',
                       json=expected_response_dict, status=200)
 
-        expected_response = GetActiveModelResponse(GenericResponse(200, "OK", json.dumps(expected_response_dict), None))
-        actual_response: GetActiveModelResponse = gg_sdk.get_active_model(nlp_task=nlp_task)
+        expected_response = GetActiveModelResponse(
+            GenericResponse(200, json.dumps(expected_response_dict), None))
+        actual_response: GetActiveModelResponse = gg_sdk.get_active_model(
+            nlp_task=nlp_task)
 
         assert actual_response == expected_response
 
@@ -265,7 +267,7 @@ class TestSdkGenericDag(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = DagRunResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: DagRunResponse = gg_sdk.job_status(
             dag_id=dag_id, dag_run_id=dag_run_id)
@@ -300,7 +302,7 @@ class TestSdkGenericDag(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = DagRunResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: DagRunResponse = gg_sdk.job_run(dag_id=dag_id,
                                                          request_body=request_body)
@@ -347,7 +349,7 @@ class TestSdkNMT(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = NMTStatusResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: NMTStatusResponse = gg_sdk.nmt_status(
             dag_run_id=dag_run_id)
@@ -391,7 +393,7 @@ class TestSdkNMT(TestSdkBase):
                       json=expected_response_dict, status=200)
 
         expected_response = NMTTrainResponse(
-            GenericResponse(200, "OK", json.dumps(expected_response_dict),
+            GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: NMTTrainResponse = gg_sdk.nmt_train(
             request_body=request_body)
