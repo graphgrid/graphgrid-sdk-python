@@ -14,7 +14,7 @@ class SdkHttpClient:
         generic_response = GenericResponse()
 
         generic_response.status_code = http_response.status_code
-        generic_response.status_text = http_response.reason
+
         generic_response.response = http_response.content.decode()
 
         try:

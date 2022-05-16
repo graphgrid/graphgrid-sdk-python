@@ -15,14 +15,12 @@ class GenericResponse:
     inbetween for HTTP responses and SdkServiceResponse subclasses.
     """
     status_code: int
-    status_text: str
     response: str
     exception: requests.RequestException
 
-    def __init__(self, status_code=None, status_text=None, response=None,
+    def __init__(self, status_code=None, response=None,
                  exception=None):
         self.status_code = status_code
-        self.status_text = status_text
         self.response = response
         self.exception = exception
 
@@ -32,14 +30,12 @@ class SdkServiceResponse:
     """Define base class representing sdk service response."""
 
     status_code: typing.Optional[int] = None
-    status_text: typing.Optional[str] = None
     response: typing.Optional[str] = None
     exception: typing.Optional[requests.RequestException] = None
 
     def __init__(self, generic_response: GenericResponse):
         """Define method to init these base fields from GenericResponse."""
         self.response = generic_response.response
-        self.status_text = generic_response.status_text
         self.status_code = generic_response.status_code
         self.exception = generic_response.exception
 
@@ -47,7 +43,6 @@ class SdkServiceResponse:
         if isinstance(other, SdkServiceResponse):
             return self.response == other.response \
                    and self.status_code == other.status_code \
-                   and self.status_text == other.status_text \
                    and self.exception == other.exception
         return False
 

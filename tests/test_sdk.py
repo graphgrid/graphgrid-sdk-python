@@ -250,7 +250,6 @@ class TestSdkGenericDag(TestSdkBase):
         dag_run_id = f"manual__{start_date}"
         expected_response_dict = {
             "status_code": 200,
-            "status_text": "OK",
             "dagRunId": dag_run_id,
             "dagId": dag_id,
             "startDate": start_date,
@@ -286,7 +285,6 @@ class TestSdkGenericDag(TestSdkBase):
         dag_run_id = f"manual__{start_date}"
         expected_response_dict = {
             "status_code": 200,
-            "status_text": "OK",
             "dagRunId": dag_run_id,
             "logicalDate": logical_date,
             "state": state,
@@ -326,7 +324,6 @@ class TestSdkNMT(TestSdkBase):
         model_name = "20220328T160245-nerModel"
         expected_response_dict = {
             "status_code": 200,
-            "status_text": "OK",
             "dagRunId": dag_run_id,
             "dagId": dag_id,
             "startDate": start_date,
@@ -370,7 +367,6 @@ class TestSdkNMT(TestSdkBase):
         dag_run_id = f"manual__{start_date}"
         expected_response_dict = {
             "status_code": 200,
-            "status_text": "OK",
             "dagRunId": dag_run_id,
             "logicalDate": logical_date,
             "state": state,
