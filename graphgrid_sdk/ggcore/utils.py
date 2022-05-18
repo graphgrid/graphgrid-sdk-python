@@ -73,7 +73,7 @@ TRANSLATION = "translation"
 RELATION_EXTRACTION = "relation_extraction"
 
 
-class NlpModel(enum.Enum):
+class NlpModel(str, enum.Enum):
     """Define NLP models"""
     NAMED_ENTITY_RECOGNITION = NAMED_ENTITY_RECOGNITION
     PART_OF_SPEECH_TAGGING = PART_OF_SPEECH_TAGGING
