@@ -6,7 +6,7 @@ from dataclasses import dataclass
 
 import requests
 
-from graphgrid_sdk.ggcore.utils import HttpMethod
+from graphgrid_sdk.ggcore.utils import HttpMethod, NlpModel
 
 
 # pylint: disable=too-few-public-methods
@@ -301,7 +301,7 @@ class CheckTokenResponse(SdkServiceResponse):
 @dataclass
 class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
-    model: str
+    model: NlpModel
     datasets: typing.Union[dict, str]
     no_cache: bool = False
     gpu: bool = False

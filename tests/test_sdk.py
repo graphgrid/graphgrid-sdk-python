@@ -13,6 +13,7 @@ from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     GetDataResponse, DagRunResponse, NMTTrainResponse, NMTStatusResponse, \
     TrainRequestBody, GetActiveModelResponse
 from graphgrid_sdk.ggcore.session import TokenTracker, TokenFactory
+from graphgrid_sdk.ggcore.utils import NlpModel
 from graphgrid_sdk.ggsdk import sdk
 from graphgrid_sdk.ggsdk.sdk import GraphGridSdk
 from tests.test_base import TestBootstrapBase, TestBase
@@ -375,7 +376,7 @@ class TestSdkNMT(TestSdkBase):
             "response": None,
             "exception": None
         }
-        request_body = TrainRequestBody(model="some-model",
+        request_body = TrainRequestBody(model=NlpModel.NAMED_ENTITY_RECOGNITION,
                                         datasets={
                                             "some-dataset": {
                                                 "train": "path/to/dataset",
