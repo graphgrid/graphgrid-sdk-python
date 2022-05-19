@@ -36,16 +36,14 @@ class GraphGridSdk:
 
     def save_dataset(self,
                      data_generator: typing.Generator,
-                     dataset_id: str = None,
-                     overwrite=False) -> SaveDatasetResponse:
+                     filename: str) -> SaveDatasetResponse:
         """Call save dataset api.
 
         :param data_generator:  The generator providing dataset lines
-        :param dataset_id:  Name/id for the dataset (default=None)
-        :param overwrite:   Whether to overwrite the dataset if it already
+        :param filename:  filename for the dataset (default=None)
             exists (default=False)
         """
-        return self._core.save_dataset(data_generator, dataset_id, overwrite)
+        return self._core.save_dataset(data_generator, filename)
 
     def promote_model(self, model_name: str,
                       environment: str = "default") -> PromoteModelResponse:

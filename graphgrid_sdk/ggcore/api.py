@@ -186,10 +186,9 @@ class NlpApi(ApiGroup):
     """Define grouping of Nlp api definitions."""
 
     @classmethod
-    def save_dataset_api(cls, generator: typing.Generator, dataset_id: str,
-                         overwrite: bool):
+    def save_dataset_api(cls, generator: typing.Generator, filename: str):
         """Return save dataset api."""
-        return cls.SaveDatasetApi(generator, dataset_id, overwrite)
+        return cls.SaveDatasetApi(generator, filename)
 
     @classmethod
     def promote_model_api(cls, model_name: str, environment: str):
@@ -225,26 +224,20 @@ class NlpApi(ApiGroup):
     class SaveDatasetApi(AbstractApi):
         """Define SaveDatasetApi api."""
         _generator: typing.Generator
-        _dataset_id: str
-        _overwrite: bool
+        _filename: str
 
-        def __init__(self, generator: typing.Generator, dataset_id: str,
-                     overwrite: bool):
+        def __init__(self, generator: typing.Generator, filename: str):
             self._generator = generator
-            self._dataset_id = dataset_id
-            self._overwrite = overwrite
+            self._filename = filename
 
         def api_base(self) -> str:
             return NLP
 
         def endpoint(self):
-            return f"dataset{'/' + self._dataset_id if self._dataset_id else ''}/save"
+            return f"dataset{'/' + self._filename if self._filename else ''}/save"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
-
-        def query_params(self) -> dict:
-            return {"overwrite": "true"} if self._overwrite else {}
 
         def body(self):
             return self._generator
