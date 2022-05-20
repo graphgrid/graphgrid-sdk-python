@@ -3,11 +3,13 @@ import typing
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
+from graphgrid_sdk.ggcore.nmt_train_pipeline import NmtTrainPipeline
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody, NMTTrainPipelineResponse
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody, \
+    NMTTrainPipelineResponse
+from graphgrid_sdk.ggcore.utils import NlpModel
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
-from graphgrid_sdk.ggcore.nmt_train_pipeline import NmtTrainPipeline
 
 
 class GraphGridSdk:
@@ -104,10 +106,14 @@ class GraphGridSdk:
         """
         return self._core.get_active_model(nlp_task)
 
-    def nmt_train_pipeline(self, models_to_train: list, datasets: typing.Union[str, list],
-                           no_cache: typing.Optional[bool], gpu: typing.Optional[bool],
-                           autopromote: bool, success_handler: typing.Optional[callable],
-                           failed_handler: typing.Optional[callable]) -> NMTTrainPipelineResponse:
+    def nmt_train_pipeline(self, models_to_train: typing.List[NlpModel],
+                           datasets: typing.Union[str, list],
+                           no_cache: typing.Optional[bool],
+                           gpu: typing.Optional[bool],
+                           autopromote: bool,
+                           success_handler: typing.Optional[callable],
+                           failed_handler: typing.Optional[
+                               callable]) -> NMTTrainPipelineResponse:
         """Call to start training pipeline: kicks off and monitors training for specified tasks, then promotes
 
         :param models_to_train: List of models to train.

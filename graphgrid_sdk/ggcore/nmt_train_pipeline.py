@@ -1,5 +1,6 @@
 import math
 import time
+import typing
 
 import requests
 
@@ -7,6 +8,7 @@ from graphgrid_sdk.ggcore.client import ConfigClient, NlpClient
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.sdk_messages import TrainRequestBody, PromoteModelResponse, NMTStatusResponse, \
     GetActiveModelResponse, NMTTrainPipelineResponse
+from graphgrid_sdk.ggcore.utils import NlpModel
 
 
 def sigmoid(x):
@@ -91,8 +93,13 @@ class NmtTrainPipeline:
         self._config_client = ConfigClient(self._configuration)
         self._nlp_client = NlpClient(self._configuration)
 
-    def nmt_train_pipeline(self, models_to_train, datasets, no_cache, gpu,
-                           autopromote, success_handler, failed_handler):
+    def nmt_train_pipeline(self, models_to_train: typing.List[NlpModel],
+                           datasets: typing.Union[str, list],
+                           no_cache: typing.Optional[bool],
+                           gpu: typing.Optional[bool],
+                           autopromote: bool,
+                           success_handler: typing.Optional[callable],
+                           failed_handler: typing.Optional[callable]):
 
         num_models = len(models_to_train)
 
