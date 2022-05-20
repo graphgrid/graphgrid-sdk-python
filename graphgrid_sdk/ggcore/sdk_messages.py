@@ -306,14 +306,13 @@ class CheckTokenResponse(SdkServiceResponse):
 class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
     model: NlpModel
-    datasets: typing.Union[dict, str]
+    datasetId: str
     no_cache: bool = False
     gpu: bool = False
 
     def to_json(self):
         """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
-
 
 @dataclass
 class TrainedModelData:
