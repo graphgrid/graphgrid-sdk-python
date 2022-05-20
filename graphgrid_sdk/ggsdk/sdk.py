@@ -119,5 +119,6 @@ class GraphGridSdk:
         :param failed_handler: Optional callable to run on a failed training.
         """
         pipeline = NmtTrainPipeline(self._config)
-        return pipeline.nmt_train_pipeline(models_to_train, datasets, no_cache, gpu, autopromote,
-                                           success_handler, failed_handler)
+        return pipeline.nmt_train_pipeline(models_to_train, datasets, no_cache,
+                                           gpu, autopromote, success_handler,
+                                           failed_handler)

@@ -416,6 +416,7 @@ class TestNMTTrainPipeline(TestSdkBase):
 
         class MockStatusResponse:
             state: str
+            status_code: int = 200
             savedModelName: str = "savedModelName"
 
         class MockPromoteResponse:
