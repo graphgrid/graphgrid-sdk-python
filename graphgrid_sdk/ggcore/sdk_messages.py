@@ -337,3 +337,10 @@ class GetActiveModelResponse(SdkServiceResponse):
             loaded = json.loads(generic_response.response)
             self.modelName = loaded.get('modelName')
             self.trainedModelData = TrainedModelData(**loaded.get('trainedModelData'))
+
+
+@dataclass
+class NMTTrainPipelineResponse:
+    """Define class representing a NMT train pipeline call response."""
+    modelStatusList: list
+    promotedModelList: list

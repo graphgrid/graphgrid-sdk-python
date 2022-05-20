@@ -400,3 +400,65 @@ class TestSdkNMT(TestSdkBase):
             request_body=request_body)
 
         assert actual_response == expected_response
+
+
+class TestNMTTrainPipeline(TestSdkBase):
+    """Define test class for nmt_train_pipeline sdk call."""
+
+    @mock.patch('graphgrid_sdk.ggcore.nmt_train_pipeline.evaluate_models')
+    @mock.patch('graphgrid_sdk.ggcore.client.NlpClient.promote_model')
+    @mock.patch('graphgrid_sdk.ggcore.client.NlpClient.get_active_model')
+    @mock.patch('graphgrid_sdk.ggcore.client.NlpClient.get_nmt_status')
+    @mock.patch('graphgrid_sdk.ggcore.client.NlpClient.trigger_nmt')
+    def test_nmt_train_pipeline(self, mock_trigger_nmt, mock_get_nmt_status, mock_get_active_model, mock_promote_model,
+                                mock_evaluate_models):
+        """Test sdk test_nmt_train_pipeline call."""
+
+        class MockStatusResponse:
+            state: str
+            status_code: int = 200
+            savedModelName: str = "savedModelName"
+
+        class MockPromoteResponse:
+            status_code: int = 200
+            modelName: str = "modelName"
+
+        mock_status_running_response = MockStatusResponse()
+        mock_status_running_response.state = "running"
+        mock_status_success_response = MockStatusResponse()
+        mock_status_success_response.state = "success"
+        mock_get_nmt_status.side_effect = [mock_status_running_response, mock_status_running_response,
+                                           mock_status_success_response, mock_status_success_response]
+
+        mock_evaluate_models.return_value = mock_status_success_response
+        mock_promote_model.return_value = MockPromoteResponse()
+
+        handler_calls = []
+
+        def mock_success_handler(status_result):
+            handler_calls.append("success")
+
+        def mock_failed_handler(status_result):
+            handler_calls.append("failed")
+
+        gg_sdk = GraphGridSdk(self._test_bootstrap_config)
+
+        models_to_train = ["some-model", "some-other-model"]
+        datasets = "path/to/saved/dataset"
+        no_cache = False
+        gpu = False
+        autopromote = True
+
+        result = gg_sdk.nmt_train_pipeline(models_to_train, datasets, no_cache, gpu, autopromote, mock_success_handler,
+                                        mock_failed_handler)
+
+        mock_trigger_nmt.assert_called()
+        mock_get_nmt_status.assert_called()
+        mock_get_active_model.assert_called()
+        mock_evaluate_models.assert_called()
+        mock_promote_model.assert_called()
+
+        self.assertEqual(handler_calls, ["success", "success"])
+
+        self.assertEqual(result.modelStatusList, [mock_status_success_response, mock_status_success_response])
+        self.assertEqual(result.promotedModelList, [MockPromoteResponse.modelName, MockPromoteResponse.modelName])

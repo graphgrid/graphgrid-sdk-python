@@ -3,9 +3,12 @@ import typing
 
 from graphgrid_sdk.ggcore.config import SdkBootstrapConfig
 from graphgrid_sdk.ggcore.core import SdkCore
+from graphgrid_sdk.ggcore.nmt_train_pipeline import NmtTrainPipeline
 from graphgrid_sdk.ggcore.sdk_messages import TestApiResponse, \
     SaveDatasetResponse, GetDataResponse, PromoteModelResponse, \
-    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody
+    DagRunResponse, NMTTrainResponse, NMTStatusResponse, TrainRequestBody, \
+    NMTTrainPipelineResponse
+from graphgrid_sdk.ggcore.utils import NlpModel
 from graphgrid_sdk.ggsdk.bootstrap import bootstrap_config_from_file
 
 
@@ -102,3 +105,26 @@ class GraphGridSdk:
         :param nlp_task: The associated NLP task for the desired model
         """
         return self._core.get_active_model(nlp_task)
+
+    def nmt_train_pipeline(self, models_to_train: typing.List[NlpModel],
+                           datasets: typing.Union[str, list],
+                           no_cache: typing.Optional[bool],
+                           gpu: typing.Optional[bool],
+                           autopromote: bool,
+                           success_handler: typing.Optional[callable],
+                           failed_handler: typing.Optional[
+                               callable]) -> NMTTrainPipelineResponse:
+        """Call to start training pipeline: kicks off and monitors training for specified tasks, then promotes
+
+        :param models_to_train: List of models to train.
+        :param datasets: Dataset(s) to train on.
+        :param no_cache: Flag to prevent caching (defaults to False)
+        :param gpu: Flag to enable GPU usage (defaults to False)
+        :param autopromote: Flag to enable automatic promotion on successfully trained models.
+        :param success_handler: Optional callable to run on a successful training.
+        :param failed_handler: Optional callable to run on a failed training.
+        """
+        pipeline = NmtTrainPipeline(self._config)
+        return pipeline.nmt_train_pipeline(models_to_train, datasets, no_cache,
+                                           gpu, autopromote, success_handler,
+                                           failed_handler)
