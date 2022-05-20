@@ -74,10 +74,9 @@ class TestSdkSaveDataset(TestSdkBase):
         """Test sdk SaveDataset call when response is 200 OK."""
 
         generator = mock.MagicMock()
-        dataset_id = "any_dataset"
-        overwrite = False
+        filename = "any_dataset"
         expected_response_dict = {
-            "datasetId": dataset_id,
+            "datasetId": filename,
             "path": "any/save/location"
         }
 
@@ -85,45 +84,16 @@ class TestSdkSaveDataset(TestSdkBase):
         gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
         responses.add(method=responses.POST,
                       url=f'http://localhost/1.0/nlp/'
-                          f'{NlpApi.save_dataset_api(generator=generator, dataset_id=dataset_id, overwrite=overwrite).endpoint()}',
+                          f'{NlpApi.save_dataset_api(generator=generator, filename=filename).endpoint()}',
                       json=expected_response_dict, status=200)
 
         expected_response = SaveDatasetResponse(
             GenericResponse(200, json.dumps(expected_response_dict),
                             None))
         actual_response: SaveDatasetResponse = gg_sdk.save_dataset(
-            data_generator=generator, dataset_id=dataset_id,
-            overwrite=overwrite)
+            data_generator=generator, filename=filename)
 
         assert actual_response == expected_response
-
-    @responses.activate  # mock responses
-    @patch.object(TokenFactory, "_token_tracker",
-                  TokenTracker(TestBase.TEST_TOKEN, 10_000))
-    def test_sdk_call__save_dataset__409(self):
-        """Test sdk SaveDatasetApi call when response is 409 Conflict."""
-
-        generator = mock.MagicMock()
-        dataset_id = "existing_dataset_name"
-        overwrite = False
-
-        endpoint = NlpApi.save_dataset_api(generator=generator,
-                                           dataset_id=dataset_id,
-                                           overwrite=overwrite).endpoint()
-        exception = requests.HTTPError(409,
-                                       f'Client Error: Conflict for url: http://localhost/1.0/nlp/{endpoint}')
-
-        # setup sdk
-        gg_sdk = sdk.GraphGridSdk(self._test_bootstrap_config)
-        responses.add(method=responses.POST,
-                      url=f'http://localhost/1.0/nlp/{endpoint}',
-                      body=exception, status=409)
-
-        with self.assertRaises(requests.HTTPError) as e:
-            gg_sdk.save_dataset(data_generator=generator, dataset_id=dataset_id,
-                                overwrite=overwrite)
-
-        self.assertEqual(exception, e.exception)
 
 
 class TestSdkGetData(TestSdkBase):
@@ -377,13 +347,7 @@ class TestSdkNMT(TestSdkBase):
             "exception": None
         }
         request_body = TrainRequestBody(model=NlpModel.NAMED_ENTITY_RECOGNITION,
-                                        datasets={
-                                            "some-dataset": {
-                                                "train": "path/to/dataset",
-                                                "eval": "path/to/dataset"},
-                                            "another_dataset": {
-                                                "train": "path/to/dataset",
-                                                "eval": "path/to/dataset"}},
+                                        datasetId="some-datasetId",
                                         no_cache=False,
                                         gpu=False)
 
