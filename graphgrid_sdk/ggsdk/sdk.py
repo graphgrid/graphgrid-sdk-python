@@ -105,7 +105,7 @@ class GraphGridSdk:
         return self._core.get_active_model(nlp_task)
 
     def nmt_train_pipeline(self, models_to_train: typing.List[NlpModel],
-                           datasets: typing.Union[str, list],
+                           datasetId: str,
                            no_cache: typing.Optional[bool],
                            gpu: typing.Optional[bool],
                            autopromote: bool,
@@ -115,7 +115,7 @@ class GraphGridSdk:
         """Call to start training pipeline: kicks off and monitors training for specified tasks, then promotes
 
         :param models_to_train: List of models to train.
-        :param datasets: Dataset(s) to train on.
+        :param datasetId: Dataset to train on.
         :param no_cache: Flag to prevent caching (defaults to False)
         :param gpu: Flag to enable GPU usage (defaults to False)
         :param autopromote: Flag to enable automatic promotion on successfully trained models.
@@ -123,6 +123,6 @@ class GraphGridSdk:
         :param failed_handler: Optional callable to run on a failed training.
         """
         pipeline = NmtTrainPipeline(self._config)
-        return pipeline.nmt_train_pipeline(models_to_train, datasets, no_cache,
+        return pipeline.nmt_train_pipeline(models_to_train, datasetId, no_cache,
                                            gpu, autopromote, success_handler,
                                            failed_handler)
