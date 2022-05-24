@@ -36,7 +36,7 @@ class GraphGridSdk:
 
     def save_dataset(self,
                      data_generator: typing.Generator,
-                     filename: str) -> SaveDatasetResponse:
+                     filename: str = None) -> SaveDatasetResponse:
         """Call save dataset api.
 
         :param data_generator:  The generator providing dataset lines

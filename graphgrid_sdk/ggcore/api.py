@@ -234,7 +234,7 @@ class NlpApi(ApiGroup):
             return NLP
 
         def endpoint(self):
-            return f"dataset{'/' + self._filename if self._filename else ''}/save"
+            return f"dataset{'/' + self._filename if self._filename is not None else ''}/save"
 
         def http_method(self) -> HttpMethod:
             return HttpMethod.POST
