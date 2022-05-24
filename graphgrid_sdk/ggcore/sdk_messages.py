@@ -208,16 +208,16 @@ class NMTTrainResponse(DagRunResponse):
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
     bucket: str
-    prefix: str
-    filename: str
+    key: str
+    datasetId: str
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
         self.bucket = loaded.get('bucket')
-        self.prefix = loaded.get('prefix')
-        self.filename = loaded.get('filename')
+        self.key = loaded.get('key')
+        self.datasetId = loaded.get('datasetId')
 
 
 class PromoteModelResponse(SdkServiceResponse):
