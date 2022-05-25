@@ -207,14 +207,16 @@ class NMTTrainResponse(DagRunResponse):
 # pylint: disable=too-few-public-methods
 class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
-    datasetId: str = None
-    path: str = None
+    bucket: str
+    key: str
+    datasetId: str
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
 
         loaded = json.loads(generic_response.response)
-        self.path = loaded.get('path')
+        self.bucket = loaded.get('bucket')
+        self.key = loaded.get('key')
         self.datasetId = loaded.get('datasetId')
 
 
@@ -302,14 +304,13 @@ class CheckTokenResponse(SdkServiceResponse):
 class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
     model: NlpModel
-    datasets: typing.Union[dict, str]
+    datasetId: str
     no_cache: bool = False
     gpu: bool = False
 
     def to_json(self):
         """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
-
 
 @dataclass
 class TrainedModelData:

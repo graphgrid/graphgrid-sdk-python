@@ -216,10 +216,10 @@ class ConfigClient(SecurityClientBase):
 class NlpClient(SecurityClientBase):
     """Define NlpClient to hold the nlp sdk calls."""
 
-    def save_dataset(self, generator: typing.Generator, dataset_id: str,
-                     overwrite: bool) -> SaveDatasetResponse:
+    def save_dataset(self, generator: typing.Generator,
+                     filename: str) -> SaveDatasetResponse:
         """Return save dataset sdk call."""
-        api_call = NlpApi.save_dataset_api(generator, dataset_id, overwrite)
+        api_call = NlpApi.save_dataset_api(generator, filename)
         return self.invoke(api_call)
 
     def promote_model(self, model_name: str,

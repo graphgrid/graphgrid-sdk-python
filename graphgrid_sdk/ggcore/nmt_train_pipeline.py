@@ -94,7 +94,7 @@ class NmtTrainPipeline:
         self._nlp_client = NlpClient(self._configuration)
 
     def nmt_train_pipeline(self, models_to_train: typing.List[NlpModel],
-                           datasets: typing.Union[str, list],
+                           datasetId: str,
                            no_cache: typing.Optional[bool],
                            gpu: typing.Optional[bool],
                            autopromote: bool,
@@ -106,7 +106,7 @@ class NmtTrainPipeline:
         train_request_bodies = []
         for model in models_to_train:
             train_request_bodies.append(
-                TrainRequestBody(model=model, datasets=datasets,
+                TrainRequestBody(model=model, datasetId=datasetId,
                                  no_cache=no_cache, gpu=gpu))
 
         jobs = []

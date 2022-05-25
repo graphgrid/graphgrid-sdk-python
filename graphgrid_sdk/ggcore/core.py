@@ -32,12 +32,11 @@ class SdkCore:
         """Execute test call. Test purposes only."""
         return self._config_client.test_api(test_message)
 
-    def save_dataset(self, generator: typing.Generator, dataset_id: str,
-                     overwrite: bool) -> SaveDatasetResponse:
+    def save_dataset(self, generator: typing.Generator,
+                     filename: str) -> SaveDatasetResponse:
         """Execute save dataset call."""
         return self._nlp_client.save_dataset(generator=generator,
-                                             dataset_id=dataset_id,
-                                             overwrite=overwrite)
+                                             filename=filename)
 
     def promote_model(self, model_name: str,
                       environment: str) -> PromoteModelResponse:
