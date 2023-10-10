@@ -76,7 +76,7 @@ class TestSdkSaveDataset(TestSdkBase):
         generator = mock.MagicMock()
         filename = "any_dataset"
         expected_response_dict = {
-            "datasetId": filename,
+            "dataset_id": filename,
             "path": "any/save/location"
         }
 
@@ -347,7 +347,7 @@ class TestSdkNMT(TestSdkBase):
             "exception": None
         }
         request_body = TrainRequestBody(model=NlpModel.NAMED_ENTITY_RECOGNITION,
-                                        datasetId="some-datasetId",
+                                        dataset_id="some-dataset-id",
                                         no_cache=False,
                                         gpu=False)
 
