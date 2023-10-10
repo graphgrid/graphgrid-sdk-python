@@ -209,7 +209,7 @@ class SaveDatasetResponse(SdkServiceResponse):
     """Define class representing a save dataset api call response."""
     bucket: str
     key: str
-    datasetId: str
+    dataset_id: str
 
     def __init__(self, generic_response: GenericResponse):
         super().__init__(generic_response)
@@ -217,7 +217,7 @@ class SaveDatasetResponse(SdkServiceResponse):
         loaded = json.loads(generic_response.response)
         self.bucket = loaded.get('bucket')
         self.key = loaded.get('key')
-        self.datasetId = loaded.get('datasetId')
+        self.dataset_id = loaded.get('dataset_id')
 
 
 class PromoteModelResponse(SdkServiceResponse):
@@ -304,7 +304,7 @@ class CheckTokenResponse(SdkServiceResponse):
 class TrainRequestBody:
     """Store Airflow configuration json/request bodies"""
     model: NlpModel
-    datasetId: str
+    dataset_id: str
     no_cache: bool = False
     gpu: bool = False
 
