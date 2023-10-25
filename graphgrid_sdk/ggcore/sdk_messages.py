@@ -312,6 +312,7 @@ class TrainRequestBody:
         """Encode TrainRequestBody to a json object"""
         return json.dumps(self.__dict__, indent=4)
 
+
 @dataclass
 class TrainedModelData:
     modelType: str

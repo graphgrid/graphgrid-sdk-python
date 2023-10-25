@@ -28,7 +28,7 @@ This example uses the default `access_key` and `secret_key` associated with [Gra
 
 You can initialize your `GraphGridSdk` object with that configuration and begin using the SDK.
 
-For details on usage please see the docs on [GraphGrid SDK Usage](https://docs.graphgrid.com/2.0/#/graphgrid-docs/sdk/python-sdk-usage).
+For details on usage please see the docs on [GraphGrid SDK Usage](https://https://docs.graphgrid.com/sdk/python-sdk-usage).
 
 ## GraphGrid SDK Methods
 
@@ -50,4 +50,26 @@ In contrast, the methods `job_run` and `job_status` are provided to trigger and 
 The `nmt_train_pipeline` method is specifically for kicking off NLP model training pipeline, it 
 runs training jobs, monitors them, and can promote the newly trained models.  
 
-For details on specific methods please see the docs on [GraphGrid SDK Method Reference](https://docs.graphgrid.com/2.0/#/graphgrid-docs/sdk/python-sdk-method-reference).
+For details on specific methods please see the docs on [GraphGrid SDK Method Reference](https://https://docs.graphgrid.com/sdk/python-sdk-method-reference).
+
+### Configuring a TrainRequestBody
+
+The `TrainRequestBody` is necessary for kicking of NLP model training via the `nmt_train` and `nmt_train_pipeline` SDK methods.
+`TrainRequestBody` has the following attributes:
+
+|  Attribute  |  Type  |  Description  |  Required  |
+| --- | --- | --- | --- |
+| model | NlpModel | the type of model to train | True |
+| dataset_id | str | id of dataset for training | True |
+| no_cache | bool | flag for whether caching should be disabled | False (defaults to False) |
+| gpu | bool | flag for whether gpu should be used for training | False (defaults to False) |
+
+Below is an example for how defining a `TrainRequestBody` might look:
+```
+request_body = TrainRequestBody(model=NlpModel.NAMED_ENTITY_RECOGNITION,
+                                dataset_id="9tb98wJhuQCoPSJEDKys3WRfrUfpp3tkFpAYexGVMzGc",
+                                no_cache=False,
+                                gpu=True)
+```
+The value of `dataset_id` can be retrieved from the response of a successful call of the `save_dataset` SDK method.
+If the dataset has already been saved, the `dataset_id` can also be found as an attribute of the node representing that dataset within the graph.
