@@ -407,14 +407,14 @@ class TestNMTTrainPipeline(TestSdkBase):
 
         gg_sdk = GraphGridSdk(self._test_bootstrap_config)
 
-        models_to_train = ["some-model", "some-other-model"]
-        datasets = "path/to/saved/dataset"
+        models_to_train = [NlpModel.NAMED_ENTITY_RECOGNITION, NlpModel.PART_OF_SPEECH_TAGGING]
+        dataset_id = "some-dataset-id"
         no_cache = False
         gpu = False
         autopromote = True
 
-        result = gg_sdk.nmt_train_pipeline(models_to_train, datasets, no_cache, gpu, autopromote, mock_success_handler,
-                                        mock_failed_handler)
+        result = gg_sdk.nmt_train_pipeline(models_to_train, dataset_id, no_cache, gpu, autopromote, mock_success_handler,
+                                           mock_failed_handler)
 
         mock_trigger_nmt.assert_called()
         mock_get_nmt_status.assert_called()
