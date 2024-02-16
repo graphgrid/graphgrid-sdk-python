@@ -217,7 +217,7 @@ class SaveDatasetResponse(SdkServiceResponse):
         loaded = json.loads(generic_response.response)
         self.bucket = loaded.get('bucket')
         self.key = loaded.get('key')
-        self.dataset_id = loaded.get('dataset_id')
+        self.dataset_id = loaded.get('datasetId')
 
 
 class PromoteModelResponse(SdkServiceResponse):
